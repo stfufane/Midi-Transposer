@@ -42,7 +42,8 @@ private:
 
     int inputChannel = 1;
     int outputChannel = 1;
-    int lastNoteOn = 0;
+    int lastNoteOn = -1;
+    std::vector<int> currentNotesOn;
     
     void mapNote(int note, juce::uint8 velocity, bool noteOn, int time, MidiBuffer& processedMidi);
     void updateMapping();

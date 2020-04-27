@@ -59,17 +59,64 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     midiMessages.swapWith(processedMidi);
 }
 
+/*
+    There are many cases to take in account here.
+    We want the input to be monophonic so we need to know which was the last played note and 
+    if there are some notes still on to be played when the last one is released.
+*/
 void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int time, MidiBuffer& processedMidi)
 {
     MidiMessage m;
-    for (int i = 0; i < mapping_notes[note].size(); i++) {
-        if (noteOn) {
-            m = MidiMessage::noteOn(outputChannel, mapping_notes[note][i], velocity);
+
+    // If the note changed, turn off the previous notes before adding the new ones.
+    if (noteOn)
+    {
+        // Add the note to the vector of current notes played.
+        currentNotesOn.push_back(note);
+        if (note != lastNoteOn && lastNoteOn > -1)
+        {
+            for (int i = 0; i < mapping_notes[lastNoteOn].size(); i++) {
+                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, mapping_notes[lastNoteOn][i], velocity), time);
+            }
         }
-        else {
-            m = MidiMessage::noteOff(outputChannel, mapping_notes[note][i], velocity);
+        lastNoteOn = note;
+
+        // Loop on the corresponding mapping for the played note.
+        for (int i = 0; i < mapping_notes[note].size(); i++) {
+            if (mapping_notes[note][i] > 127) break;
+            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, mapping_notes[note][i], velocity), time);
         }
-        processedMidi.addEvent(m, time);
+    }
+    else 
+    {
+        for (auto it = currentNotesOn.begin(); it != currentNotesOn.end();)
+        {
+            if (*it == note)
+            {
+                currentNotesOn.erase(it);
+                break;
+            }
+            ++it;
+        }
+        
+        // Turn off the corresponding notes for the current note off if it's the same as the last played note.
+        // Otherwise it means the released note was not active so we don't need to do anything.
+        if (note == lastNoteOn) 
+        {
+            for (int i = 0; i < mapping_notes[note].size(); i++) {
+                if (mapping_notes[note][i] > 127) break;
+                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, mapping_notes[note][i], velocity), time);
+            }
+        }
+
+        // If there were still some notes on, play the last one.
+        if (note == lastNoteOn && currentNotesOn.size() > 0) {
+            lastNoteOn = currentNotesOn.back();
+            for (int i = 0; i < mapping_notes[lastNoteOn].size(); i++) {
+                if (mapping_notes[lastNoteOn][i] > 127) break;
+                processedMidi.addEvent(MidiMessage::noteOn(outputChannel, mapping_notes[lastNoteOn][i], velocity), time);
+            }
+        }
     }
 }
 
@@ -87,17 +134,21 @@ void MidiProcessor::updateMapping()
 void MidiProcessor::addMappedNotes(const int from_note, const int to_note, const String chord)
 {
     int note, mapped_note, new_size = 1;
-    if (chord == "maj" || chord == "min" || chord == "sus4") {
+    if (chord == "maj" || chord == "min" || chord == "sus4") 
+    {
         new_size = 3;
     }
-    else if (chord == "Maj7" || chord == "m7" || chord == "7" || chord == "m7b5") {
+    else if (chord == "Maj7" || chord == "m7" || chord == "7" || chord == "m7b5") 
+    {
         new_size = 4;
     }
 
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 0; i <= 10; i++) 
+    {
         note = i * 12 + from_note;
         mapped_note = i * 12 + to_note;
-        if (note < 128 && mapped_note < 128) {
+        if (note < 128 && mapped_note < 128) 
+        {
             // Redimensionne le tableau de mapping
             mapping_notes[note].resize(new_size);
 
@@ -105,9 +156,8 @@ void MidiProcessor::addMappedNotes(const int from_note, const int to_note, const
             mapping_notes[note][0] = mapped_note;
 
             // Si aucun accord paramétré on s'arrête là.
-            if (chord == "None") {
+            if (chord == "None") 
                 continue;
-            }
 
             // Définit si on est sur une tierce majeure, mineure ou une quarte
             if (chord == "maj" || chord == "Maj7" || chord == "7") {
