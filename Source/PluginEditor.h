@@ -31,6 +31,8 @@ private:
 
     AudioProcessorValueTreeState& valueTreeState;
 
+    TooltipWindow tooltipWindow;
+
     ComboBox inputChannelChoice;
     std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment> inputChannelAttachment;
 

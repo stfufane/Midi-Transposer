@@ -28,11 +28,13 @@ MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTrans
     }
 
     inputChannelChoice.setText("Input Channel");
+    inputChannelChoice.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
     inputChannelChoice.setBounds(518, 22, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(inputChannelChoice);
     inputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramInChannel, inputChannelChoice));
 
     outputChannelChoice.setText("Output Channel");
+    outputChannelChoice.setTooltip("The transposed events will be routed to this channel.");
     outputChannelChoice.setBounds(518, 54, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(outputChannelChoice);
     outputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramOutChannel, outputChannelChoice));
