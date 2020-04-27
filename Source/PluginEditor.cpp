@@ -22,14 +22,17 @@ constexpr auto COMBO_HEIGHT = 24;
 MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
 {
+    for (int c = 1; c <= 16; c++) {
+        inputChannelChoice.addItem(std::to_string(c), c);
+        outputChannelChoice.addItem(std::to_string(c), c);
+    }
+
     inputChannelChoice.setText("Input Channel");
-    inputChannelChoice.addItemList(MidiProcessor::midiChannels, 1);
     inputChannelChoice.setBounds(518, 22, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(inputChannelChoice);
     inputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramInChannel, inputChannelChoice));
 
     outputChannelChoice.setText("Output Channel");
-    outputChannelChoice.addItemList(MidiProcessor::midiChannels, 1);
     outputChannelChoice.setBounds(518, 54, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(outputChannelChoice);
     outputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramOutChannel, outputChannelChoice));
@@ -76,37 +79,20 @@ MidiTransposerAudioProcessorEditor::~MidiTransposerAudioProcessorEditor() { }
 void MidiTransposerAudioProcessorEditor::paint(Graphics& g)
 {
     g.fillAll(Colour(0xffffffff));
+    
+    Image background = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
+    g.drawImage(background, 0, 0, WINDOW_WIDTH, BACKGROUND_HEIGHT, 0, 0, background.getWidth(), background.getHeight());
+    
+    g.setColour(Colours::white);
+    g.fillRoundedRectangle(383.0f, 11.0f, 409.0f, 75.0f, 2.0f);
+    
+    g.setColour(Colours::black);
+    g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
+    g.drawText("Input Midi Channel", 390, 22, 130, 24, Justification::left, true);
 
-    {
-        int x = 0, y = 0;
-        Image background = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
-        g.drawImage(background, x, y, WINDOW_WIDTH, BACKGROUND_HEIGHT, x, y, background.getWidth(), background.getHeight());
-    }
-
-    {
-        float x = 383.0f, y = 11.0f, width = 409.0f, height = 75.0f;
-        Colour fillColour = Colours::white;
-        g.setColour(fillColour);
-        g.fillRoundedRectangle(x, y, width, height, 10.000f);
-    }
-
-    {
-        int x = 385, y = 22, width = 130, height = 24;
-        String text(TRANS("Old Midi Channel"));
-        Colour fillColour = Colours::black;
-        g.setColour(fillColour);
-        g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-        g.drawText(text, x, y, width, height, Justification::centred, true);
-    }
-
-    {
-        int x = 385, y = 54, width = 130, height = 24;
-        String text(TRANS("New Midi Channel"));
-        Colour fillColour = Colours::black;
-        g.setColour(fillColour);
-        g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-        g.drawText(text, x, y, width, height, Justification::centred, true);
-    }
+    g.setColour(Colours::black);
+    g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
+    g.drawText("Output Midi Channel", 390, 54, 130, 24, Justification::left, true);
 }
 
 void MidiTransposerAudioProcessorEditor::resized() {}

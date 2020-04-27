@@ -145,8 +145,17 @@ void MidiTransposerAudioProcessor::setStateInformation (const void* data, int si
 AudioProcessorValueTreeState::ParameterLayout MidiTransposerAudioProcessor::createParameterLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
-    MidiProcessor::addChannelParameters(layout);
-    MidiProcessor::addMappingParameters(layout);
+
+    for (int i = 0; i < MidiProcessor::notes.size(); i++)
+    {
+        auto transpose = std::make_unique<AudioParameterChoice>(MidiProcessor::notes[i] + "_note", MidiProcessor::notes[i], MidiProcessor::notes, i);
+        auto chord = std::make_unique<AudioParameterChoice>(MidiProcessor::notes[i] + "_chord", MidiProcessor::notes[i], MidiProcessor::chords, 0);
+        layout.add(std::move(transpose), std::move(chord));
+    }
+    auto inChannel = std::make_unique<AudioParameterInt>(IDs::paramInChannel, "Input Channel", 1, 16, 1); 
+    auto outChannel = std::make_unique<AudioParameterInt>(IDs::paramOutChannel, "Output Channel", 1, 16, 1);
+
+    layout.add(std::move(inChannel), std::move(outChannel));
     
     return layout;
 }

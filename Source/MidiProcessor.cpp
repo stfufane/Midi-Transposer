@@ -10,7 +10,6 @@
 
 #include "MidiProcessor.h"
 
-StringArray MidiProcessor::midiChannels{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" };
 StringArray MidiProcessor::notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 StringArray MidiProcessor::chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
 
@@ -26,8 +25,14 @@ MidiProcessor::MidiProcessor(AudioProcessorValueTreeState& stateToUse)
 
     state.state.addListener(this);
 
-    inputChannelParameter = state.getRawParameterValue(IDs::paramInChannel);
-    outputChannelParameter = state.getRawParameterValue(IDs::paramOutChannel);
+    inputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramInChannel));
+    outputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramOutChannel));
+
+    for (int i = 0; i < notes.size(); i++)
+    {
+        noteParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_note"));
+        chordParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_chord"));
+    }
 
     updateMapping();
 }
@@ -39,11 +44,14 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     MidiMessage m;
     for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, time);)
     {
-        if (m.getChannel() == inputChannel) {
-            if (m.isNoteOnOrOff()) {
+        if (m.getChannel() == inputChannel) 
+        {
+            if (m.isNoteOnOrOff()) 
+            {
                 mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), time, processedMidi);
             }
-            else {
+            else 
+            {
                 processedMidi.addEvent(m, time);
             }
         }
@@ -67,13 +75,11 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
 
 void MidiProcessor::updateMapping()
 {
-    inputChannel = roundToInt(inputChannelParameter->load()) + 1;
-    outputChannel = roundToInt(outputChannelParameter->load()) + 1;
+    inputChannel = inputChannelParameter->get();
+    outputChannel = outputChannelParameter->get();
 
     for (int i = 0; i < notes.size(); i++)
     {
-        noteParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_note"));
-        chordParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_chord"));
         addMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getCurrentChoiceName());
     }
 }
@@ -132,24 +138,6 @@ void MidiProcessor::addMappedNotes(const int from_note, const int to_note, const
         }
     }
 
-}
-
-void MidiProcessor::addMappingParameters(AudioProcessorValueTreeState::ParameterLayout& layout)
-{
-    for (int i = 0; i < notes.size(); i++)
-    {
-        auto transpose = std::make_unique<AudioParameterChoice>(notes[i] + "_note", notes[i], notes, i);
-        auto chord = std::make_unique<AudioParameterChoice>(notes[i] + "_chord", notes[i], chords, 0);
-        layout.add(std::move(transpose), std::move(chord));
-    }
-}
-
-void MidiProcessor::addChannelParameters(AudioProcessorValueTreeState::ParameterLayout& layout)
-{
-    auto inChannel = std::make_unique<AudioParameterChoice>(IDs::paramInChannel, "Input Channel", midiChannels, 0);
-    auto outChannel = std::make_unique<AudioParameterChoice>(IDs::paramOutChannel, "Output Channel", midiChannels, 0);
-
-    layout.add(std::move(inChannel), std::move(outChannel));
 }
 
 void MidiProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged, const Identifier& property)
