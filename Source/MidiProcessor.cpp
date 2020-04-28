@@ -71,7 +71,7 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
         if (note != lastNoteOn && lastNoteOn > -1)
         {
             for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, currentOutputNotesOn[i], velocity), time);
+                processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
             }
         }
         
@@ -86,8 +86,9 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
                 currentOutputNotesOn.push_back(noteToPlay);
             }
         }
-        // Set the new last played note.
+        // Set the new last played note and the current output channel.
         lastNoteOn = note;
+        currentNoteOutputChannel = outputChannel;
     }
     else 
     {
@@ -107,7 +108,7 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
         if (note == lastNoteOn) 
         {
             for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, currentOutputNotesOn[i], velocity), time);
+                processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
             }
 
             // If there were still some notes on, play the last one.
@@ -124,6 +125,7 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
                         currentOutputNotesOn.push_back(noteToPlay);
                     }
                 }
+                currentNoteOutputChannel = outputChannel;
             }
         }
     }
