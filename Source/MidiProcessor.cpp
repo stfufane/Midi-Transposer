@@ -40,16 +40,14 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     MidiMessage m;
     for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, time);)
     {
-        if (m.getChannel() == inputChannel) 
+        // Only notes on and of from input channel are processed, the rest is passed through.
+        if (m.getChannel() == inputChannel && m.isNoteOnOrOff())
         {
-            if (m.isNoteOnOrOff()) 
-            {
-                mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), time, processedMidi);
-            }
-            else 
-            {
-                processedMidi.addEvent(m, time);
-            }
+            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), time, processedMidi);
+        }
+        else 
+        {
+            processedMidi.addEvent(m, time);
         }
     }
     midiMessages.swapWith(processedMidi);
@@ -62,36 +60,43 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
 */
 void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int time, MidiBuffer& processedMidi)
 {
-    MidiMessage m;
-    int baseNote;
+    int baseNote, noteToPlay;
 
-    // If the note changed, turn off the previous notes before adding the new ones.
     if (noteOn)
     {
         // Add the note to the vector of current notes played.
-        currentNotesOn.push_back(note);
+        currentInputNotesOn.push_back(note);
+
+        // If the note changed, turn off the previous notes before adding the new ones.
         if (note != lastNoteOn && lastNoteOn > -1)
         {
-            baseNote = lastNoteOn % 12;
-            for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, lastNoteOn + mappingNotes[baseNote][i], velocity), time);
+            for (int i = 0; i < currentOutputNotesOn.size(); i++) {
+                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, currentOutputNotesOn[i], velocity), time);
             }
         }
-        lastNoteOn = note;
+        
+        currentOutputNotesOn.clear();
 
         // Loop on the corresponding mapping for the played note.
         baseNote = note % 12;
         for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, note + mappingNotes[baseNote][i], velocity), time);
+            noteToPlay = note + mappingNotes[baseNote][i];
+            if (noteToPlay < 128) {
+                processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
+                currentOutputNotesOn.push_back(noteToPlay);
+            }
         }
+        // Set the new last played note.
+        lastNoteOn = note;
     }
     else 
     {
-        for (auto it = currentNotesOn.begin(); it != currentNotesOn.end();)
+        // For every note off, remove the received not form the vector of current notes on played.
+        for (auto it = currentInputNotesOn.begin(); it != currentInputNotesOn.end();)
         {
             if (*it == note)
             {
-                currentNotesOn.erase(it);
+                currentInputNotesOn.erase(it);
                 break;
             }
             ++it;
@@ -101,18 +106,24 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
         // Otherwise it means the released note was not active so we don't need to do anything.
         if (note == lastNoteOn) 
         {
-            baseNote = note % 12;
-            for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, note + mappingNotes[baseNote][i], velocity), time);
+            for (int i = 0; i < currentOutputNotesOn.size(); i++) {
+                processedMidi.addEvent(MidiMessage::noteOff(outputChannel, currentOutputNotesOn[i], velocity), time);
             }
-        }
 
-        // If there were still some notes on, play the last one.
-        if (note == lastNoteOn && currentNotesOn.size() > 0) {
-            lastNoteOn = currentNotesOn.back();
-            baseNote = lastNoteOn % 12;
-            for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOn(outputChannel, lastNoteOn + mappingNotes[baseNote][i], velocity), time);
+            // If there were still some notes on, play the last one.
+            if (currentInputNotesOn.size() > 0) {
+                // First clear the output notes vector to replace its values.
+                currentOutputNotesOn.clear();
+                // Then take the last note from the vector of active input notes.
+                lastNoteOn = currentInputNotesOn.back();
+                baseNote = lastNoteOn % 12;
+                for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
+                    noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
+                    if (noteToPlay < 128) {
+                        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
+                        currentOutputNotesOn.push_back(noteToPlay);
+                    }
+                }
             }
         }
     }
