@@ -58,10 +58,8 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     We want the input to be monophonic so we need to know which was the last played note and 
     if there are some notes still on to be played when the last one is released.
 */
-void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int time, MidiBuffer& processedMidi)
+void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int time, MidiBuffer& processedMidi)
 {
-    int baseNote, noteToPlay;
-
     if (noteOn)
     {
         // Add the note to the vector of current notes played.
@@ -70,64 +68,66 @@ void MidiProcessor::mapNote(int note, juce::uint8 velocity, bool noteOn, int tim
         // If the note changed, turn off the previous notes before adding the new ones.
         if (note != lastNoteOn && lastNoteOn > -1)
         {
-            for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
-            }
+            stopCurrentNotes(velocity, time, processedMidi);
         }
-        
-        currentOutputNotesOn.clear();
-
-        // Loop on the corresponding mapping for the played note.
-        baseNote = note % 12;
-        for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-            noteToPlay = note + mappingNotes[baseNote][i];
-            if (noteToPlay < 128) {
-                processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
-                currentOutputNotesOn.push_back(noteToPlay);
-            }
-        }
-        // Set the new last played note and the current output channel.
-        lastNoteOn = note;
-        currentNoteOutputChannel = outputChannel;
+        // Play the received note.
+        playMappedNotes(note, velocity, time, processedMidi);
     }
     else 
     {
-        // For every note off, remove the received not form the vector of current notes on played.
-        for (auto it = currentInputNotesOn.begin(); it != currentInputNotesOn.end();)
-        {
-            if (*it == note)
-            {
-                currentInputNotesOn.erase(it);
-                break;
-            }
-            ++it;
-        }
+        // For every note off, remove the received note from the vector of current notes held.
+        removeHeldNote(note);
         
         // Turn off the corresponding notes for the current note off if it's the same as the last played note.
-        // Otherwise it means the released note was not active so we don't need to do anything.
+        // Otherwise it means the released note was not active so we don't need to do anything (case of multiple notes held)
         if (note == lastNoteOn) 
         {
-            for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-                processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
-            }
+            stopCurrentNotes(velocity, time, processedMidi);
 
-            // If there were still some notes on, play the last one.
+            // If there were still some notes held, play the last one.
             if (currentInputNotesOn.size() > 0) {
-                // First clear the output notes vector to replace its values.
-                currentOutputNotesOn.clear();
-                // Then take the last note from the vector of active input notes.
-                lastNoteOn = currentInputNotesOn.back();
-                baseNote = lastNoteOn % 12;
-                for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-                    noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
-                    if (noteToPlay < 128) {
-                        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
-                        currentOutputNotesOn.push_back(noteToPlay);
-                    }
-                }
-                currentNoteOutputChannel = outputChannel;
+                // Then play the last note from the vector of active input notes.
+                playMappedNotes(currentInputNotesOn.back(), velocity, time, processedMidi);
             }
         }
+    }
+}
+
+void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int time, MidiBuffer& processedMidi)
+{
+    int baseNote, noteToPlay;
+    lastNoteOn = note;
+    // First clear the output notes vector to replace its values.
+    currentOutputNotesOn.clear();
+
+    baseNote = lastNoteOn % 12;
+    for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
+        noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
+        if (noteToPlay < 128) {
+            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
+            currentOutputNotesOn.push_back(noteToPlay);
+        }
+    }
+    currentNoteOutputChannel = outputChannel;
+}
+
+void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int time, MidiBuffer& processedMidi)
+{
+    for (int i = 0; i < currentOutputNotesOn.size(); i++) {
+        processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
+    }
+}
+
+void MidiProcessor::removeHeldNote(const int note)
+{
+    for (auto it = currentInputNotesOn.begin(); it != currentInputNotesOn.end();)
+    {
+        if (*it == note)
+        {
+            currentInputNotesOn.erase(it);
+            break;
+        }
+        ++it;
     }
 }
 
@@ -138,11 +138,11 @@ void MidiProcessor::updateMapping()
 
     for (int i = 0; i < notes.size(); i++)
     {
-        addMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getIndex());
+        setMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getIndex());
     }
 }
 
-void MidiProcessor::addMappedNotes(const int from_note, const int to_note, const int chord)
+void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
 {
     // Redimensionne le tableau de mapping
     mappingNotes[from_note].resize(chordIntervals[chord].size());

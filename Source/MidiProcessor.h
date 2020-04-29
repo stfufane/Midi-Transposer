@@ -57,7 +57,17 @@ private:
     std::vector<int> currentInputNotesOn;
     std::vector<int> currentOutputNotesOn;
     
-    void mapNote(int note, juce::uint8 velocity, bool noteOn, int time, MidiBuffer& processedMidi);
+    // -----------------------------------
+    // Process the input midi events
+    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int time, MidiBuffer& processedMidi);
+    void playMappedNotes(const int note, const juce::uint8 velocity, const int time, MidiBuffer& processedMidi);
+    void stopCurrentNotes(const juce::uint8 velocity, const int time, MidiBuffer& processedMidi);
+    void removeHeldNote(const int note);
+    // -----------------------------------
+
+    // -----------------------------------
+    // Manage mapping values
     void updateMapping();
-    void addMappedNotes(const int note_origine, const int new_note, const int chord);
+    void setMappedNotes(const int note_origine, const int new_note, const int chord);
+    // -----------------------------------
 };
