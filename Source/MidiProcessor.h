@@ -44,14 +44,14 @@ private:
     AudioParameterInt* octaveTransposeParameter;
 
     const std::vector< std::vector<int> > chordIntervals = {
-        {},            // None
-        {4, 7},      // maj
-        {3, 7},      // min
-        {5, 7},      // sus4
-        {4, 7, 11},  // maj7
-        {3, 7, 10},  // min7
-        {4, 7, 11},  // 7
-        {3, 6, 10}   // m7b5
+        {0},            // None
+        {0, 4, 7},      // maj
+        {0, 3, 7},      // min
+        {0, 5, 7},      // sus4
+        {0, 4, 7, 11},  // maj7
+        {0, 3, 7, 10},  // min7
+        {0, 4, 7, 11},  // 7
+        {0, 3, 6, 10}   // m7b5
     };
     std::vector< std::vector<int> > mappingNotes;
 
