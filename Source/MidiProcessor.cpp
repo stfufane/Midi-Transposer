@@ -23,6 +23,7 @@ MidiProcessor::MidiProcessor(AudioProcessorValueTreeState& stateToUse)
 
     inputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramInChannel));
     outputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramOutChannel));
+    bypassOtherChannelsParameter = dynamic_cast<AudioParameterBool*>(state.getParameter(IDs::bypassOtherChannels));
 
     for (int i = 0; i < notes.size(); i++)
     {
@@ -30,24 +31,30 @@ MidiProcessor::MidiProcessor(AudioProcessorValueTreeState& stateToUse)
         chordParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_chord"));
     }
 
-    updateMapping();
+    octaveTransposeParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::octaveTranspose));
+
+    updateParameters();
 }
 
 void MidiProcessor::process(MidiBuffer& midiMessages)
 {
     MidiBuffer processedMidi;
-    int time;
     MidiMessage m;
+    int time;
+    bool matchingChannel; 
+
     for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, time);)
     {
-        // Only notes on and of from input channel are processed, the rest is passed through.
-        if (m.getChannel() == inputChannel && m.isNoteOnOrOff())
+        matchingChannel = (m.getChannel() == inputChannel);
+        // Only notes on and off from input channel are processed, the rest is passed through.
+        if (matchingChannel && m.isNoteOnOrOff())
         {
             mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), time, processedMidi);
         }
         else 
         {
-            processedMidi.addEvent(m, time);
+            if (!bypassOtherChannels || matchingChannel)
+                processedMidi.addEvent(m, time);
         }
     }
     midiMessages.swapWith(processedMidi);
@@ -103,7 +110,7 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
     baseNote = lastNoteOn % 12;
     for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
         noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
-        if (noteToPlay < 128) {
+        if (noteToPlay >= 0 && noteToPlay < 128) {
             processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
             currentOutputNotesOn.push_back(noteToPlay);
         }
@@ -131,11 +138,13 @@ void MidiProcessor::removeHeldNote(const int note)
     }
 }
 
-void MidiProcessor::updateMapping()
+void MidiProcessor::updateParameters()
 {
     inputChannel = inputChannelParameter->get();
     outputChannel = outputChannelParameter->get();
-
+    bypassOtherChannels = bypassOtherChannelsParameter->get();
+    
+    octaveTranspose = octaveTransposeParameter->get();
     for (int i = 0; i < notes.size(); i++)
     {
         setMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getIndex());
@@ -144,16 +153,25 @@ void MidiProcessor::updateMapping()
 
 void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
 {
-    // Redimensionne le tableau de mapping
-    mappingNotes[from_note].resize(chordIntervals[chord].size());
-    for (int i = 0; i < mappingNotes[from_note].size(); i++)
+    // First clear the mapping values.
+    mappingNotes[from_note].clear();
+
+    // Add the root note in every case.
+    mappingNotes[from_note].push_back(to_note - from_note);
+
+    // If there's a chord, add its note + the octave transposition.
+    int chord_size = chordIntervals[chord].size();
+    if (chord_size > 0)
     {
-        mappingNotes[from_note][i] = to_note - from_note + chordIntervals[chord][i];
-    }
+        for (int i = 0; i < chord_size; i++)
+        {
+            mappingNotes[from_note].push_back(to_note - from_note + chordIntervals[chord][i] + (octaveTranspose * 12));
+        }
+    } 
 }
 
 void MidiProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged, const Identifier& property)
 {
     if (property.toString() == "value")
-        updateMapping();
+        updateParameters();
 }

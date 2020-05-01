@@ -14,9 +14,10 @@
 
 namespace IDs
 {
-    static String groupChannels{ "channels" };
     static String paramInChannel{ "in_channel" };
     static String paramOutChannel{ "out_channel" };
+    static String bypassOtherChannels{ "bypass_other_channels" };
+    static String octaveTranspose{ "octave_transpose" };
 }
 
 class MidiProcessor : public ValueTree::Listener
@@ -33,22 +34,26 @@ public:
 
 private:
     AudioProcessorValueTreeState& state;
-    const std::vector< std::vector<int> > chordIntervals = {
-        {0},            // None
-        {0, 4, 7},      // maj
-        {0, 3, 7},      // min
-        {0, 5, 7},      // sus4
-        {0, 4, 7, 11},  // maj7
-        {0, 3, 7, 10},  // min7
-        {0, 4, 7, 11},  // 7
-        {0, 3, 6, 10}   // m7b5
-    };
-    std::vector< std::vector<int> > mappingNotes;
 
+    // Parameters read from the tree state
     AudioParameterInt* inputChannelParameter;
     AudioParameterInt* outputChannelParameter;
     std::vector<AudioParameterChoice*> noteParameters;
     std::vector<AudioParameterChoice*> chordParameters;
+    AudioParameterBool* bypassOtherChannelsParameter;
+    AudioParameterInt* octaveTransposeParameter;
+
+    const std::vector< std::vector<int> > chordIntervals = {
+        {},            // None
+        {4, 7},      // maj
+        {3, 7},      // min
+        {5, 7},      // sus4
+        {4, 7, 11},  // maj7
+        {3, 7, 10},  // min7
+        {4, 7, 11},  // 7
+        {3, 6, 10}   // m7b5
+    };
+    std::vector< std::vector<int> > mappingNotes;
 
     int inputChannel = 1;
     int outputChannel = 1;
@@ -56,6 +61,8 @@ private:
     int currentNoteOutputChannel = 1;
     std::vector<int> currentInputNotesOn;
     std::vector<int> currentOutputNotesOn;
+    bool bypassOtherChannels;
+    int octaveTranspose;
     
     // -----------------------------------
     // Process the input midi events
@@ -67,7 +74,7 @@ private:
 
     // -----------------------------------
     // Manage mapping values
-    void updateMapping();
+    void updateParameters();
     void setMappedNotes(const int note_origine, const int new_note, const int chord);
     // -----------------------------------
 };

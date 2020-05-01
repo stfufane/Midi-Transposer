@@ -29,6 +29,8 @@ public:
 private:
     MidiTransposerAudioProcessor& processor;
 
+    Image backgroundImage;
+
     AudioProcessorValueTreeState& valueTreeState;
 
     TooltipWindow tooltipWindow;
@@ -38,6 +40,12 @@ private:
 
     ComboBox outputChannelChoice;
     std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment> outputChannelAttachment;
+
+    ToggleButton bypassChannels;
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> bypassChannelsAttachment;
+
+    ComboBox octaveTransposeChoice;
+    std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment> octraveTransposeAttachment;
 
     std::vector <std::unique_ptr<ComboBox>> noteChoices;
     std::vector<std::unique_ptr<ComboBox>> chordChoices;

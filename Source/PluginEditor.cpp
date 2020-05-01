@@ -22,22 +22,39 @@ constexpr auto COMBO_HEIGHT = 24;
 MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
 {
+    backgroundImage = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
+
     for (int c = 1; c <= 16; c++) {
         inputChannelChoice.addItem(std::to_string(c), c);
         outputChannelChoice.addItem(std::to_string(c), c);
     }
 
-    inputChannelChoice.setText("Input Channel");
     inputChannelChoice.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
-    inputChannelChoice.setBounds(518, 22, COMBO_WIDTH, COMBO_HEIGHT);
+    inputChannelChoice.setBounds(425, 18, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(inputChannelChoice);
     inputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramInChannel, inputChannelChoice));
 
-    outputChannelChoice.setText("Output Channel");
     outputChannelChoice.setTooltip("The transposed events will be routed to this channel.");
-    outputChannelChoice.setBounds(518, 54, COMBO_WIDTH, COMBO_HEIGHT);
+    outputChannelChoice.setBounds(425, 50, COMBO_WIDTH, COMBO_HEIGHT);
     addAndMakeVisible(outputChannelChoice);
     outputChannelAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::paramOutChannel, outputChannelChoice));
+
+    bypassChannels.setButtonText("Bypass other channels");
+    bypassChannels.setBounds(500, 50, 150, 24);
+    bypassChannels.setColour(ToggleButton::textColourId, Colours::black);
+    bypassChannels.setColour(ToggleButton::tickColourId, Colours::black);
+    bypassChannels.setColour(ToggleButton::tickDisabledColourId, Colours::black);
+    addAndMakeVisible(bypassChannels);
+    bypassChannels.changeWidthToFitText();
+    bypassChannelsAttachment.reset(new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, IDs::bypassOtherChannels, bypassChannels));
+
+    for (int o = 1; o <= 6; o++) {
+        octaveTransposeChoice.addItem(std::to_string(o - 2), o);
+    }
+    octaveTransposeChoice.setTooltip("This will play the root note at its original position and transpose the chord.");
+    octaveTransposeChoice.setBounds(630, 18, COMBO_WIDTH, COMBO_HEIGHT);
+    addAndMakeVisible(octaveTransposeChoice);
+    octraveTransposeAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, IDs::octaveTranspose, octaveTransposeChoice));
 
     std::vector<int> combo_x{ 47, 94, 138, 185, 232, 323, 365, 412, 455, 503, 547, 595 };
     std::vector<int> combo_note_y{ 616, 446, 616, 446, 616, 616, 446, 616, 446, 616, 446, 616 };
@@ -49,7 +66,6 @@ MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTrans
         // Create the notes combo box
         note_id = MidiProcessor::notes[i] + "_note";
         noteChoices.push_back(std::make_unique<ComboBox>(note_id));
-        noteChoices.back()->setText(MidiProcessor::notes[i] + " Transpose");
         noteChoices.back()->addItemList(MidiProcessor::notes, i + 1);
         noteChoices.back()->setBounds(combo_x[i], combo_note_y[i], COMBO_WIDTH, COMBO_HEIGHT);
         addAndMakeVisible(noteChoices.back().get());
@@ -61,7 +77,6 @@ MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTrans
         // Create the chords combo box
         chord_id = MidiProcessor::notes[i] + "_chord";
         chordChoices.push_back(std::make_unique<ComboBox>(chord_id));
-        chordChoices.back()->setText(MidiProcessor::notes[i] + " Chord");
         chordChoices.back()->addItemList(MidiProcessor::chords, i + 1);
         chordChoices.back()->setBounds(combo_x[i], combo_chord_y[i], COMBO_WIDTH, COMBO_HEIGHT);
         addAndMakeVisible(chordChoices.back().get());
@@ -82,19 +97,16 @@ void MidiTransposerAudioProcessorEditor::paint(Graphics& g)
 {
     g.fillAll(Colour(0xffffffff));
     
-    Image background = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
-    g.drawImage(background, 0, 0, WINDOW_WIDTH, BACKGROUND_HEIGHT, 0, 0, background.getWidth(), background.getHeight());
+    g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, BACKGROUND_HEIGHT, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
     
     g.setColour(Colours::white);
-    g.fillRoundedRectangle(383.0f, 11.0f, 409.0f, 75.0f, 2.0f);
+    g.fillRoundedRectangle(278.0f, 9.0f, 515.0f, 71.0f, 2.0f);
     
     g.setColour(Colours::black);
     g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-    g.drawText("Input Midi Channel", 390, 22, 130, 24, Justification::left, true);
-
-    g.setColour(Colours::black);
-    g.setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-    g.drawText("Output Midi Channel", 390, 54, 130, 24, Justification::left, true);
+    g.drawText("Input Midi Channel", 290, 18, 130, 24, Justification::left, true);
+    g.drawText("Output Midi Channel", 290, 50, 130, 24, Justification::left, true);
+    g.drawText("Octave transpose", 500, 18, 120, 24, Justification::left, true);
 }
 
 void MidiTransposerAudioProcessorEditor::resized() {}

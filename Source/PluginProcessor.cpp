@@ -148,14 +148,22 @@ AudioProcessorValueTreeState::ParameterLayout MidiTransposerAudioProcessor::crea
 
     for (int i = 0; i < MidiProcessor::notes.size(); i++)
     {
-        auto transpose = std::make_unique<AudioParameterChoice>(MidiProcessor::notes[i] + "_note", MidiProcessor::notes[i], MidiProcessor::notes, i);
-        auto chord = std::make_unique<AudioParameterChoice>(MidiProcessor::notes[i] + "_chord", MidiProcessor::notes[i], MidiProcessor::chords, 0);
+        auto transpose = std::make_unique<AudioParameterChoice>(
+            MidiProcessor::notes[i] + "_note", MidiProcessor::notes[i], MidiProcessor::notes, i, MidiProcessor::notes[i]
+        );
+        auto chord = std::make_unique<AudioParameterChoice>(
+            MidiProcessor::notes[i] + "_chord", MidiProcessor::notes[i] + " chord", MidiProcessor::chords, 0, MidiProcessor::notes[i] + " chord"
+        );
         layout.add(std::move(transpose), std::move(chord));
     }
-    auto inChannel = std::make_unique<AudioParameterInt>(IDs::paramInChannel, "Input Channel", 1, 16, 1); 
-    auto outChannel = std::make_unique<AudioParameterInt>(IDs::paramOutChannel, "Output Channel", 1, 16, 1);
+    auto inChannel = std::make_unique<AudioParameterInt>(IDs::paramInChannel, "Input Channel", 1, 16, 1, "Input Channel"); 
+    auto outChannel = std::make_unique<AudioParameterInt>(IDs::paramOutChannel, "Output Channel", 1, 16, 1, "Output Channel");
 
-    layout.add(std::move(inChannel), std::move(outChannel));
+    auto bypassChannels = std::make_unique<AudioParameterBool>(IDs::bypassOtherChannels, "Bypass other channels", false, "Bypass other channels");
+
+    auto octaveTranspose = std::make_unique<AudioParameterInt>(IDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves");
+
+    layout.add(std::move(inChannel), std::move(outChannel), std::move(bypassChannels), std::move(octaveTranspose));
     
     return layout;
 }
