@@ -16,12 +16,12 @@
 //==============================================================================
 /**
 */
-class MidiTransposerAudioProcessor : public AudioProcessor
+class MidiBassPedalChordsAudioProcessor : public AudioProcessor
 {
 public:
     //==============================================================================
-    MidiTransposerAudioProcessor();
-    ~MidiTransposerAudioProcessor();
+    MidiBassPedalChordsAudioProcessor();
+    ~MidiBassPedalChordsAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -63,5 +63,5 @@ private:
 
     MidiProcessor midiProcessor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiTransposerAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiBassPedalChordsAudioProcessor)
 };

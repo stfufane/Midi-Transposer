@@ -19,7 +19,7 @@ constexpr auto COMBO_WIDTH = 65;
 constexpr auto COMBO_HEIGHT = 24;
 
 //==============================================================================
-MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor& p, AudioProcessorValueTreeState& vts)
+MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
 {
     backgroundImage = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
@@ -90,10 +90,10 @@ MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTrans
     setResizable(false, false);
 }
 
-MidiTransposerAudioProcessorEditor::~MidiTransposerAudioProcessorEditor() { }
+MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
 
 //==============================================================================
-void MidiTransposerAudioProcessorEditor::paint(Graphics& g)
+void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g)
 {
     g.fillAll(Colour(0xffffffff));
     
@@ -109,4 +109,4 @@ void MidiTransposerAudioProcessorEditor::paint(Graphics& g)
     g.drawText("Octave transpose", 500, 18, 120, 24, Justification::left, true);
 }
 
-void MidiTransposerAudioProcessorEditor::resized() {}
+void MidiBassPedalChordsAudioProcessorEditor::resized() {}

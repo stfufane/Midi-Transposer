@@ -16,18 +16,18 @@
 //==============================================================================
 /**
 */
-class MidiTransposerAudioProcessorEditor : public AudioProcessorEditor
+class MidiBassPedalChordsAudioProcessorEditor : public AudioProcessorEditor
 {
 public:
-    MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor&, AudioProcessorValueTreeState&);
-    ~MidiTransposerAudioProcessorEditor();
+    MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&, AudioProcessorValueTreeState&);
+    ~MidiBassPedalChordsAudioProcessorEditor();
 
     //==============================================================================
     void paint(Graphics&) override;
     void resized() override;
 
 private:
-    MidiTransposerAudioProcessor& processor;
+    MidiBassPedalChordsAudioProcessor& processor;
 
     Image backgroundImage;
 
@@ -53,5 +53,5 @@ private:
     std::vector<std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment>> noteChoicesAttachments;
     std::vector<std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment>> chordChoicesAttachments;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiTransposerAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiBassPedalChordsAudioProcessorEditor)
 };

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="MCGxUI" name="MidiTransposer" projectType="audioplug" jucerVersion="5.4.7"
-              pluginFormats="buildVST3" pluginManufacturer="stfufane" pluginManufacturerCode="Stfu"
-              pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn">
-  <MAINGROUP id="j2Knjj" name="MidiTransposer">
+<JUCERPROJECT id="MCGxUI" name="Midi Bass Pedal Chords" projectType="audioplug"
+              jucerVersion="5.4.7" pluginFormats="buildVST3" pluginManufacturer="stfufane"
+              pluginManufacturerCode="Stfu" pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn"
+              version="0.2">
+  <MAINGROUP id="j2Knjj" name="Midi Bass Pedal Chords">
     <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Resources">
       <FILE id="gGMz9K" name="pk-5a.jpg" compile="0" resource="1" file="Resources/pk-5a.jpg"/>
     </GROUP>
