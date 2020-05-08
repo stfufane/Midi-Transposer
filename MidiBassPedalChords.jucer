@@ -6,7 +6,9 @@
               version="0.2">
   <MAINGROUP id="j2Knjj" name="Midi Bass Pedal Chords">
     <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Resources">
+      <FILE id="V4Xozb" name="black_key.png" compile="0" resource="1" file="Resources/black_key.png"/>
       <FILE id="gGMz9K" name="pk-5a.jpg" compile="0" resource="1" file="Resources/pk-5a.jpg"/>
+      <FILE id="I5Qin7" name="white_key.png" compile="0" resource="1" file="Resources/white_key.png"/>
     </GROUP>
     <GROUP id="{DCDAF334-DD30-3195-88D8-06B875B498F4}" name="Source">
       <FILE id="bEJIwc" name="MidiProcessor.cpp" compile="1" resource="0"

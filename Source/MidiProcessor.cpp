@@ -96,6 +96,10 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
                 // Then play the last note from the vector of active input notes.
                 playMappedNotes(currentInputNotesOn.back(), velocity, time, processedMidi);
             }
+            else {
+                // No note is currently played.
+                lastNoteOn = -1;
+            }
         }
     }
 }
@@ -174,4 +178,9 @@ void MidiProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged
 {
     if (property.toString() == "value")
         updateParameters();
+}
+
+int MidiProcessor::getLastNoteOn()
+{
+    return lastNoteOn;
 }

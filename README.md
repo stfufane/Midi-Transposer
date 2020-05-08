@@ -1,4 +1,4 @@
-# Midi-Bass-Pedal-Chords
+# Midi Bass Pedal Chords
 A VST3 plugin developed with JUCE framework to map chords to a MIDI bass pedal (or any MIDI controller)
 
 ## General purpose

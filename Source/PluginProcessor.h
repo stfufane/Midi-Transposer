@@ -57,6 +57,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    int getCurrentNotePlayed();
 private:
     //==============================================================================
     AudioProcessorValueTreeState treeState;

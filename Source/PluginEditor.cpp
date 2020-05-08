@@ -23,6 +23,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
 {
     backgroundImage = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
+    whiteKey = ImageCache::getFromMemory(BinaryData::white_key_png, BinaryData::white_key_pngSize);
+    blackKey = ImageCache::getFromMemory(BinaryData::black_key_png, BinaryData::black_key_pngSize);
 
     for (int c = 1; c <= 16; c++) {
         inputChannelChoice.addItem(std::to_string(c), c);
@@ -88,6 +90,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
 
     setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     setResizable(false, false);
+
+    startTimerHz(20);
 }
 
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
@@ -98,6 +102,11 @@ void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g)
     g.fillAll(Colour(0xffffffff));
     
     g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, BACKGROUND_HEIGHT, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
+
+    if (currentNotePlayed > -1)
+    {
+        g.drawImageAt(*keyPositions[currentNotePlayed].keyImage, keyPositions[currentNotePlayed].x, keyPositions[currentNotePlayed].y, false);
+    }
     
     g.setColour(Colours::white);
     g.fillRoundedRectangle(278.0f, 9.0f, 515.0f, 71.0f, 2.0f);
@@ -110,3 +119,12 @@ void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g)
 }
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() {}
+
+void MidiBassPedalChordsAudioProcessorEditor::timerCallback()
+{
+    int lastNotePlayed = processor.getCurrentNotePlayed() % 12;
+    if (lastNotePlayed != currentNotePlayed) {
+        repaint();
+        currentNotePlayed = lastNotePlayed;
+    }
+}

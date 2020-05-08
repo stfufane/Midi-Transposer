@@ -25,7 +25,7 @@ MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
 #else
     :
 #endif
-    treeState(*this, nullptr, ProjectInfo::projectName, createParameterLayout()),
+    treeState(*this, nullptr, "MidiBassPedalChords", createParameterLayout()),
     midiProcessor(treeState)
 { }
 
@@ -115,6 +115,11 @@ void MidiBassPedalChordsAudioProcessor::processBlock (AudioBuffer<float>& buffer
     buffer.clear();
 
     midiProcessor.process(midiMessages);
+}
+
+int MidiBassPedalChordsAudioProcessor::getCurrentNotePlayed()
+{
+    return midiProcessor.getLastNoteOn();
 }
 
 //==============================================================================

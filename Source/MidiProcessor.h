@@ -32,6 +32,8 @@ public:
 
     void valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged, const Identifier& property) override;
 
+    int getLastNoteOn();
+
 private:
     AudioProcessorValueTreeState& state;
 
