@@ -164,7 +164,7 @@ void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const
     mappingNotes[from_note].push_back(to_note - from_note);
 
     // If there's a chord, add its note + the octave transposition.
-    int chord_size = chordIntervals[chord].size();
+    size_t chord_size = chordIntervals[chord].size();
     if (chord_size > 1)
     {
         for (int i = 0; i < chord_size; i++)
