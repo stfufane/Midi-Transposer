@@ -39,22 +39,21 @@ MidiProcessor::MidiProcessor(AudioProcessorValueTreeState& stateToUse)
 void MidiProcessor::process(MidiBuffer& midiMessages)
 {
     MidiBuffer processedMidi;
-    MidiMessage m;
-    int time;
     bool matchingChannel; 
 
-    for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(m, time);)
+    for (const auto metadata: midiMessages)
     {
+        const auto m = metadata.getMessage();
         matchingChannel = (m.getChannel() == inputChannel);
         // Only notes on and off from input channel are processed, the rest is passed through.
         if (matchingChannel && m.isNoteOnOrOff())
         {
-            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), time, processedMidi);
+            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), metadata.samplePosition, processedMidi);
         }
         else 
         {
             if (!bypassOtherChannels || matchingChannel)
-                processedMidi.addEvent(m, time);
+                processedMidi.addEvent(m, metadata.samplePosition);
         }
     }
     midiMessages.swapWith(processedMidi);
