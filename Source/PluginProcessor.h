@@ -56,14 +56,12 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-
     int getCurrentNotePlayed();
+    MidiProcessor& getMidiProcessor() { return midiProcessor; }
 private:
-    //==============================================================================
-    AudioProcessorValueTreeState treeState;
-
+    //==============================================================================    
     MidiProcessor midiProcessor;
+    AudioProcessorValueTreeState treeState{ *this, nullptr, "MidiBassPedalChords", midiProcessor.getParameterLayout() };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiBassPedalChordsAudioProcessor)
 };

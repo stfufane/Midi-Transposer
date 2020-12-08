@@ -14,24 +14,15 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
+     : AudioProcessor (BusesProperties())
 #else
-    :
+    : 
 #endif
-    treeState(*this, nullptr, "MidiBassPedalChords", createParameterLayout()),
-    midiProcessor(treeState)
-{ }
-
-MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor()
 {
+    midiProcessor.registerListeners(treeState);
 }
+
+MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor() {}
 
 //==============================================================================
 const String MidiBassPedalChordsAudioProcessor::getName() const
@@ -74,17 +65,8 @@ const String MidiBassPedalChordsAudioProcessor::getProgramName (int index) { ret
 void MidiBassPedalChordsAudioProcessor::changeProgramName (int index, const String& newName) { }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
-{
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-}
-
-void MidiBassPedalChordsAudioProcessor::releaseResources()
-{
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
-}
+void MidiBassPedalChordsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock) {}
+void MidiBassPedalChordsAudioProcessor::releaseResources() {}
 
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -113,7 +95,7 @@ bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const BusesLayou
 void MidiBassPedalChordsAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     buffer.clear();
-
+    // The real processing is made in the MidiProcessor class.
     midiProcessor.process(midiMessages);
 }
 
@@ -145,32 +127,6 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(treeState.state.getType()))
             treeState.replaceState(ValueTree::fromXml(*xmlState));
-}
-
-AudioProcessorValueTreeState::ParameterLayout MidiBassPedalChordsAudioProcessor::createParameterLayout()
-{
-    AudioProcessorValueTreeState::ParameterLayout layout;
-
-    for (int i = 0; i < MidiProcessor::notes.size(); i++)
-    {
-        auto transpose = std::make_unique<AudioParameterChoice>(
-            MidiProcessor::notes[i] + "_note", MidiProcessor::notes[i], MidiProcessor::notes, i, MidiProcessor::notes[i]
-        );
-        auto chord = std::make_unique<AudioParameterChoice>(
-            MidiProcessor::notes[i] + "_chord", MidiProcessor::notes[i] + " chord", MidiProcessor::chords, 0, MidiProcessor::notes[i] + " chord"
-        );
-        layout.add(std::move(transpose), std::move(chord));
-    }
-    auto inChannel = std::make_unique<AudioParameterInt>(IDs::paramInChannel, "Input Channel", 1, 16, 1, "Input Channel"); 
-    auto outChannel = std::make_unique<AudioParameterInt>(IDs::paramOutChannel, "Output Channel", 1, 16, 1, "Output Channel");
-
-    auto bypassChannels = std::make_unique<AudioParameterBool>(IDs::bypassOtherChannels, "Bypass other channels", false, "Bypass other channels");
-
-    auto octaveTranspose = std::make_unique<AudioParameterInt>(IDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves");
-
-    layout.add(std::move(inChannel), std::move(outChannel), std::move(bypassChannels), std::move(octaveTranspose));
-    
-    return layout;
 }
 
 //==============================================================================

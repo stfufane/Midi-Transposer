@@ -12,40 +12,37 @@
 
 #include "JuceHeader.h"
 
-namespace IDs
-{
-    static String paramInChannel{ "in_channel" };
-    static String paramOutChannel{ "out_channel" };
-    static String bypassOtherChannels{ "bypass_other_channels" };
-    static String octaveTranspose{ "octave_transpose" };
-}
-
-class MidiProcessor : public ValueTree::Listener
+class MidiProcessor : AudioProcessorValueTreeState::Listener
 {
 public:
-    static StringArray notes;
-    static StringArray chords;
-
-    MidiProcessor(AudioProcessorValueTreeState& state);
+    MidiProcessor();
 
     void process(MidiBuffer& midiMessages);
 
-    void valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged, const Identifier& property) override;
+    void registerListeners(AudioProcessorValueTreeState& treeState);
+    void parameterChanged(const String& parameterID, float newValue) override;
 
     int getLastNoteOn();
 
+    StringArray& getNotes() { return notes; }
+    StringArray& getChords() { return chords; }
+
+    AudioProcessorValueTreeState::ParameterLayout getParameterLayout();
+
 private:
-    AudioProcessorValueTreeState& state;
+    std::vector<RangedAudioParameter*> params;
 
-    // Parameters read from the tree state
-    AudioParameterInt* inputChannelParameter;
-    AudioParameterInt* outputChannelParameter;
-    std::vector<AudioParameterChoice*> noteParameters;
-    std::vector<AudioParameterChoice*> chordParameters;
-    AudioParameterBool* bypassOtherChannelsParameter;
-    AudioParameterInt* octaveTransposeParameter;
+    // Local variables that get their values from parameters
+    int inputChannel = 1;
+    int outputChannel = 1;
+    std::vector< std::vector<int> > mappingNotes;
+    bool bypassOtherChannels;
+    int octaveTranspose;
 
-    const std::vector< std::vector<int> > chordIntervals = {
+    StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
+
+    const std::vector< std::vector<int> > chordIntervals {
         {0},            // None
         {0, 4, 7},      // maj
         {0, 3, 7},      // min
@@ -55,22 +52,17 @@ private:
         {0, 4, 7, 11},  // 7
         {0, 3, 6, 10}   // m7b5
     };
-    std::vector< std::vector<int> > mappingNotes;
-
-    int inputChannel = 1;
-    int outputChannel = 1;
+    
     int lastNoteOn = -1;
     int currentNoteOutputChannel = 1;
     std::vector<int> currentInputNotesOn;
     std::vector<int> currentOutputNotesOn;
-    bool bypassOtherChannels;
-    int octaveTranspose;
     
     // -----------------------------------
     // Process the input midi events
-    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int time, MidiBuffer& processedMidi);
-    void playMappedNotes(const int note, const juce::uint8 velocity, const int time, MidiBuffer& processedMidi);
-    void stopCurrentNotes(const juce::uint8 velocity, const int time, MidiBuffer& processedMidi);
+    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition, MidiBuffer& processedMidi);
+    void playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi);
+    void stopCurrentNotes(const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi);
     void removeHeldNote(const int note);
     // -----------------------------------
 

@@ -19,6 +19,25 @@ struct KeyPosition {
     int y;
 };
 
+template <typename CompType, typename CompAttachment>
+class AttachedComponent : Component
+{
+public:
+    AttachedComponent<CompType, CompAttachment>(const String id, const String tooltip, AudioProcessorValueTreeState& vts)
+        : id(id), treeState(vts)
+    {
+        attachment.reset(new CompAttachment(vts, id, component));
+        addAndMakeVisible(component);
+        if (tooltip != "")
+            component.setTooltip(tooltip);
+    }
+
+    String id;
+    AudioProcessorValueTreeState& treeState;
+    CompType component;
+    std::unique_ptr<CompAttachment> attachment;
+};
+
 //==============================================================================
 /**
 */
@@ -45,7 +64,7 @@ private:
 
     int currentNotePlayed = -1;
 
-    const std::vector<KeyPosition> keyPositions = {
+    const std::vector<KeyPosition> keyPositions {
         { &whiteKey, 41, 401 }, // C
         { &blackKey, 84, 297 }, // C#
         { &whiteKey, 133, 401 }, // D
@@ -62,11 +81,8 @@ private:
 
     TooltipWindow tooltipWindow;
 
-    ComboBox inputChannelChoice;
-    std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment> inputChannelAttachment;
-
-    ComboBox outputChannelChoice;
-    std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment> outputChannelAttachment;
+    AttachedComponent <ComboBox, AudioProcessorValueTreeState::ComboBoxAttachment> inputChannel;
+    AttachedComponent <ComboBox, AudioProcessorValueTreeState::ComboBoxAttachment> outputChannel;
 
     ToggleButton bypassChannels;
     std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> bypassChannelsAttachment;

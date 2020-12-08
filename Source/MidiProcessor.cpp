@@ -10,29 +10,9 @@
 
 #include "MidiProcessor.h"
 
-StringArray MidiProcessor::notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-StringArray MidiProcessor::chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
-
-MidiProcessor::MidiProcessor(AudioProcessorValueTreeState& stateToUse)
-    : mappingNotes(12, std::vector<int>(1, 0)),
-      noteParameters(notes.size()),
-      chordParameters(notes.size()),
-      state(stateToUse)
+MidiProcessor::MidiProcessor()
+    : mappingNotes(12, std::vector<int>(1, 0))
 {
-    state.state.addListener(this);
-
-    inputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramInChannel));
-    outputChannelParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::paramOutChannel));
-    bypassOtherChannelsParameter = dynamic_cast<AudioParameterBool*>(state.getParameter(IDs::bypassOtherChannels));
-
-    for (int i = 0; i < notes.size(); i++)
-    {
-        noteParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_note"));
-        chordParameters[i] = dynamic_cast<AudioParameterChoice*>(state.getParameter(notes[i] + "_chord"));
-    }
-
-    octaveTransposeParameter = dynamic_cast<AudioParameterInt*>(state.getParameter(IDs::octaveTranspose));
-
     updateParameters();
 }
 
@@ -64,7 +44,7 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     We want the input to be monophonic so we need to know which was the last played note and 
     if there are some notes still on to be played when the last one is released.
 */
-void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int time, MidiBuffer& processedMidi)
+void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition, MidiBuffer& processedMidi)
 {
     if (noteOn)
     {
@@ -74,10 +54,10 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
         // If the note changed, turn off the previous notes before adding the new ones.
         if (note != lastNoteOn && lastNoteOn > -1)
         {
-            stopCurrentNotes(velocity, time, processedMidi);
+            stopCurrentNotes(velocity, samplePosition, processedMidi);
         }
         // Play the received note.
-        playMappedNotes(note, velocity, time, processedMidi);
+        playMappedNotes(note, velocity, samplePosition, processedMidi);
     }
     else 
     {
@@ -88,12 +68,12 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
         // Otherwise it means the released note was not active so we don't need to do anything (case of multiple notes held)
         if (note == lastNoteOn) 
         {
-            stopCurrentNotes(velocity, time, processedMidi);
+            stopCurrentNotes(velocity, samplePosition, processedMidi);
 
             // If there were still some notes held, play the last one.
             if (currentInputNotesOn.size() > 0) {
                 // Then play the last note from the vector of active input notes.
-                playMappedNotes(currentInputNotesOn.back(), velocity, time, processedMidi);
+                playMappedNotes(currentInputNotesOn.back(), velocity, samplePosition, processedMidi);
             }
             else {
                 // No note is currently played.
@@ -103,7 +83,7 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
     }
 }
 
-void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int time, MidiBuffer& processedMidi)
+void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
 {
     int baseNote, noteToPlay;
     lastNoteOn = note;
@@ -114,36 +94,41 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
     for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
         noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
         if (noteToPlay >= 0 && noteToPlay < 128) {
-            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), time);
+            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), samplePosition);
             currentOutputNotesOn.push_back(noteToPlay);
         }
     }
     currentNoteOutputChannel = outputChannel;
 }
 
-void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int time, MidiBuffer& processedMidi)
+void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
 {
     for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-        processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), time);
+        processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), samplePosition);
     }
 }
 
 void MidiProcessor::removeHeldNote(const int note)
 {
-    for (auto it = currentInputNotesOn.begin(); it != currentInputNotesOn.end();)
+    for (auto it = currentInputNotesOn.begin(); it != currentInputNotesOn.end(); ++it)
     {
         if (*it == note)
         {
             currentInputNotesOn.erase(it);
             break;
         }
-        ++it;
     }
+}
+
+void MidiProcessor::parameterChanged(const String& parameterID, float newValue)
+{
+    DBG(parameterID);
+    DBG(newValue);
 }
 
 void MidiProcessor::updateParameters()
 {
-    inputChannel = inputChannelParameter->get();
+    /* inputChannel = inputChannelParameter->get();
     outputChannel = outputChannelParameter->get();
     bypassOtherChannels = bypassOtherChannelsParameter->get();
     
@@ -151,7 +136,7 @@ void MidiProcessor::updateParameters()
     for (int i = 0; i < notes.size(); i++)
     {
         setMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getIndex());
-    }
+    } */
 }
 
 void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
@@ -173,10 +158,35 @@ void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const
     } 
 }
 
-void MidiProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyChanged, const Identifier& property)
+AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout()
 {
-    if (property.toString() == "value")
-        updateParameters();
+    AudioProcessorValueTreeState::ParameterLayout layout;
+    std::vector<std::unique_ptr<RangedAudioParameter>> layout_params;
+
+    for (int i = 0; i < notes.size(); i++)
+    {
+        layout_params.emplace_back(new AudioParameterChoice(notes[i] + "_note", notes[i], notes, i, notes[i]));
+        layout_params.emplace_back(new AudioParameterChoice(notes[i] + "_chord", notes[i] + " chord", chords, 0, notes[i] + " chord"));
+    }
+
+    layout_params.emplace_back(new AudioParameterInt("in_channel", "Input Channel", 1, 16, 1, "Input Channel"));
+    layout_params.emplace_back(new AudioParameterInt("out_channel", "Output Channel", 1, 16, 1, "Output Channel"));
+    layout_params.emplace_back(new AudioParameterBool("bypass_other_channels", "Bypass other channels", false, "Bypass other channels"));
+    layout_params.emplace_back(new AudioParameterInt("octave_transpose", "Transpose octaves", -1, 4, 0, "Transpose octaves"));
+
+    for (auto& param : layout_params)
+        params.push_back(param.get());
+
+    layout.add(layout_params.begin(), layout_params.end());
+
+    return layout;
+}
+
+void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
+{
+    for (auto& param : params) {
+        treeState.addParameterListener(param->paramID, this);
+    }
 }
 
 int MidiProcessor::getLastNoteOn()
