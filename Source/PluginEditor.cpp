@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "MidiProcessor.h"
@@ -19,67 +9,77 @@ constexpr auto COMBO_WIDTH = 65;
 constexpr auto COMBO_HEIGHT = 24;
 
 //==============================================================================
-MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor(&p), processor(p), valueTreeState(vts),
-    inputChannel("in_channel", "Only the events coming from this channel will be transposed. The rest will pass through.", vts),
-    outputChannel("out_channel", "The transposed events will be routed to this channel.", vts)
+MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p, APVTS& vts)
+    : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
 {
-    backgroundImage = ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize);
-    whiteKey = ImageCache::getFromMemory(BinaryData::white_key_png, BinaryData::white_key_pngSize);
-    blackKey = ImageCache::getFromMemory(BinaryData::black_key_png, BinaryData::black_key_pngSize);
+    inputChannel = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
+        ParamIDs::inChannel, *this, valueTreeState,
+        [](ComboBox& combo) {
+            for (int c = 1; c <= 16; c++) {
+                combo.addItem(String(c), c);
+            }
+            combo.setBounds(425, 18, COMBO_WIDTH, COMBO_HEIGHT);
+            combo.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
+        }
+    );
 
-    for (int c = 1; c <= 16; c++) {
-        inputChannel.component.addItem(String(c), c);
-        outputChannel.component.addItem(String(c), c);
-    }
+    outputChannel = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
+        ParamIDs::outChannel, *this, valueTreeState,
+        [](ComboBox& combo) {
+            for (int c = 1; c <= 16; c++) {
+                combo.addItem(String(c), c);
+            }
+            combo.setBounds(425, 50, COMBO_WIDTH, COMBO_HEIGHT);
+            combo.setTooltip("The transposed events will be routed to this channel.");
+        }
+    );
 
-    inputChannel.component.setBounds(425, 18, COMBO_WIDTH, COMBO_HEIGHT);
-    outputChannel.component.setBounds(425, 50, COMBO_WIDTH, COMBO_HEIGHT);
+    octaveTranspose = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
+        ParamIDs::octaveTranspose, *this, valueTreeState,
+        [](ComboBox& combo) {
+            for (int o = 1; o <= 6; o++) {
+                combo.addItem(String(o - 2), o);
+            }
+            combo.setTooltip("This will play the root note at its original position and transpose the chord.");
+            combo.setBounds(630, 18, COMBO_WIDTH, COMBO_HEIGHT);
+        }
+    );
 
-    bypassChannels.setButtonText("Bypass other channels");
-    bypassChannels.setBounds(500, 50, 150, 24);
-    bypassChannels.setColour(ToggleButton::textColourId, Colours::black);
-    bypassChannels.setColour(ToggleButton::tickColourId, Colours::black);
-    bypassChannels.setColour(ToggleButton::tickDisabledColourId, Colours::black);
-    addAndMakeVisible(bypassChannels);
-    bypassChannels.changeWidthToFitText();
-    bypassChannelsAttachment.reset(new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "bypass_other_channels", bypassChannels));
+    bypassChannels = std::make_unique< AttachedComponent<ToggleButton, APVTS::ButtonAttachment> >(
+        ParamIDs::bypassChannels, *this, valueTreeState,
+        [](ToggleButton& button) {
+            button.setButtonText("Bypass other channels");
+            button.setBounds(500, 50, 150, 24);
+            button.setColour(ToggleButton::textColourId, Colours::black);
+            button.setColour(ToggleButton::tickColourId, Colours::black);
+            button.setColour(ToggleButton::tickDisabledColourId, Colours::black);
+            button.changeWidthToFitText();
+        }
+    );
 
-    for (int o = 1; o <= 6; o++) {
-        octaveTransposeChoice.addItem(String(o - 2), o);
-    }
-    octaveTransposeChoice.setTooltip("This will play the root note at its original position and transpose the chord.");
-    octaveTransposeChoice.setBounds(630, 18, COMBO_WIDTH, COMBO_HEIGHT);
-    addAndMakeVisible(octaveTransposeChoice);
-    octraveTransposeAttachment.reset(new AudioProcessorValueTreeState::ComboBoxAttachment(valueTreeState, "octave_transpose", octaveTransposeChoice));
-
-    std::vector<int> combo_x{ 47, 94, 138, 185, 232, 323, 365, 412, 455, 503, 547, 595 };
-    std::vector<int> combo_note_y{ 616, 446, 616, 446, 616, 616, 446, 616, 446, 616, 446, 616 };
-    std::vector<int> combo_chord_y{ 648, 478, 648, 478, 648, 648, 478, 648, 478, 648, 478, 648 };
-
-    for (int i = 0; i < processor.getMidiProcessor().getNotes().size(); i++)
+    auto& notes = processor.getMidiProcessor().getNotes();
+    auto& chords = processor.getMidiProcessor().getChords();
+    for (int i = 0; i < notes.size(); i++)
     {
         // Create the notes combo box
-        String note_id = processor.getMidiProcessor().getNotes()[i] + "_note";
-        noteChoices.push_back(std::make_unique<ComboBox>(note_id));
-        noteChoices.back()->addItemList(processor.getMidiProcessor().getNotes(), i + 1);
-        noteChoices.back()->setBounds(combo_x[i], combo_note_y[i], COMBO_WIDTH, COMBO_HEIGHT);
-        addAndMakeVisible(noteChoices.back().get());
-        // Attach the combobox to the tree state
-        noteChoicesAttachments.push_back(
-            std::make_unique<AudioProcessorValueTreeState::ComboBoxAttachment>(valueTreeState, note_id, *noteChoices.back())
-        );
+        String note_id = processor.getMidiProcessor().getNotes()[i] + ParamIDs::noteChoice;
+        noteChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
+            note_id, *this, valueTreeState,
+            [&i, &notes, this](ComboBox& combo) {
+                combo.addItemList(notes, i + 1);
+                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_note_y, COMBO_WIDTH, COMBO_HEIGHT);
+            }
+        ));
 
         // Create the chords combo box
-        String chord_id = processor.getMidiProcessor().getNotes()[i] + "_chord";
-        chordChoices.push_back(std::make_unique<ComboBox>(chord_id));
-        chordChoices.back()->addItemList(processor.getMidiProcessor().getChords(), i + 1);
-        chordChoices.back()->setBounds(combo_x[i], combo_chord_y[i], COMBO_WIDTH, COMBO_HEIGHT);
-        addAndMakeVisible(chordChoices.back().get());
-        // Attach the combobox to the tree state
-        chordChoicesAttachments.push_back(
-            std::make_unique<AudioProcessorValueTreeState::ComboBoxAttachment>(valueTreeState, chord_id, *chordChoices.back())
-        );
+        String chord_id = processor.getMidiProcessor().getNotes()[i] + ParamIDs::chordChoice;
+        chordChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
+            chord_id, *this, valueTreeState,
+            [&i, &chords, this](ComboBox& combo) {
+                combo.addItemList(chords, i + 1);
+                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_chord_y, COMBO_WIDTH, COMBO_HEIGHT);
+            }
+        ));
     }
 
     setSize(WINDOW_WIDTH, WINDOW_HEIGHT);

@@ -1,16 +1,16 @@
-/*
-  ==============================================================================
-
-    MidiProcessor.h
-    Created: 15 Apr 2020 7:12:57pm
-    Author:  Stfufane
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"
+
+namespace ParamIDs
+{
+    static String inChannel{ "in_channel" };
+    static String outChannel{ "out_channel" };
+    static String octaveTranspose{ "octave_transpose" };
+    static String bypassChannels{ "bypass_other_channels" };
+    static String noteChoice{ "_note" };
+    static String chordChoice{ "_chord" };
+}
 
 class MidiProcessor : AudioProcessorValueTreeState::Listener
 {
@@ -33,11 +33,11 @@ private:
     std::vector<RangedAudioParameter*> params;
 
     // Local variables that get their values from parameters
-    int inputChannel = 1;
-    int outputChannel = 1;
+    int inputChannel{ 1 };
+    int outputChannel{ 1 };
     std::vector< std::vector<int> > mappingNotes;
-    bool bypassOtherChannels;
-    int octaveTranspose;
+    bool bypassOtherChannels{ false };
+    int octaveTranspose{ 0 };
 
     StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
     StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
@@ -53,8 +53,8 @@ private:
         {0, 3, 6, 10}   // m7b5
     };
     
-    int lastNoteOn = -1;
-    int currentNoteOutputChannel = 1;
+    int lastNoteOn{ -1 };
+    int currentNoteOutputChannel{ 1 };
     std::vector<int> currentInputNotesOn;
     std::vector<int> currentOutputNotesOn;
     

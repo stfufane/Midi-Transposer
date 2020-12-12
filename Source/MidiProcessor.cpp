@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    MidiProcessor.cpp
-    Created: 15 Apr 2020 7:12:57pm
-    Author:  Stfufane
-
-  ==============================================================================
-*/
-
 #include "MidiProcessor.h"
 
 MidiProcessor::MidiProcessor()
@@ -165,14 +155,14 @@ AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout(
 
     for (int i = 0; i < notes.size(); i++)
     {
-        layout_params.emplace_back(new AudioParameterChoice(notes[i] + "_note", notes[i], notes, i, notes[i]));
-        layout_params.emplace_back(new AudioParameterChoice(notes[i] + "_chord", notes[i] + " chord", chords, 0, notes[i] + " chord"));
+        layout_params.emplace_back(new AudioParameterChoice(notes[i] + ParamIDs::noteChoice, notes[i], notes, i, notes[i]));
+        layout_params.emplace_back(new AudioParameterChoice(notes[i] + ParamIDs::chordChoice, notes[i] + " chord", chords, 0, notes[i] + " chord"));
     }
 
-    layout_params.emplace_back(new AudioParameterInt("in_channel", "Input Channel", 1, 16, 1, "Input Channel"));
-    layout_params.emplace_back(new AudioParameterInt("out_channel", "Output Channel", 1, 16, 1, "Output Channel"));
-    layout_params.emplace_back(new AudioParameterBool("bypass_other_channels", "Bypass other channels", false, "Bypass other channels"));
-    layout_params.emplace_back(new AudioParameterInt("octave_transpose", "Transpose octaves", -1, 4, 0, "Transpose octaves"));
+    layout_params.emplace_back(new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
+    layout_params.emplace_back(new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
+    layout_params.emplace_back(new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves"));
+    layout_params.emplace_back(new AudioParameterBool(ParamIDs::bypassChannels, "Bypass other channels", false, "Bypass other channels"));
 
     for (auto& param : layout_params)
         params.push_back(param.get());
@@ -184,9 +174,9 @@ AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout(
 
 void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
 {
-    for (auto& param : params) {
-        treeState.addParameterListener(param->paramID, this);
-    }
+     for (auto& param : params) {
+         treeState.addParameterListener(param->paramID, this);
+     }
 }
 
 int MidiProcessor::getLastNoteOn()
