@@ -2,19 +2,31 @@
 
 MidiProcessor::MidiProcessor()
     : mappingNotes(12, std::vector<int>(1, 0))
+{}
+
+void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
 {
-    updateParameters();
+    initParameters();
+
+    treeState.addParameterListener(ParamIDs::inChannel, &midiParams);
+    treeState.addParameterListener(ParamIDs::outChannel, &midiParams);
+    treeState.addParameterListener(ParamIDs::octaveTranspose, &midiParams);
+    treeState.addParameterListener(ParamIDs::bypassChannels, &midiParams);
+
+    for (auto& noteName : noteNames) {
+        treeState.addParameterListener(noteName + ParamIDs::noteChoice, &noteParams);
+        treeState.addParameterListener(noteName + ParamIDs::chordChoice, &noteParams);
+    }
 }
 
 void MidiProcessor::process(MidiBuffer& midiMessages)
 {
     MidiBuffer processedMidi;
-    bool matchingChannel; 
 
     for (const auto metadata: midiMessages)
     {
         const auto m = metadata.getMessage();
-        matchingChannel = (m.getChannel() == inputChannel);
+        const auto matchingChannel = (m.getChannel() == inputChannel);
         // Only notes on and off from input channel are processed, the rest is passed through.
         if (matchingChannel && m.isNoteOnOrOff())
         {
@@ -75,14 +87,13 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
 
 void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
 {
-    int baseNote, noteToPlay;
     lastNoteOn = note;
     // First clear the output notes vector to replace its values.
     currentOutputNotesOn.clear();
 
-    baseNote = lastNoteOn % 12;
+    const int baseNote = lastNoteOn % 12;
     for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-        noteToPlay = lastNoteOn + mappingNotes[baseNote][i];
+        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (i > 0 ? (octaveTranspose * 12) : 0);
         if (noteToPlay >= 0 && noteToPlay < 128) {
             processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), samplePosition);
             currentOutputNotesOn.push_back(noteToPlay);
@@ -93,8 +104,8 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
 
 void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
 {
-    for (int i = 0; i < currentOutputNotesOn.size(); i++) {
-        processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentOutputNotesOn[i], velocity), samplePosition);
+    for (const auto& currentNote: currentOutputNotesOn) {
+        processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentNote, velocity), samplePosition);
     }
 }
 
@@ -110,73 +121,61 @@ void MidiProcessor::removeHeldNote(const int note)
     }
 }
 
-void MidiProcessor::parameterChanged(const String& parameterID, float newValue)
+void MidiProcessor::initParameters()
 {
-    DBG(parameterID);
-    DBG(newValue);
+    updateMidiParams();
+    
+    for (auto& noteParam: noteParams.notes)
+    {
+        setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
+    }
 }
 
-void MidiProcessor::updateParameters()
+void MidiProcessor::updateMidiParams()
 {
-    /* inputChannel = inputChannelParameter->get();
-    outputChannel = outputChannelParameter->get();
-    bypassOtherChannels = bypassOtherChannelsParameter->get();
-    
-    octaveTranspose = octaveTransposeParameter->get();
-    for (int i = 0; i < notes.size(); i++)
-    {
-        setMappedNotes(i, noteParameters[i]->getIndex(), chordParameters[i]->getIndex());
-    } */
+    inputChannel = midiParams.inputChannel->get();
+    outputChannel = midiParams.outputChannel->get();
+    bypassOtherChannels = midiParams.bypassOtherChannels->get();
+    octaveTranspose = midiParams.octaveTranspose->get();
+}
+
+void MidiProcessor::updateNoteParams(const String& paramID)
+{
+    for (auto& noteParam : noteParams.notes) {
+        if (paramID == (noteParam.noteName + ParamIDs::noteChoice) || paramID == (noteParam.noteName + ParamIDs::chordChoice)) {
+            setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
+            return;
+        }
+    }
 }
 
 void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
 {
-    // First clear the mapping values.
-    mappingNotes[from_note].clear();
-
-    // Add the root note in every case.
-    mappingNotes[from_note].push_back(to_note - from_note);
+    // Declare a local vector for the mapping, initialized with the root note
+    size_t chord_size = chordIntervals[chord].size();
+    std::vector<int> mapping (chord_size, to_note - from_note);
 
     // If there's a chord, add its note + the octave transposition.
-    size_t chord_size = chordIntervals[chord].size();
     if (chord_size > 1)
     {
-        for (int i = 0; i < chord_size; i++)
+        // Starting with 1 cause the first index is occupied by the root note
+        for (int i = 1; i < chord_size; i++)
         {
-            mappingNotes[from_note].push_back(to_note - from_note + chordIntervals[chord][i] + (octaveTranspose * 12));
+            mapping[i] = to_note - from_note + chordIntervals[chord][i];
         }
-    } 
+    }
+    // Replace the old mapping.
+    mappingNotes[from_note].swap(mapping);
 }
 
 AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
-    std::vector<std::unique_ptr<RangedAudioParameter>> layout_params;
 
-    for (int i = 0; i < notes.size(); i++)
-    {
-        layout_params.emplace_back(new AudioParameterChoice(notes[i] + ParamIDs::noteChoice, notes[i], notes, i, notes[i]));
-        layout_params.emplace_back(new AudioParameterChoice(notes[i] + ParamIDs::chordChoice, notes[i] + " chord", chords, 0, notes[i] + " chord"));
-    }
-
-    layout_params.emplace_back(new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
-    layout_params.emplace_back(new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
-    layout_params.emplace_back(new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves"));
-    layout_params.emplace_back(new AudioParameterBool(ParamIDs::bypassChannels, "Bypass other channels", false, "Bypass other channels"));
-
-    for (auto& param : layout_params)
-        params.push_back(param.get());
-
-    layout.add(layout_params.begin(), layout_params.end());
+    midiParams.addParams(layout);
+    noteParams.addParams(layout);
 
     return layout;
-}
-
-void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
-{
-     for (auto& param : params) {
-         treeState.addParameterListener(param->paramID, this);
-     }
 }
 
 int MidiProcessor::getLastNoteOn()

@@ -14,6 +14,8 @@
       <FILE id="bEJIwc" name="MidiProcessor.cpp" compile="1" resource="0"
             file="Source/MidiProcessor.cpp"/>
       <FILE id="FTyAVW" name="MidiProcessor.h" compile="0" resource="0" file="Source/MidiProcessor.h"/>
+      <FILE id="vNVAKg" name="ParameterList.h" compile="0" resource="0" file="Source/ParameterList.h"/>
+      <FILE id="GHIHsk" name="Params.h" compile="0" resource="0" file="Source/Params.h"/>
       <FILE id="UgMRyr" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="hrAlJX" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

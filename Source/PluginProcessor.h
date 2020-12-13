@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -58,8 +48,8 @@ public:
 
     int getCurrentNotePlayed();
     MidiProcessor& getMidiProcessor() { return midiProcessor; }
-private:
     //==============================================================================    
+private:
     MidiProcessor midiProcessor;
     AudioProcessorValueTreeState treeState{ *this, nullptr, "MidiBassPedalChords", midiProcessor.getParameterLayout() };
 

@@ -1,46 +1,36 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "Params.h"
 
-namespace ParamIDs
-{
-    static String inChannel{ "in_channel" };
-    static String outChannel{ "out_channel" };
-    static String octaveTranspose{ "octave_transpose" };
-    static String bypassChannels{ "bypass_other_channels" };
-    static String noteChoice{ "_note" };
-    static String chordChoice{ "_chord" };
-}
-
-class MidiProcessor : AudioProcessorValueTreeState::Listener
+class MidiProcessor
 {
 public:
     MidiProcessor();
 
     void process(MidiBuffer& midiMessages);
-
-    void registerListeners(AudioProcessorValueTreeState& treeState);
-    void parameterChanged(const String& parameterID, float newValue) override;
-
     int getLastNoteOn();
 
-    StringArray& getNotes() { return notes; }
-    StringArray& getChords() { return chords; }
+    StringArray& getNoteNames() { return noteNames; }
+    StringArray& getChordNames() { return chordNames; }
 
     AudioProcessorValueTreeState::ParameterLayout getParameterLayout();
 
+    void registerListeners(AudioProcessorValueTreeState& treeState);
 private:
-    std::vector<RangedAudioParameter*> params;
+    StringArray noteNames{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    StringArray chordNames{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
+
+    // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
+    MidiParams midiParams{ [this]() { updateMidiParams(); } };
+    NoteParams noteParams{ noteNames, chordNames, [this](const String& paramID) { updateNoteParams(paramID); } };
 
     // Local variables that get their values from parameters
-    int inputChannel{ 1 };
-    int outputChannel{ 1 };
+    std::atomic<int>  inputChannel{ 1 };
+    std::atomic<int>  outputChannel{ 1 };
+    std::atomic<int>  octaveTranspose{ 0 };
+    std::atomic<bool> bypassOtherChannels{ false };
     std::vector< std::vector<int> > mappingNotes;
-    bool bypassOtherChannels{ false };
-    int octaveTranspose{ 0 };
-
-    StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
 
     const std::vector< std::vector<int> > chordIntervals {
         {0},            // None
@@ -68,7 +58,9 @@ private:
 
     // -----------------------------------
     // Manage mapping values
-    void updateParameters();
+    void initParameters();
+    void updateMidiParams();
+    void updateNoteParams(const String& paramID);
     void setMappedNotes(const int note_origine, const int new_note, const int chord);
     // -----------------------------------
 };

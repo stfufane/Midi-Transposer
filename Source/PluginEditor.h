@@ -26,7 +26,7 @@ public:
         attachment.reset(new CompAttachment(vts, id, component));
         editor.addAndMakeVisible(component);
     }
-//private:
+private:
     CompType component;
     std::unique_ptr<CompAttachment> attachment;
 };
