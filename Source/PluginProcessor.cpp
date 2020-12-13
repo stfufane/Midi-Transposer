@@ -9,6 +9,8 @@ MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
     : 
 #endif
 { 
+    // This is called in the constructor body cause both midiProcessor and treeState have to be initialized
+    // before it's called.
     midiProcessor.registerListeners(treeState);
 }
 

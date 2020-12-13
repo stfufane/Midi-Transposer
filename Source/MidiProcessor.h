@@ -23,7 +23,7 @@ private:
 
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
     MidiParams midiParams{ [this]() { updateMidiParams(); } };
-    NoteParams noteParams{ noteNames, chordNames, [this](const String& paramID) { updateNoteParams(paramID); } };
+    NoteParams noteParams{ noteNames, chordNames };
 
     // Local variables that get their values from parameters
     std::atomic<int>  inputChannel{ 1 };
@@ -60,7 +60,7 @@ private:
     // Manage mapping values
     void initParameters();
     void updateMidiParams();
-    void updateNoteParams(const String& paramID);
+    void updateNoteParams(const NoteParam& noteParam);
     void setMappedNotes(const int note_origine, const int new_note, const int chord);
     // -----------------------------------
 };

@@ -49,8 +49,9 @@ struct MidiParams : AudioProcessorValueTreeState::Listener
 
 /*
     This represents the structure for a note/chord couple parameters.
+    The update function is called on parameter changed to update the mappingNotes vector of the processor.
 */
-struct NoteParam 
+struct NoteParam : AudioProcessorValueTreeState::Listener
 {
     NoteParam(const int i, const String n)
         : noteIndex(i), noteName(n)
@@ -63,20 +64,25 @@ struct NoteParam
         chord = list.add<AudioParameterChoice>(noteName + ParamIDs::chordChoice, noteName + " chord", chordNames, 0, noteName + " chord");
     }
 
+    void parameterChanged(const String& paramID, float newValue) {
+        if (update != nullptr) update();
+    }
+
     int noteIndex;
     String noteName;
     AudioParameterChoice* note = nullptr;
     AudioParameterChoice* chord = nullptr;
+
+    std::function<void()> update = nullptr;
 };
 
 /*
-    This structure contains all 12 note/chord couples. A listener is attached so we can know which mapping has to be updated
-    when one of the parameters is changed.
+    This structure contains all 12 note/chord couples.
 */
-struct NoteParams : AudioProcessorValueTreeState::Listener
+struct NoteParams 
 {
-    NoteParams(const StringArray& noteNames, const StringArray& chordNames, std::function<void(const String& paramID)> lambda = nullptr)
-        : noteNames(noteNames), chordNames(chordNames), update(lambda)
+    NoteParams(const StringArray& noteNames, const StringArray& chordNames)
+        : noteNames(noteNames), chordNames(chordNames)
     {
         for (int i = 0; i < noteNames.size(); i++) {
             notes.emplace_back(i, noteNames[i]);
@@ -90,13 +96,7 @@ struct NoteParams : AudioProcessorValueTreeState::Listener
         }
     }
 
-    void parameterChanged(const String& paramID, float newValue) {
-        if (update != nullptr) update(paramID);
-    }
-
     StringArray noteNames;
     StringArray chordNames;
     std::vector<NoteParam> notes;
-
-    std::function<void(const String& paramID)> update = nullptr;
 };

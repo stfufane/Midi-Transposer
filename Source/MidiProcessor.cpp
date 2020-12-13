@@ -13,9 +13,12 @@ void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
     treeState.addParameterListener(ParamIDs::octaveTranspose, &midiParams);
     treeState.addParameterListener(ParamIDs::bypassChannels, &midiParams);
 
-    for (auto& noteName : noteNames) {
-        treeState.addParameterListener(noteName + ParamIDs::noteChoice, &noteParams);
-        treeState.addParameterListener(noteName + ParamIDs::chordChoice, &noteParams);
+    // Each note param has its own listener and lambda function so only the corresponding note
+    // is updated in the mappingNotes vector. It also avoids testing paramID in parameterChanged method.
+    for (auto& noteParam : noteParams.notes) {
+        noteParam.update = [this, &noteParam]() { updateNoteParams(noteParam); };
+        treeState.addParameterListener(noteParam.note->paramID, &noteParam);
+        treeState.addParameterListener(noteParam.chord->paramID, &noteParam);
     }
 }
 
@@ -127,7 +130,7 @@ void MidiProcessor::initParameters()
     
     for (auto& noteParam: noteParams.notes)
     {
-        setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
+        updateNoteParams(noteParam);
     }
 }
 
@@ -139,33 +142,26 @@ void MidiProcessor::updateMidiParams()
     octaveTranspose = midiParams.octaveTranspose->get();
 }
 
-void MidiProcessor::updateNoteParams(const String& paramID)
+// This method is called by the lambda associated to every noteParam when one of the associated combobox is updated.
+void MidiProcessor::updateNoteParams(const NoteParam& noteParam)
 {
-    for (auto& noteParam : noteParams.notes) {
-        if (paramID == (noteParam.noteName + ParamIDs::noteChoice) || paramID == (noteParam.noteName + ParamIDs::chordChoice)) {
-            setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
-            return;
-        }
-    }
+    setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
 }
 
 void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
 {
     // Declare a local vector for the mapping, initialized with the root note
     size_t chord_size = chordIntervals[chord].size();
-    std::vector<int> mapping (chord_size, to_note - from_note);
+    std::vector<int> new_mapping (chord_size);
 
-    // If there's a chord, add its note + the octave transposition.
-    if (chord_size > 1)
+    // Set the notes depending on the selected chord.
+    for (int i = 0; i < chord_size; i++)
     {
-        // Starting with 1 cause the first index is occupied by the root note
-        for (int i = 1; i < chord_size; i++)
-        {
-            mapping[i] = to_note - from_note + chordIntervals[chord][i];
-        }
+        new_mapping[i] = to_note - from_note + chordIntervals[chord][i];
     }
+    
     // Replace the old mapping.
-    mappingNotes[from_note].swap(mapping);
+    mappingNotes[from_note].swap(new_mapping);
 }
 
 AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout()
