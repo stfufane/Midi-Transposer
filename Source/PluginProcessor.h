@@ -47,7 +47,6 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     int getCurrentNotePlayed();
-    MidiProcessor& getMidiProcessor() { return midiProcessor; }
     //==============================================================================    
 private:
     MidiProcessor midiProcessor;

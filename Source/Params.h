@@ -13,6 +13,12 @@ namespace ParamIDs
     static String chordChoice{ "_chord" };
 }
 
+namespace Names
+{
+    static StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    static StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
+}
+
 using Layout = AudioProcessorValueTreeState::ParameterLayout;
 
 /*
@@ -57,11 +63,11 @@ struct NoteParam : AudioProcessorValueTreeState::Listener
         : noteIndex(i), noteName(n)
     {}
 
-    void addParams(Layout& layout, const StringArray& noteNames, const StringArray& chordNames)
+    void addParams(Layout& layout)
     {
         ParameterList list(layout);
-        note = list.add<AudioParameterChoice>(noteName + ParamIDs::noteChoice, noteName, noteNames, noteIndex, noteName);
-        chord = list.add<AudioParameterChoice>(noteName + ParamIDs::chordChoice, noteName + " chord", chordNames, 0, noteName + " chord");
+        note = list.add<AudioParameterChoice>(noteName + ParamIDs::noteChoice, noteName, Names::notes, noteIndex, noteName);
+        chord = list.add<AudioParameterChoice>(noteName + ParamIDs::chordChoice, noteName + " chord", Names::chords, 0, noteName + " chord");
     }
 
     void parameterChanged(const String& paramID, float newValue) {
@@ -81,22 +87,19 @@ struct NoteParam : AudioProcessorValueTreeState::Listener
 */
 struct NoteParams 
 {
-    NoteParams(const StringArray& noteNames, const StringArray& chordNames)
-        : noteNames(noteNames), chordNames(chordNames)
+    NoteParams()
     {
-        for (int i = 0; i < noteNames.size(); i++) {
-            notes.emplace_back(i, noteNames[i]);
+        for (int i = 0; i < Names::notes.size(); i++) {
+            notes.emplace_back(i, Names::notes[i]);
         }
     }
 
     void addParams(Layout& layout)
     {
         for (auto& note : notes) {
-            note.addParams(layout, noteNames, chordNames);
+            note.addParams(layout);
         }
     }
 
-    StringArray noteNames;
-    StringArray chordNames;
     std::vector<NoteParam> notes;
 };

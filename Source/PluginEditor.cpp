@@ -1,6 +1,4 @@
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "MidiProcessor.h"
 
 constexpr auto WINDOW_WIDTH = 800;
 constexpr auto WINDOW_HEIGHT = 680;
@@ -57,26 +55,24 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         }
     );
 
-    auto& noteNames = processor.getMidiProcessor().getNoteNames();
-    auto& chordNames = processor.getMidiProcessor().getChordNames();
-    for (int i = 0; i < noteNames.size(); i++)
+    for (int i = 0; i < Names::notes.size(); i++)
     {
         // Create the notes combo box
-        String note_id = processor.getMidiProcessor().getNoteNames()[i] + ParamIDs::noteChoice;
+        String note_id = Names::notes[i] + ParamIDs::noteChoice;
         noteChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
             note_id, *this, valueTreeState,
-            [&i, &noteNames, this](ComboBox& combo) {
-                combo.addItemList(noteNames, i + 1);
+            [&i, this](ComboBox& combo) {
+                combo.addItemList(Names::notes, i + 1);
                 combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_note_y, COMBO_WIDTH, COMBO_HEIGHT);
             }
         ));
 
         // Create the chords combo box
-        String chord_id = processor.getMidiProcessor().getNoteNames()[i] + ParamIDs::chordChoice;
+        String chord_id = Names::notes[i] + ParamIDs::chordChoice;
         chordChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
             chord_id, *this, valueTreeState,
-            [&i, &chordNames, this](ComboBox& combo) {
-                combo.addItemList(chordNames, i + 1);
+            [&i, this](ComboBox& combo) {
+                combo.addItemList(Names::chords, i + 1);
                 combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_chord_y, COMBO_WIDTH, COMBO_HEIGHT);
             }
         ));

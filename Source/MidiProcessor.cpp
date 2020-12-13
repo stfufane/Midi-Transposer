@@ -96,11 +96,15 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
 
     const int baseNote = lastNoteOn % 12;
     for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (i > 0 ? (octaveTranspose * 12) : 0);
+        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (octaveTranspose * 12);
         if (noteToPlay >= 0 && noteToPlay < 128) {
             processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), samplePosition);
             currentOutputNotesOn.push_back(noteToPlay);
         }
+    }
+    // If there's an octave transpose, add the root note at its original height.
+    if (octaveTranspose != 0) {
+        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, lastNoteOn + mappingNotes[baseNote][0], velocity), samplePosition);
     }
     currentNoteOutputChannel = outputChannel;
 }

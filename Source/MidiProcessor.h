@@ -11,19 +11,13 @@ public:
     void process(MidiBuffer& midiMessages);
     int getLastNoteOn();
 
-    StringArray& getNoteNames() { return noteNames; }
-    StringArray& getChordNames() { return chordNames; }
-
     AudioProcessorValueTreeState::ParameterLayout getParameterLayout();
 
     void registerListeners(AudioProcessorValueTreeState& treeState);
 private:
-    StringArray noteNames{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    StringArray chordNames{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
-
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
     MidiParams midiParams{ [this]() { updateMidiParams(); } };
-    NoteParams noteParams{ noteNames, chordNames };
+    NoteParams noteParams;
 
     // Local variables that get their values from parameters
     std::atomic<int>  inputChannel{ 1 };
