@@ -24,8 +24,7 @@ void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
 
 void MidiProcessor::process(MidiBuffer& midiMessages)
 {
-    MidiBuffer processedMidi;
-
+    processedMidi.clear();
     for (const auto metadata: midiMessages)
     {
         const auto m = metadata.getMessage();
@@ -33,7 +32,7 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
         // Only notes on and off from input channel are processed, the rest is passed through.
         if (matchingChannel && m.isNoteOnOrOff())
         {
-            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), metadata.samplePosition, processedMidi);
+            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), metadata.samplePosition);
         }
         else 
         {
@@ -49,7 +48,7 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     We want the input to be monophonic so we need to know which was the last played note and 
     if there are some notes still on to be played when the last one is released.
 */
-void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition, MidiBuffer& processedMidi)
+void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition)
 {
     if (noteOn)
     {
@@ -59,10 +58,10 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
         // If the note changed, turn off the previous notes before adding the new ones.
         if (note != lastNoteOn && lastNoteOn > -1)
         {
-            stopCurrentNotes(velocity, samplePosition, processedMidi);
+            stopCurrentNotes(velocity, samplePosition);
         }
         // Play the received note.
-        playMappedNotes(note, velocity, samplePosition, processedMidi);
+        playMappedNotes(note, velocity, samplePosition);
     }
     else 
     {
@@ -73,12 +72,12 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
         // Otherwise it means the released note was not active so we don't need to do anything (case of multiple notes held)
         if (note == lastNoteOn) 
         {
-            stopCurrentNotes(velocity, samplePosition, processedMidi);
+            stopCurrentNotes(velocity, samplePosition);
 
             // If there were still some notes held, play the last one.
             if (currentInputNotesOn.size() > 0) {
                 // Then play the last note from the vector of active input notes.
-                playMappedNotes(currentInputNotesOn.back(), velocity, samplePosition, processedMidi);
+                playMappedNotes(currentInputNotesOn.back(), velocity, samplePosition);
             }
             else {
                 // No note is currently played.
@@ -88,28 +87,35 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
     }
 }
 
-void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
+void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition)
 {
     lastNoteOn = note;
     // First clear the output notes vector to replace its values.
     currentOutputNotesOn.clear();
 
     const int baseNote = lastNoteOn % 12;
-    for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (octaveTranspose * 12);
-        if (noteToPlay >= 0 && noteToPlay < 128) {
-            processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteToPlay, velocity), samplePosition);
-            currentOutputNotesOn.push_back(noteToPlay);
-        }
-    }
     // If there's an octave transpose, add the root note at its original height.
     if (octaveTranspose != 0) {
-        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, lastNoteOn + mappingNotes[baseNote][0], velocity), samplePosition);
+        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][0];
+        playNote(noteToPlay, velocity, samplePosition);
+    }
+    // Then add all the notes from the mapping vector at the transposed height.
+    for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
+        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (octaveTranspose * 12);
+        playNote(noteToPlay, velocity, samplePosition);
     }
     currentNoteOutputChannel = outputChannel;
 }
 
-void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi)
+void MidiProcessor::playNote(const int note, const juce::uint8 velocity, const int samplePosition)
+{
+    if (note >= 0 && note < 128) {
+        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, note, velocity), samplePosition);
+        currentOutputNotesOn.push_back(note);
+    }
+}
+
+void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition)
 {
     for (const auto& currentNote: currentOutputNotesOn) {
         processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentNote, velocity), samplePosition);

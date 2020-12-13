@@ -15,6 +15,7 @@ public:
 
     void registerListeners(AudioProcessorValueTreeState& treeState);
 private:
+    MidiBuffer processedMidi;
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
     MidiParams midiParams{ [this]() { updateMidiParams(); } };
     NoteParams noteParams;
@@ -44,9 +45,10 @@ private:
     
     // -----------------------------------
     // Process the input midi events
-    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition, MidiBuffer& processedMidi);
-    void playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi);
-    void stopCurrentNotes(const juce::uint8 velocity, const int samplePosition, MidiBuffer& processedMidi);
+    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition);
+    void playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition);
+    void playNote(const int note, const juce::uint8 velocity, const int samplePosition);
+    void stopCurrentNotes(const juce::uint8 velocity, const int samplePosition);
     void removeHeldNote(const int note);
     // -----------------------------------
 
@@ -55,6 +57,6 @@ private:
     void initParameters();
     void updateMidiParams();
     void updateNoteParams(const NoteParam& noteParam);
-    void setMappedNotes(const int note_origine, const int new_note, const int chord);
+    void setMappedNotes(const int from_note, const int to_note, const int chord);
     // -----------------------------------
 };
