@@ -101,18 +101,38 @@ AudioProcessorEditor* MidiBassPedalChordsAudioProcessor::createEditor()
 //==============================================================================
 void MidiBassPedalChordsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    /*auto state = treeState.copyState();
-    std::unique_ptr<XmlElement> xml(state.createXml());
-    copyXmlToBinary(*xml, destData);*/
+    ValueTree params("Params");
+
+    for (auto& param : getParameters())
+    {
+        ValueTree paramTree(param->getName(50));
+        paramTree.setProperty("Value", param->getValue(), nullptr);
+        params.appendChild(paramTree, nullptr);
+    }
+
+    ValueTree pluginPreset("PluginState");
+    pluginPreset.appendChild(params, nullptr);
+
+    copyXmlToBinary(*pluginPreset.createXml(), destData);
 }
 
 void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    /*std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    auto xml = getXmlFromBinary(data, sizeInBytes);
 
-    if (xmlState.get() != nullptr)
-        if (xmlState->hasTagName(treeState.state.getType()))
-            treeState.replaceState(ValueTree::fromXml(*xmlState));*/
+    if (xml != nullptr)
+    {
+        auto preset = ValueTree::fromXml(*xml);
+        auto params = preset.getChildWithName("Params");
+
+        for (auto& param : getParameters())
+        {
+            auto paramTree = params.getChildWithName(param->getName(50));
+
+            if (paramTree.isValid())
+                param->setValueNotifyingHost(paramTree["Value"]);
+        }
+    }
 }
 
 //==============================================================================

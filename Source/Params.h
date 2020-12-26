@@ -15,6 +15,7 @@ namespace ParamIDs
 namespace Names
 {
     static StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    static StringArray noteLabels{ "C", "C_Sharp", "D", "D_Sharp", "E", "F", "F_Sharp", "G", "G_Sharp", "A", "A_Sharp", "B" };
     static StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
 }
 
@@ -30,10 +31,10 @@ struct MidiParams : AudioProcessorParameter::Listener
 
     void addParams(AudioProcessor& p)
     {
-        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
-        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
-        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves"));
-        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "Bypass other channels", false, "Bypass other channels"));
+        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "InputChannel", 1, 16, 1, "Input Channel"));
+        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "OutputChannel", 1, 16, 1, "Output Channel"));
+        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "TransposeOctaves", -1, 4, 0, "Transpose octaves"));
+        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "BypassOtherChannels", false, "Bypass other channels"));
 
         inputChannel->addListener(this);
         outputChannel->addListener(this);
@@ -62,14 +63,14 @@ struct MidiParams : AudioProcessorParameter::Listener
 */
 struct NoteParam : AudioProcessorParameter::Listener
 {
-    NoteParam(const int i, const String n)
-        : noteIndex(i), noteName(n)
+    NoteParam(const int i, const String& n, const String& l)
+        : noteIndex(i), noteName(n), noteLabel(l)
     {}
 
     void addParams(AudioProcessor& p)
     {
-        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteName, Names::notes, noteIndex, noteName));
-        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteName + " chord", Names::chords, 0, noteName + " chord"));
+        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteLabel, Names::notes, noteIndex, noteName));
+        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteLabel + ParamIDs::chordChoice, Names::chords, 0, noteName + " chord"));
         note->addListener(this);
         chord->addListener(this);
     }
@@ -83,6 +84,7 @@ struct NoteParam : AudioProcessorParameter::Listener
 
     int noteIndex;
     String noteName;
+    String noteLabel;
     AudioParameterChoice* note = nullptr;
     AudioParameterChoice* chord = nullptr;
 
@@ -97,7 +99,7 @@ struct NoteParams
     NoteParams()
     {
         for (int i = 0; i < Names::notes.size(); i++) {
-            notes.emplace_back(i, Names::notes[i]);
+            notes.emplace_back(i, Names::notes[i], Names::noteLabels[i]);
         }
     }
 

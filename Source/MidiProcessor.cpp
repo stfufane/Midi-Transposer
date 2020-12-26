@@ -46,7 +46,7 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     We want the input to be monophonic so we need to know which was the last played note and 
     if there are some notes still on to be played when the last one is released.
 */
-void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition)
+void MidiProcessor::mapNote(const int note, const uint8 velocity, const bool noteOn, const int samplePosition)
 {
     if (noteOn)
     {
@@ -85,7 +85,7 @@ void MidiProcessor::mapNote(const int note, const juce::uint8 velocity, const bo
     }
 }
 
-void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition)
+void MidiProcessor::playMappedNotes(const int note, const uint8 velocity, const int samplePosition)
 {
     lastNoteOn = note;
     // First clear the output notes vector to replace its values.
@@ -105,7 +105,7 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
     currentNoteOutputChannel = outputChannel;
 }
 
-void MidiProcessor::playNote(const int note, const juce::uint8 velocity, const int samplePosition)
+void MidiProcessor::playNote(const int note, const uint8 velocity, const int samplePosition)
 {
     if (note >= 0 && note < 128) {
         processedMidi.addEvent(MidiMessage::noteOn(outputChannel, note, velocity), samplePosition);
@@ -113,7 +113,7 @@ void MidiProcessor::playNote(const int note, const juce::uint8 velocity, const i
     }
 }
 
-void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition)
+void MidiProcessor::stopCurrentNotes(const uint8 velocity, const int samplePosition)
 {
     for (const auto& currentNote: currentOutputNotesOn) {
         processedMidi.addEvent(MidiMessage::noteOff(currentNoteOutputChannel, currentNote, velocity), samplePosition);

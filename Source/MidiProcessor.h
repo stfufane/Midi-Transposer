@@ -44,10 +44,10 @@ private:
     
     // -----------------------------------
     // Process the input midi events
-    void mapNote(const int note, const juce::uint8 velocity, const bool noteOn, const int samplePosition);
-    void playMappedNotes(const int note, const juce::uint8 velocity, const int samplePosition);
-    void playNote(const int note, const juce::uint8 velocity, const int samplePosition);
-    void stopCurrentNotes(const juce::uint8 velocity, const int samplePosition);
+    void mapNote(const int note, const uint8 velocity, const bool noteOn, const int samplePosition);
+    void playMappedNotes(const int note, const uint8 velocity, const int samplePosition);
+    void playNote(const int note, const uint8 velocity, const int samplePosition);
+    void stopCurrentNotes(const uint8 velocity, const int samplePosition);
     void removeHeldNote(const int note);
     // -----------------------------------
 
