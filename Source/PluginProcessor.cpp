@@ -105,7 +105,7 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (MemoryBlock& destDa
 
     for (auto& param : getParameters())
     {
-        ValueTree paramTree(param->getName(50));
+        ValueTree paramTree(ParamHelper::getParamID(param));
         paramTree.setProperty("Value", param->getValue(), nullptr);
         params.appendChild(paramTree, nullptr);
     }
@@ -127,7 +127,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
 
         for (auto& param : getParameters())
         {
-            auto paramTree = params.getChildWithName(param->getName(50));
+            auto paramTree = params.getChildWithName(ParamHelper::getParamID(param));
 
             if (paramTree.isValid())
                 param->setValueNotifyingHost(paramTree["Value"]);

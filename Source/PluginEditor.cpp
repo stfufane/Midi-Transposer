@@ -4,6 +4,7 @@ constexpr auto WINDOW_WIDTH = 800;
 constexpr auto WINDOW_HEIGHT = 680;
 constexpr auto BACKGROUND_HEIGHT = 612;
 constexpr auto COMBO_WIDTH = 65;
+constexpr auto NOTE_COMBO_WIDTH = 85;
 constexpr auto COMBO_HEIGHT = 24;
 
 //==============================================================================
@@ -61,8 +62,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         noteChoices.push_back(std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
             *processor.midiProcessor.noteParams.notes[i].note, *this,
             [&i, this](ComboBox& combo) {
-                combo.addItemList(Names::notes, i + 1);
-                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_note_y, COMBO_WIDTH, COMBO_HEIGHT);
+                combo.addItemList(Names::noteLabels, i + 1);
+                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_note_y, NOTE_COMBO_WIDTH, COMBO_HEIGHT);
             }
         ));
 
@@ -71,7 +72,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
             *processor.midiProcessor.noteParams.notes[i].chord, *this,
             [&i, this](ComboBox& combo) {
                 combo.addItemList(Names::chords, i + 1);
-                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_chord_y, COMBO_WIDTH, COMBO_HEIGHT);
+                combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_chord_y, NOTE_COMBO_WIDTH, COMBO_HEIGHT);
             }
         ));
     }

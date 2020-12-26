@@ -57,18 +57,18 @@ private:
     // This vector defines which image is used for each key, 
     // the coordinates of the image and the coordinates of the combobox components.
     const std::vector<KeyPosition> keyPositions {
-        { &whiteKey, 41,  401,  47, 616, 648 }, // C
-        { &blackKey, 84,  297,  94, 446, 478 }, // C#
-        { &whiteKey, 133, 401, 138, 616, 648 }, // D
-        { &blackKey, 177, 297, 185, 446, 478 }, // D#
-        { &whiteKey, 223, 401, 232, 616, 648 }, // E
-        { &whiteKey, 313, 401, 323, 616, 648 }, // F
-        { &blackKey, 359, 297, 365, 446, 478 }, // F#
-        { &whiteKey, 403, 401, 412, 616, 648 }, // G
-        { &blackKey, 449, 297, 455, 446, 478 }, // G#
-        { &whiteKey, 494, 401, 503, 616, 648 }, // A
-        { &blackKey, 539, 297, 547, 446, 478 }, // A#
-        { &whiteKey, 587, 401, 595, 616, 648 }  // B
+        { &whiteKey, 41,  401,  35, 616, 648 }, // C
+        { &blackKey, 84,  297,  82, 446, 478 }, // C#
+        { &whiteKey, 133, 401, 131, 616, 648 }, // D
+        { &blackKey, 177, 297, 178, 446, 478 }, // D#
+        { &whiteKey, 223, 401, 225, 616, 648 }, // E
+        { &whiteKey, 313, 401, 316, 616, 648 }, // F
+        { &blackKey, 359, 297, 358, 446, 478 }, // F#
+        { &whiteKey, 403, 401, 405, 616, 648 }, // G
+        { &blackKey, 449, 297, 449, 446, 478 }, // G#
+        { &whiteKey, 494, 401, 498, 616, 648 }, // A
+        { &blackKey, 539, 297, 542, 446, 478 }, // A#
+        { &whiteKey, 587, 401, 593, 616, 648 }  // B
     };
 
     std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >   inputChannel;

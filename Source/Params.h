@@ -14,10 +14,21 @@ namespace ParamIDs
 
 namespace Names
 {
-    static StringArray notes{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    static StringArray noteLabels{ "C", "C_Sharp", "D", "D_Sharp", "E", "F", "F_Sharp", "G", "G_Sharp", "A", "A_Sharp", "B" };
+    static StringArray notes{ "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
+    static StringArray noteLabels{ "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
     static StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
 }
+
+struct ParamHelper
+{
+    static juce::String getParamID(juce::AudioProcessorParameter* param)
+    {
+        if (auto paramWithID = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
+            return paramWithID->paramID;
+
+        return param->getName(50);
+    }
+};
 
 /*
     Simple structure that contains the 4 basic parameters at the top of the plugin.
@@ -31,10 +42,10 @@ struct MidiParams : AudioProcessorParameter::Listener
 
     void addParams(AudioProcessor& p)
     {
-        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "InputChannel", 1, 16, 1, "Input Channel"));
-        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "OutputChannel", 1, 16, 1, "Output Channel"));
-        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "TransposeOctaves", -1, 4, 0, "Transpose octaves"));
-        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "BypassOtherChannels", false, "Bypass other channels"));
+        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
+        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
+        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose Octaves", -1, 4, 0, "Transpose Octaves"));
+        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "Bypass Other Channels", false, "Bypass Other Channels"));
 
         inputChannel->addListener(this);
         outputChannel->addListener(this);
@@ -69,8 +80,8 @@ struct NoteParam : AudioProcessorParameter::Listener
 
     void addParams(AudioProcessor& p)
     {
-        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteLabel, Names::notes, noteIndex, noteName));
-        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteLabel + ParamIDs::chordChoice, Names::chords, 0, noteName + " chord"));
+        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteLabel, Names::notes, noteIndex, noteLabel));
+        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteLabel + ParamIDs::chordChoice, Names::chords, 0, noteLabel + " chord"));
         note->addListener(this);
         chord->addListener(this);
     }
