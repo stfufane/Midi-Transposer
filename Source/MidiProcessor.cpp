@@ -100,8 +100,8 @@ void MidiProcessor::playMappedNotes(const int note, const juce::uint8 velocity, 
         playNote(noteToPlay, velocity, samplePosition);
     }
     // Then add all the notes from the mapping vector at the transposed height.
-    for (int i = 0; i < mappingNotes[baseNote].size(); i++) {
-        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][i] + (octaveTranspose * 12);
+    for (const auto mappedNote: mappingNotes[baseNote]) {
+        const int noteToPlay = lastNoteOn + mappedNote + (octaveTranspose * 12);
         playNote(noteToPlay, velocity, samplePosition);
     }
     currentNoteOutputChannel = outputChannel;
@@ -161,11 +161,11 @@ void MidiProcessor::updateNoteParams(const NoteParam& noteParam)
 void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
 {
     // Declare a local vector for the mapping, initialized with the root note
-    size_t chord_size = chordIntervals[chord].size();
+    auto chord_size = chordIntervals[chord].size();
     std::vector<int> new_mapping (chord_size);
 
     // Set the notes depending on the selected chord.
-    for (int i = 0; i < chord_size; i++)
+    for (size_t i = 0; i < chord_size; i++)
     {
         new_mapping[i] = to_note - from_note + chordIntervals[chord][i];
     }
