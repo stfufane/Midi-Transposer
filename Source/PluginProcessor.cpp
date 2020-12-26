@@ -9,9 +9,8 @@ MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
     : 
 #endif
 { 
-    // This is called in the constructor body cause both midiProcessor and treeState have to be initialized
-    // before it's called.
-    midiProcessor.registerListeners(treeState);
+    // Add the parameters and listeners from the midi processor.
+    midiProcessor.addParameters(*this);
 }
 
 MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor() {}
@@ -91,34 +90,29 @@ void MidiBassPedalChordsAudioProcessor::processBlock (AudioBuffer<float>& buffer
     midiProcessor.process(midiMessages);
 }
 
-int MidiBassPedalChordsAudioProcessor::getCurrentNotePlayed()
-{
-    return midiProcessor.getLastNoteOn();
-}
-
 //==============================================================================
 bool MidiBassPedalChordsAudioProcessor::hasEditor() const { return true; }
 
 AudioProcessorEditor* MidiBassPedalChordsAudioProcessor::createEditor()
 {
-    return new MidiBassPedalChordsAudioProcessorEditor(*this, treeState);
+    return new MidiBassPedalChordsAudioProcessorEditor(*this);
 }
 
 //==============================================================================
 void MidiBassPedalChordsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    auto state = treeState.copyState();
+    /*auto state = treeState.copyState();
     std::unique_ptr<XmlElement> xml(state.createXml());
-    copyXmlToBinary(*xml, destData);
+    copyXmlToBinary(*xml, destData);*/
 }
 
 void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    /*std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(treeState.state.getType()))
-            treeState.replaceState(ValueTree::fromXml(*xmlState));
+            treeState.replaceState(ValueTree::fromXml(*xmlState));*/
 }
 
 //==============================================================================

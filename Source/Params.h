@@ -1,7 +1,6 @@
 #pragma once
 
 #include "JuceHeader.h"
-#include "ParameterList.h"
 
 namespace ParamIDs
 {
@@ -19,31 +18,35 @@ namespace Names
     static StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
 }
 
-using Layout = AudioProcessorValueTreeState::ParameterLayout;
-
 /*
     Simple structure that contains the 4 basic parameters at the top of the plugin.
     Whenever one of them is updated, the parameterChanged method will update the local atomic values for all of them.
 */
-struct MidiParams : AudioProcessorValueTreeState::Listener
+struct MidiParams : AudioProcessorParameter::Listener
 {
     MidiParams(std::function<void()> lambda)
         : update(lambda)
     {}
 
-    void addParams(Layout& layout)
+    void addParams(AudioProcessor& p)
     {
-        ParameterList list(layout);
+        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
+        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
+        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves"));
+        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "Bypass other channels", false, "Bypass other channels"));
 
-        inputChannel = list.add<AudioParameterInt>(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel");
-        outputChannel = list.add<AudioParameterInt>(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel");
-        octaveTranspose = list.add<AudioParameterInt>(ParamIDs::octaveTranspose, "Transpose octaves", -1, 4, 0, "Transpose octaves");
-        bypassOtherChannels = list.add<AudioParameterBool>(ParamIDs::bypassChannels, "Bypass other channels", false, "Bypass other channels");
+        inputChannel->addListener(this);
+        outputChannel->addListener(this);
+        octaveTranspose->addListener(this);
+        bypassOtherChannels->addListener(this);
     }
 
-    void parameterChanged(const String& paramID, float newValue) {
+    void parameterValueChanged(int parameterIndex, float newValue) override
+    {
         if (update != nullptr) update();
     }
+
+    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
 
     std::function<void()> update = nullptr;
 
@@ -57,22 +60,26 @@ struct MidiParams : AudioProcessorValueTreeState::Listener
     This represents the structure for a note/chord couple parameters.
     The update function is called on parameter changed to update the mappingNotes vector of the processor.
 */
-struct NoteParam : AudioProcessorValueTreeState::Listener
+struct NoteParam : AudioProcessorParameter::Listener
 {
     NoteParam(const int i, const String n)
         : noteIndex(i), noteName(n)
     {}
 
-    void addParams(Layout& layout)
+    void addParams(AudioProcessor& p)
     {
-        ParameterList list(layout);
-        note = list.add<AudioParameterChoice>(noteName + ParamIDs::noteChoice, noteName, Names::notes, noteIndex, noteName);
-        chord = list.add<AudioParameterChoice>(noteName + ParamIDs::chordChoice, noteName + " chord", Names::chords, 0, noteName + " chord");
+        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteName, Names::notes, noteIndex, noteName));
+        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteName + " chord", Names::chords, 0, noteName + " chord"));
+        note->addListener(this);
+        chord->addListener(this);
     }
 
-    void parameterChanged(const String& paramID, float newValue) {
+    void parameterValueChanged(int parameterIndex, float newValue) override
+    {
         if (update != nullptr) update();
     }
+
+    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
 
     int noteIndex;
     String noteName;
@@ -94,10 +101,10 @@ struct NoteParams
         }
     }
 
-    void addParams(Layout& layout)
+    void addParams(AudioProcessor& p)
     {
         for (auto& note : notes) {
-            note.addParams(layout);
+            note.addParams(p);
         }
     }
 

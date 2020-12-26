@@ -3,8 +3,6 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-using APVTS = AudioProcessorValueTreeState;
-
 struct KeyPosition {
     Image* keyImage;
     int x;
@@ -20,11 +18,12 @@ template <typename CompType, typename CompAttachment>
 class AttachedComponent
 {
 public:
-    AttachedComponent<CompType, CompAttachment>(const String id, AudioProcessorEditor& editor, APVTS& vts, std::function<void(CompType&)> init = nullptr)
+    AttachedComponent<CompType, CompAttachment>(RangedAudioParameter& param, AudioProcessorEditor& editor, std::function<void(CompType&)> init = nullptr)
     {
         if (init != nullptr) init(component);
-        attachment.reset(new CompAttachment(vts, id, component));
+        attachment.reset(new CompAttachment(param, component));
         editor.addAndMakeVisible(component);
+        attachment->sendInitialUpdate();
     }
 private:
     CompType component;
@@ -37,7 +36,7 @@ private:
 class MidiBassPedalChordsAudioProcessorEditor : public AudioProcessorEditor, private Timer
 {
 public:
-    MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&, APVTS&);
+    MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&);
     ~MidiBassPedalChordsAudioProcessorEditor();
 
     //==============================================================================
@@ -48,8 +47,6 @@ public:
 
 private:
     MidiBassPedalChordsAudioProcessor& processor;
-
-    APVTS& valueTreeState;
 
     Image backgroundImage{ ImageCache::getFromMemory(BinaryData::pk5a_jpg, BinaryData::pk5a_jpgSize) };
     Image whiteKey{ ImageCache::getFromMemory(BinaryData::white_key_png, BinaryData::white_key_pngSize) };
@@ -74,13 +71,13 @@ private:
         { &whiteKey, 587, 401, 595, 616, 648 }  // B
     };
 
-    std::unique_ptr< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >   inputChannel;
-    std::unique_ptr< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >   outputChannel;
-    std::unique_ptr< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >   octaveTranspose;
-    std::unique_ptr< AttachedComponent<ToggleButton, APVTS::ButtonAttachment> > bypassChannels;
+    std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >   inputChannel;
+    std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >   outputChannel;
+    std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >   octaveTranspose;
+    std::unique_ptr< AttachedComponent<ToggleButton, ButtonParameterAttachment> > bypassChannels;
 
-    std::vector< std::unique_ptr< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> > > noteChoices;
-    std::vector< std::unique_ptr< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> > > chordChoices;
+    std::vector< std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> > > noteChoices;
+    std::vector< std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> > > chordChoices;
 
     TooltipWindow tooltipWindow;
 

@@ -4,22 +4,20 @@ MidiProcessor::MidiProcessor()
     : mappingNotes(12, std::vector<int>(1, 0))
 {}
 
-void MidiProcessor::registerListeners(AudioProcessorValueTreeState& treeState)
+void MidiProcessor::addParameters(AudioProcessor& p)
 {
-    initParameters();
-
-    treeState.addParameterListener(ParamIDs::inChannel, &midiParams);
-    treeState.addParameterListener(ParamIDs::outChannel, &midiParams);
-    treeState.addParameterListener(ParamIDs::octaveTranspose, &midiParams);
-    treeState.addParameterListener(ParamIDs::bypassChannels, &midiParams);
+    midiParams.addParams(p);
+    for (auto& noteParam : noteParams.notes) {
+        noteParam.addParams(p);
+    }
 
     // Each note param has its own listener and lambda function so only the corresponding note
     // is updated in the mappingNotes vector. It also avoids testing paramID in parameterChanged method.
     for (auto& noteParam : noteParams.notes) {
-        noteParam.update = [this, &noteParam]() { updateNoteParams(noteParam); };
-        treeState.addParameterListener(noteParam.note->paramID, &noteParam);
-        treeState.addParameterListener(noteParam.chord->paramID, &noteParam);
+        noteParam.update = [this, &noteParam]() { updateNoteParam(noteParam); };
     }
+
+    initParameters();
 }
 
 void MidiProcessor::process(MidiBuffer& midiMessages)
@@ -140,7 +138,7 @@ void MidiProcessor::initParameters()
     
     for (auto& noteParam: noteParams.notes)
     {
-        updateNoteParams(noteParam);
+        updateNoteParam(noteParam);
     }
 }
 
@@ -153,7 +151,7 @@ void MidiProcessor::updateMidiParams()
 }
 
 // This method is called by the lambda associated to every noteParam when one of the associated combobox is updated.
-void MidiProcessor::updateNoteParams(const NoteParam& noteParam)
+void MidiProcessor::updateNoteParam(const NoteParam& noteParam)
 {
     setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
 }
@@ -172,16 +170,6 @@ void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const
     
     // Replace the old mapping.
     mappingNotes[from_note].swap(new_mapping);
-}
-
-AudioProcessorValueTreeState::ParameterLayout MidiProcessor::getParameterLayout()
-{
-    AudioProcessorValueTreeState::ParameterLayout layout;
-
-    midiParams.addParams(layout);
-    noteParams.addParams(layout);
-
-    return layout;
 }
 
 int MidiProcessor::getLastNoteOn()

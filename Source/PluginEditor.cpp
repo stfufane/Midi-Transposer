@@ -7,11 +7,11 @@ constexpr auto COMBO_WIDTH = 65;
 constexpr auto COMBO_HEIGHT = 24;
 
 //==============================================================================
-MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p, APVTS& vts)
-    : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
+MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
+    : AudioProcessorEditor(&p), processor(p)
 {
-    inputChannel = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
-        ParamIDs::inChannel, *this, valueTreeState,
+    inputChannel = std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
+        *processor.midiProcessor.midiParams.inputChannel, *this,
         [](ComboBox& combo) {
             for (int channel = 1; channel <= 16; channel++) {
                 combo.addItem(String(channel), channel);
@@ -21,8 +21,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         }
     );
 
-    outputChannel = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
-        ParamIDs::outChannel, *this, valueTreeState,
+    outputChannel = std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
+        *processor.midiProcessor.midiParams.outputChannel, *this,
         [](ComboBox& combo) {
             for (int channel = 1; channel <= 16; channel++) {
                 combo.addItem(String(channel), channel);
@@ -32,8 +32,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         }
     );
 
-    octaveTranspose = std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
-        ParamIDs::octaveTranspose, *this, valueTreeState,
+    octaveTranspose = std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
+        *processor.midiProcessor.midiParams.octaveTranspose, *this,
         [](ComboBox& combo) {
             for (int octave = 1; octave <= 6; octave++) {
                 combo.addItem(String(octave - 2), octave);
@@ -43,8 +43,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         }
     );
 
-    bypassChannels = std::make_unique< AttachedComponent<ToggleButton, APVTS::ButtonAttachment> >(
-        ParamIDs::bypassChannels, *this, valueTreeState,
+    bypassChannels = std::make_unique< AttachedComponent<ToggleButton, ButtonParameterAttachment> >(
+        *processor.midiProcessor.midiParams.bypassOtherChannels, *this,
         [](ToggleButton& button) {
             button.setButtonText("Bypass other channels");
             button.setBounds(500, 50, 150, 24);
@@ -58,9 +58,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     for (int i = 0; i < Names::notes.size(); i++)
     {
         // Create the notes combo box
-        String note_id = Names::notes[i] + ParamIDs::noteChoice;
-        noteChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
-            note_id, *this, valueTreeState,
+        noteChoices.push_back(std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
+            *processor.midiProcessor.noteParams.notes[i].note, *this,
             [&i, this](ComboBox& combo) {
                 combo.addItemList(Names::notes, i + 1);
                 combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_note_y, COMBO_WIDTH, COMBO_HEIGHT);
@@ -68,9 +67,8 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         ));
 
         // Create the chords combo box
-        String chord_id = Names::notes[i] + ParamIDs::chordChoice;
-        chordChoices.push_back(std::make_unique< AttachedComponent<ComboBox, APVTS::ComboBoxAttachment> >(
-            chord_id, *this, valueTreeState,
+        chordChoices.push_back(std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
+            *processor.midiProcessor.noteParams.notes[i].chord, *this,
             [&i, this](ComboBox& combo) {
                 combo.addItemList(Names::chords, i + 1);
                 combo.setBounds(keyPositions[i].combo_x, keyPositions[i].combo_chord_y, COMBO_WIDTH, COMBO_HEIGHT);
@@ -113,7 +111,7 @@ void MidiBassPedalChordsAudioProcessorEditor::resized() {}
 
 void MidiBassPedalChordsAudioProcessorEditor::timerCallback()
 {
-    int lastNotePlayed = processor.getCurrentNotePlayed() % 12;
+    int lastNotePlayed = processor.midiProcessor.getLastNoteOn() % 12;
     if (lastNotePlayed != currentNotePlayed) {
         repaint();
         currentNotePlayed = lastNotePlayed;
