@@ -53,12 +53,12 @@ struct MidiParams : AudioProcessorParameter::Listener
         bypassOtherChannels->addListener(this);
     }
 
-    void parameterValueChanged(int parameterIndex, float newValue) override
+    void parameterValueChanged(int, float) override
     {
         if (update != nullptr) update();
     }
 
-    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
+    void parameterGestureChanged(int, bool) override {}
 
     std::function<void()> update = nullptr;
 
@@ -86,12 +86,12 @@ struct NoteParam : AudioProcessorParameter::Listener
         chord->addListener(this);
     }
 
-    void parameterValueChanged(int parameterIndex, float newValue) override
+    void parameterValueChanged(int, float) override
     {
         if (update != nullptr) update();
     }
 
-    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
+    void parameterGestureChanged(int, bool) override {}
 
     int noteIndex;
     String noteName;

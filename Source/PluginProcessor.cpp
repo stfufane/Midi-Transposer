@@ -51,12 +51,12 @@ bool MidiBassPedalChordsAudioProcessor::isMidiEffect() const
 double MidiBassPedalChordsAudioProcessor::getTailLengthSeconds() const { return 0.0; }
 int MidiBassPedalChordsAudioProcessor::getNumPrograms() { return 1; }
 int MidiBassPedalChordsAudioProcessor::getCurrentProgram() { return 0; }
-void MidiBassPedalChordsAudioProcessor::setCurrentProgram (int index) { }
-const String MidiBassPedalChordsAudioProcessor::getProgramName (int index) { return {}; }
-void MidiBassPedalChordsAudioProcessor::changeProgramName (int index, const String& newName) { }
+void MidiBassPedalChordsAudioProcessor::setCurrentProgram (int) { }
+const String MidiBassPedalChordsAudioProcessor::getProgramName (int) { return {}; }
+void MidiBassPedalChordsAudioProcessor::changeProgramName (int, const String&) { }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock) {}
+void MidiBassPedalChordsAudioProcessor::prepareToPlay (double, int) {}
 void MidiBassPedalChordsAudioProcessor::releaseResources() {}
 
 #ifndef JucePlugin_PreferredChannelConfigurations
