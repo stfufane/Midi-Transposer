@@ -11,17 +11,19 @@ constexpr auto NB_NOTES = 12;
  */
 struct IntervalsChoice : Component
 {
-    IntervalsChoice(int index, MidiBassPedalChordsAudioProcessor&) : noteIndex(index)
+    IntervalsChoice(int index, MidiBassPedalChordsAudioProcessor& processor) : noteIndex(index)
     {
         buttons.reserve(NB_NOTES);
         for (auto i = 0; i < NB_NOTES; i++)
         {
-            auto button = new ToggleButton();
+            auto button = new AttachedComponent<ToggleButton, ButtonParameterAttachment>(
+                *processor.midiProcessor.noteParams.notes[noteIndex].intervals[i], *this,
+                [this](ToggleButton& button) {
+                    button.setColour(ToggleButton::tickColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
+                    button.setColour(ToggleButton::tickDisabledColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
+                }
+            );
             buttons.emplace_back(button);
-            button->setBounds(25 * i, 0, 25, 25);
-            button->setColour(ToggleButton::tickColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
-            button->setColour(ToggleButton::tickDisabledColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
-            addAndMakeVisible(button);
         }
     }
 
@@ -31,11 +33,11 @@ struct IntervalsChoice : Component
         auto height = getLocalBounds().getHeight();
         auto button_width = getLocalBounds().getWidth() / float(NB_NOTES);
         for (size_t i = 0; i < buttons.size(); i++)
-            buttons[i]->setBounds(button_width * i, 0, button_width, height);
+            buttons[i].get()->component.setBounds(button_width * i, 0, button_width, height);
     }
 
     int noteIndex;
-    std::vector<std::unique_ptr<ToggleButton>> buttons;
+    std::vector<std::unique_ptr<AttachedComponent<ToggleButton, ButtonParameterAttachment>>> buttons;
 };
 
 /**
@@ -45,21 +47,19 @@ struct IntervalsChoice : Component
  */
 struct NoteLine : Component
 {
-    NoteLine(int index, MidiBassPedalChordsAudioProcessor& processor) : noteIndex(index), intervalsChoice(index, processor)
+    NoteLine(int index, MidiBassPedalChordsAudioProcessor& processor) 
+        : noteIndex(index), noteLabel("noteLabel", Notes::labels[index]), intervalsChoice(index, processor)
     {
-        // Create the notes combo box
-        noteChoice = std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
-            *processor.midiProcessor.noteParams.notes[noteIndex].note, *this,
-            [this](ComboBox& combo) {
-                combo.addItemList(Notes::labels, noteIndex + 1);
-            }
-        );
+        noteLabel.setColour(Label::ColourIds::textColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
+        addAndMakeVisible(noteLabel);
 
-        // Create the chords combo box
-        chordChoice = std::make_unique< AttachedComponent<ComboBox, ComboBoxParameterAttachment> >(
-            *processor.midiProcessor.noteParams.notes[noteIndex].chord, *this,
-            [this](ComboBox& combo) {
-                combo.addItemList(Notes::chords, noteIndex + 1);
+        transpose = std::make_unique< AttachedComponent<Slider, SliderParameterAttachment> >(
+            *processor.midiProcessor.noteParams.notes[noteIndex].transpose, *this,
+            [this](Slider& slider) {
+                slider.setNormalisableRange({-12, 12, 1});
+                slider.setColour(Slider::textBoxTextColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
+                slider.setColour(Slider::textBoxOutlineColourId, Notes::whiteNotes[noteIndex] ? Colours::white : Colours::black);
+                slider.setTooltip("Choose the number of semitones you want to transpose the note.");
             }
         );
 
@@ -74,15 +74,16 @@ struct NoteLine : Component
     void resized() override
     {
         auto height = getLocalBounds().getHeight();
-        auto column_width = getLocalBounds().getWidth() / 5.0;
-        intervalsChoice.setBounds(column_width * 2, 0, column_width * 3, height);
-        noteChoice->component.setBounds(0, 0, column_width, height);
-        chordChoice->component.setBounds(column_width, 0, column_width, height);
+        auto column_width = getLocalBounds().getWidth() / 10.0;
+        noteLabel.setBounds(0, 0, column_width, height);
+        transpose.get()->component.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxLeft, true, column_width / 2.0, height);
+        transpose.get()->component.setBounds(column_width, 0, column_width * 3, height);
+        intervalsChoice.setBounds(column_width * 4, 0, column_width * 6, height);
     }
 
     int noteIndex;
-    std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> > noteChoice;
-    std::unique_ptr< AttachedComponent<ComboBox, ComboBoxParameterAttachment> > chordChoice;
+    Label noteLabel;
+    std::unique_ptr<AttachedComponent<Slider, SliderParameterAttachment>> transpose;
     IntervalsChoice intervalsChoice;
 };
 

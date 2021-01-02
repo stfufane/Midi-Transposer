@@ -9,7 +9,6 @@ public:
     MidiProcessor();
 
     void process(MidiBuffer& midiMessages);
-    int getLastNoteOn();
 
     void addParameters(AudioProcessor& p);
 
@@ -25,17 +24,6 @@ private:
     std::atomic<int>  octaveTranspose{ 0 };
     std::atomic<bool> bypassOtherChannels{ false };
     std::vector< std::vector<int> > mappingNotes;
-
-    const std::vector< std::vector<int> > chordIntervals {
-        {0},            // None
-        {0, 4, 7},      // maj
-        {0, 3, 7},      // min
-        {0, 5, 7},      // sus4
-        {0, 4, 7, 11},  // maj7
-        {0, 3, 7, 10},  // min7
-        {0, 4, 7, 11},  // 7
-        {0, 3, 6, 10}   // m7b5
-    };
     
     int lastNoteOn{ -1 };
     int currentNoteOutputChannel{ 1 };
@@ -55,8 +43,7 @@ private:
     // Manage mapping values
     void initParameters();
     void updateMidiParams();
-    void updateNoteParam(const NoteParam& noteParam);
-    void setMappedNotes(const int from_note, const int to_note, const int chord);
+    void updateNoteMapping(const NoteParam& noteParam);
     // -----------------------------------
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiProcessor)

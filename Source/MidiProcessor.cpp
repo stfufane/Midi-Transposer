@@ -14,7 +14,7 @@ void MidiProcessor::addParameters(AudioProcessor& p)
     // Each note param has its own listener and lambda function so only the corresponding note
     // is updated in the mappingNotes vector. It also avoids testing paramID in parameterChanged method.
     for (auto& noteParam : noteParams.notes) {
-        noteParam.update = [this, &noteParam]() { updateNoteParam(noteParam); };
+        noteParam.update = [this, &noteParam]() { updateNoteMapping(noteParam); };
     }
 
     initParameters();
@@ -138,7 +138,7 @@ void MidiProcessor::initParameters()
     
     for (auto& noteParam: noteParams.notes)
     {
-        updateNoteParam(noteParam);
+        updateNoteMapping(noteParam);
     }
 }
 
@@ -150,29 +150,19 @@ void MidiProcessor::updateMidiParams()
     octaveTranspose = midiParams.octaveTranspose->get();
 }
 
-// This method is called by the lambda associated to every noteParam when one of the associated combobox is updated.
-void MidiProcessor::updateNoteParam(const NoteParam& noteParam)
+// This method is called by the lambda associated to every noteParam when one of the note parameters is updated.
+void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
 {
-    setMappedNotes(noteParam.noteIndex, noteParam.note->getIndex(), noteParam.chord->getIndex());
-}
+    std::vector<int> new_mapping;
+    auto transpose = noteParam.transpose->get();
+    // Add the transposed value first
+    new_mapping.push_back(transpose);
 
-void MidiProcessor::setMappedNotes(const int from_note, const int to_note, const int chord)
-{
-    // Declare a local vector for the mapping, initialized with the root note
-    auto chord_size = chordIntervals[chord].size();
-    std::vector<int> new_mapping (chord_size);
-
-    // Set the notes depending on the selected chord.
-    for (size_t i = 0; i < chord_size; i++)
-    {
-        new_mapping[i] = to_note - from_note + chordIntervals[chord][i];
-    }
+    // Then add the selected intervals.
+    for (size_t i = 0; i < noteParam.intervals.size(); i++)
+        if (noteParam.intervals[i]->get())
+            new_mapping.push_back(transpose + (i + 1));
     
-    // Replace the old mapping.
-    mappingNotes[from_note].swap(new_mapping);
-}
-
-int MidiProcessor::getLastNoteOn()
-{
-    return lastNoteOn;
+    // Finally, replace the old mapping.
+    mappingNotes[noteParam.noteIndex].swap(new_mapping);
 }
