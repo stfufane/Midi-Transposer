@@ -101,19 +101,16 @@ AudioProcessorEditor* MidiBassPedalChordsAudioProcessor::createEditor()
 //==============================================================================
 void MidiBassPedalChordsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    ValueTree params("Params");
+    XmlElement xml("PluginState");
 
+    XmlElement* params = new XmlElement("Params");
     for (auto& param : getParameters())
-    {
-        ValueTree paramTree(ParamHelper::getParamID(param));
-        paramTree.setProperty("Value", param->getValue(), nullptr);
-        params.appendChild(paramTree, nullptr);
-    }
+        params->setAttribute(ParamHelper::getParamID(param), param->getValue());
 
-    ValueTree pluginPreset("PluginState");
-    pluginPreset.appendChild(params, nullptr);
+    xml.addChildElement(params);
+    xml.addChildElement(uiSettings.getXml());
 
-    copyXmlToBinary(*pluginPreset.createXml(), destData);
+    copyXmlToBinary(xml, destData);
 }
 
 void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -122,17 +119,20 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
 
     if (xml != nullptr)
     {
-        auto preset = ValueTree::fromXml(*xml);
-        auto params = preset.getChildWithName("Params");
+        auto params = xml->getChildByName("Params");
+        if (params != nullptr)
+            for (auto& param : getParameters())
+                param->setValueNotifyingHost(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue()));
 
-        for (auto& param : getParameters())
-        {
-            auto paramTree = params.getChildWithName(ParamHelper::getParamID(param));
-
-            if (paramTree.isValid())
-                param->setValueNotifyingHost(paramTree["Value"]);
-        }
+        uiSettings = UISettings(xml->getChildByName("UISettings"));
     }
+}
+
+void MidiBassPedalChordsAudioProcessor::setUISettings(int w, int h) 
+{
+    uiSettings.width = w;
+    uiSettings.height = h;
+    uiSettings.exists = true;
 }
 
 //==============================================================================

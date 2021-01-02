@@ -12,11 +12,13 @@ namespace ParamIDs
     static String chordChoice{ "_chord" };
 }
 
-namespace Names
+namespace Notes
 {
-    static StringArray notes{ "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
-    static StringArray noteLabels{ "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
-    static StringArray chords{ "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
+    static StringArray names { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
+    static StringArray labels { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
+    static StringArray chords { "None", "maj", "min", "sus4", "maj7", "min7", "7", "m7b5" };
+    static std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
+    static Colour getColour(int index) { return whiteNotes[index] ? Colours::white : Colours::black; };
 }
 
 struct ParamHelper
@@ -74,14 +76,14 @@ struct MidiParams : AudioProcessorParameter::Listener
 */
 struct NoteParam : AudioProcessorParameter::Listener
 {
-    NoteParam(const int i, const String& n, const String& l)
-        : noteIndex(i), noteName(n), noteLabel(l)
+    NoteParam(const int i)
+        : noteIndex(i), noteName(Notes::names[i]), noteLabel(Notes::labels[i])
     {}
 
     void addParams(AudioProcessor& p)
     {
-        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteLabel, Names::notes, noteIndex, noteLabel));
-        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteLabel + ParamIDs::chordChoice, Names::chords, 0, noteLabel + " chord"));
+        p.addParameter(note = new AudioParameterChoice(noteName + ParamIDs::noteChoice, noteLabel, Notes::names, noteIndex, noteLabel));
+        p.addParameter(chord = new AudioParameterChoice(noteName + ParamIDs::chordChoice, noteLabel + ParamIDs::chordChoice, Notes::chords, 0, noteLabel + " chord"));
         note->addListener(this);
         chord->addListener(this);
     }
@@ -109,8 +111,9 @@ struct NoteParams
 {
     NoteParams()
     {
-        for (int i = 0; i < Names::notes.size(); i++) {
-            notes.emplace_back(i, Names::notes[i], Names::noteLabels[i]);
+        notes.reserve(Notes::names.size());
+        for (int i = 0; i < Notes::names.size(); i++) {
+            notes.emplace_back(i);
         }
     }
 

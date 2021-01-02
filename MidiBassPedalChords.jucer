@@ -5,16 +5,15 @@
               pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn"
               version="0.2" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="j2Knjj" name="Midi Bass Pedal Chords">
-    <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Resources">
-      <FILE id="V4Xozb" name="black_key.png" compile="0" resource="1" file="Resources/black_key.png"/>
-      <FILE id="gGMz9K" name="pk-5a.jpg" compile="0" resource="1" file="Resources/pk-5a.jpg"/>
-      <FILE id="I5Qin7" name="white_key.png" compile="0" resource="1" file="Resources/white_key.png"/>
+    <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Layout">
+      <FILE id="pnGT62" name="Helpers.h" compile="0" resource="0" file="Source/Layout/Helpers.h"/>
+      <FILE id="cuPRKx" name="MidiPanel.h" compile="0" resource="0" file="Source/Layout/MidiPanel.h"/>
+      <FILE id="M4cHCw" name="NotesPanel.h" compile="0" resource="0" file="Source/Layout/NotesPanel.h"/>
     </GROUP>
     <GROUP id="{DCDAF334-DD30-3195-88D8-06B875B498F4}" name="Source">
       <FILE id="bEJIwc" name="MidiProcessor.cpp" compile="1" resource="0"
             file="Source/MidiProcessor.cpp"/>
       <FILE id="FTyAVW" name="MidiProcessor.h" compile="0" resource="0" file="Source/MidiProcessor.h"/>
-      <FILE id="vNVAKg" name="ParameterList.h" compile="0" resource="0" file="Source/ParameterList.h"/>
       <FILE id="GHIHsk" name="Params.h" compile="0" resource="0" file="Source/Params.h"/>
       <FILE id="UgMRyr" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>

@@ -58,4 +58,6 @@ private:
     void updateNoteParam(const NoteParam& noteParam);
     void setMappedNotes(const int from_note, const int to_note, const int chord);
     // -----------------------------------
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiProcessor)
 };

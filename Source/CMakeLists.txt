@@ -33,7 +33,7 @@ FILE(GLOB CppSources *.cpp)
 target_sources(${BaseTargetName} PRIVATE
         ${CppSources})
 		
-add_images_from_directory(${BaseTargetName} ../Resources)
+# add_images_from_directory(${BaseTargetName} ../Resources)
 
 juce_generate_juce_header(${BaseTargetName})
 
