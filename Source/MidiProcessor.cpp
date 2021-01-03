@@ -8,13 +8,13 @@ void MidiProcessor::addParameters(AudioProcessor& p)
 {
     midiParams.addParams(p);
     for (auto& noteParam : noteParams.notes) {
-        noteParam.addParams(p);
+        noteParam->addParams(p);
     }
 
     // Each note param has its own listener and lambda function so only the corresponding note
     // is updated in the mappingNotes vector. It also avoids testing paramID in parameterChanged method.
     for (auto& noteParam : noteParams.notes) {
-        noteParam.update = [this, &noteParam]() { updateNoteMapping(noteParam); };
+        noteParam->update = [this, &noteParam]() { updateNoteMapping(*noteParam); };
     }
 
     initParameters();
@@ -138,7 +138,7 @@ void MidiProcessor::initParameters()
     
     for (auto& noteParam: noteParams.notes)
     {
-        updateNoteMapping(noteParam);
+        updateNoteMapping(*noteParam);
     }
 }
 
@@ -160,7 +160,7 @@ void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
 
     // Then add the selected intervals.
     for (size_t i = 0; i < noteParam.intervals.size(); i++)
-        if (noteParam.intervals[i]->get())
+        if (noteParam.intervals[i]->interval->get())
             new_mapping.push_back(transpose + (i + 1));
     
     // Finally, replace the old mapping.

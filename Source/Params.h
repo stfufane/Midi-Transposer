@@ -8,14 +8,13 @@ namespace ParamIDs
     static String outChannel{ "out_channel" };
     static String octaveTranspose{ "octave_transpose" };
     static String bypassChannels{ "bypass_other_channels" };
-    static String noteChoice{ "_note" };
-    static String chordChoice{ "_chord" };
     static String noteTranspose{ "_noteTranspose" };
     static String noteInterval{ "_interval_" };
 }
 
 namespace Notes
 {
+    static int count { 12 };
     static StringArray names { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
     static StringArray labels { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
     static std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
@@ -39,27 +38,12 @@ struct ParamHelper
 */
 struct MidiParams : AudioProcessorParameter::Listener
 {
-    MidiParams(std::function<void()> lambda)
-        : update(lambda)
-    {}
+    MidiParams(std::function<void()> lambda) : update(lambda) {}
+    ~MidiParams();
 
-    void addParams(AudioProcessor& p)
-    {
-        p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
-        p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
-        p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose Octaves", -1, 4, 0, "Transpose Octaves"));
-        p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "Bypass Other Channels", false, "Bypass Other Channels"));
+    void addParams(AudioProcessor& p);
 
-        inputChannel->addListener(this);
-        outputChannel->addListener(this);
-        octaveTranspose->addListener(this);
-        bypassOtherChannels->addListener(this);
-    }
-
-    void parameterValueChanged(int, float) override
-    {
-        if (update != nullptr) update();
-    }
+    void parameterValueChanged(int, float) override;
 
     void parameterGestureChanged(int, bool) override {}
 
@@ -71,36 +55,32 @@ struct MidiParams : AudioProcessorParameter::Listener
     AudioParameterBool* bypassOtherChannels = nullptr;
 };
 
+// Forward declarations for readability
+struct IntervalParam;
+struct NoteParam;
+
 /*
-    This represents the structure for a note with its tranposition and selected intervals.
-    The update function is called on parameter changed to update the mappingNotes vector of the processor.
+    This structure contains all 12 note/chord couples.
+*/
+struct NoteParams 
+{
+    NoteParams();
+    void addParams(AudioProcessor& p);
+
+    std::vector<std::unique_ptr<NoteParam>> notes;
+};
+
+/*
+This represents the structure for a note with its tranposition and selected intervals.
+The update function is called on parameter changed to update the mappingNotes vector of the processor.
 */
 struct NoteParam : AudioProcessorParameter::Listener
 {
-    NoteParam(const int i)
-        : noteIndex(i), noteName(Notes::names[i]), noteLabel(Notes::labels[i])
-    {
-        intervals.reserve(Notes::names.size());
-    }
+    NoteParam(const int i);
+    ~NoteParam();
 
-    void addParams(AudioProcessor& p)
-    {
-        p.addParameter(transpose = new AudioParameterInt(noteName + ParamIDs::noteTranspose, noteLabel + " transpose", -12, 12, 0, "Transpose semitones"));
-        for (auto i = 0; i < Notes::names.size(); i++) {
-            auto paramId = noteName + ParamIDs::noteInterval + String(i + 1);
-            auto interval = new AudioParameterBool(paramId, paramId, false, "Interval " + String(i + 1) + " for " + noteLabel);
-            intervals.emplace_back(interval);
-            p.addParameter(interval);
-            interval->addListener(this);
-        }
-        transpose->addListener(this);
-    }
-
-    void parameterValueChanged(int, float) override
-    {
-        if (update != nullptr) update();
-    }
-
+    void addParams(AudioProcessor& p);
+    void parameterValueChanged(int, float) override;
     void parameterGestureChanged(int, bool) override {}
 
     int noteIndex;
@@ -108,30 +88,24 @@ struct NoteParam : AudioProcessorParameter::Listener
     String noteLabel;
 
     AudioParameterInt* transpose = nullptr;
-    std::vector<std::unique_ptr<AudioParameterBool>> intervals;
+    std::vector<std::unique_ptr<IntervalParam>> intervals;
 
     std::function<void()> update = nullptr;
 };
 
-/*
-    This structure contains all 12 note/chord couples.
-*/
-struct NoteParams 
+/**
+ * This is just an interval toggle for a specific note and degree.
+ */
+struct IntervalParam
 {
-    NoteParams()
-    {
-        notes.reserve(Notes::names.size());
-        for (int i = 0; i < Notes::names.size(); i++) {
-            notes.emplace_back(i);
-        }
-    }
+    IntervalParam(NoteParam& noteParam, int i) 
+        : degree(i), noteName(noteParam.noteName), noteLabel(noteParam.noteLabel)
+    {}
 
-    void addParams(AudioProcessor& p)
-    {
-        for (auto& note : notes) {
-            note.addParams(p);
-        }
-    }
+    void addParam(AudioProcessor& p);
 
-    std::vector<NoteParam> notes;
+    AudioParameterBool* interval;
+    int degree;
+    String noteName;
+    String noteLabel;
 };

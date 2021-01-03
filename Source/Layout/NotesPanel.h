@@ -17,7 +17,7 @@ struct IntervalsChoice : Component
         for (auto i = 0; i < NB_NOTES; i++)
         {
             auto button = new AttachedComponent<ToggleButton, ButtonParameterAttachment>(
-                *processor.midiProcessor.noteParams.notes[noteIndex].intervals[i], *this,
+                *processor.midiProcessor.noteParams.notes[noteIndex]->intervals[i]->interval, *this,
                 [this](ToggleButton& button) {
                     button.setColour(ToggleButton::tickColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
                     button.setColour(ToggleButton::tickDisabledColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
@@ -54,7 +54,7 @@ struct NoteLine : Component
         addAndMakeVisible(noteLabel);
 
         transpose = std::make_unique< AttachedComponent<Slider, SliderParameterAttachment> >(
-            *processor.midiProcessor.noteParams.notes[noteIndex].transpose, *this,
+            *processor.midiProcessor.noteParams.notes[noteIndex]->transpose, *this,
             [this](Slider& slider) {
                 slider.setNormalisableRange({-12, 12, 1});
                 slider.setColour(Slider::textBoxTextColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
