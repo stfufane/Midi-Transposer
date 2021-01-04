@@ -19,3 +19,12 @@ public:
 private:
     std::unique_ptr<CompAttachment> attachment;
 };
+
+class SemitoneSlider : public Slider
+{
+public:
+    String getTextFromValue(double value) override 
+    {
+        return (value == 0 ? "0 semitone" : (value < 0 ? "-" : "+") + String(std::abs(value)) + " semitones");
+    }
+};

@@ -1,13 +1,14 @@
 #include "PluginEditor.h"
 
-constexpr auto WINDOW_WIDTH = 500;
-constexpr auto WINDOW_HEIGHT = 400;
+constexpr auto WINDOW_RATIO = 16.0 / 9.0;
+constexpr auto WINDOW_WIDTH = 800;
+constexpr auto WINDOW_HEIGHT = WINDOW_WIDTH / WINDOW_RATIO;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : AudioProcessorEditor(&p), processor(p), midiPanel(p), notesPanel(p)
 {
-    addAndMakeVisible(midiPanel);
+    // addAndMakeVisible(midiPanel);
     addAndMakeVisible(notesPanel);
 
     setResizable(true, true);
@@ -18,7 +19,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
     setResizeLimits(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH * 1.5, WINDOW_HEIGHT * 1.5);
-    getConstrainer()->setFixedAspectRatio(5.0 / 4.0);
+    getConstrainer()->setFixedAspectRatio(WINDOW_RATIO);
 }
 
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
@@ -31,7 +32,7 @@ void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g)
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() 
 {
-    midiPanel.setBounds(0, 0, getLocalBounds().getWidth(), 100);
-    notesPanel.setBounds(0, 100, getLocalBounds().getWidth(), getHeight() - 100);
+    notesPanel.setBounds(0, 0, getLocalBounds().getWidth(), getHeight());
+    // midiPanel.setBounds(0, getHeight() - 100, getLocalBounds().getWidth(), 100);
     processor.setUISettings(getWidth(), getHeight());
 }
