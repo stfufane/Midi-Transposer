@@ -1,14 +1,17 @@
 #include "PluginEditor.h"
 
-constexpr auto WINDOW_RATIO = 16.0 / 9.0;
-constexpr auto WINDOW_WIDTH = 800;
+constexpr auto WINDOW_RATIO = 9.0 / 5.4;
+constexpr auto WINDOW_WIDTH = 900;
 constexpr auto WINDOW_HEIGHT = WINDOW_WIDTH / WINDOW_RATIO;
+
+using Track = Grid::TrackInfo;
+using Fr = Grid::Fr;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
-    : AudioProcessorEditor(&p), processor(p), midiPanel(p), notesPanel(p)
+    : AudioProcessorEditor(&p), processor(p), midiPanel(p), notesPanel(p, 0)
 {
-    // addAndMakeVisible(midiPanel);
+    addAndMakeVisible(midiPanel);
     addAndMakeVisible(notesPanel);
 
     setResizable(true, true);
@@ -32,7 +35,14 @@ void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g)
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() 
 {
-    notesPanel.setBounds(0, 0, getLocalBounds().getWidth(), getHeight());
-    // midiPanel.setBounds(0, getHeight() - 100, getLocalBounds().getWidth(), 100);
+    Grid grid;
+
+    grid.templateColumns    = { Track (Fr(1)), Track(Fr(4)) };
+    grid.templateRows       = { Track (Fr(1)) };
+
+    grid.items = { GridItem(midiPanel), GridItem(notesPanel) };
+
+    grid.performLayout (getLocalBounds());
+
     processor.setUISettings(getWidth(), getHeight());
 }

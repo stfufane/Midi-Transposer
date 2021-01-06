@@ -120,9 +120,10 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
     if (xml != nullptr)
     {
         auto params = xml->getChildByName("Params");
-        if (params != nullptr)
+        if (params != nullptr) {
             for (auto& param : getParameters())
                 param->setValueNotifyingHost(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue()));
+        }
 
         uiSettings = UISettings(xml->getChildByName("UISettings"));
     }

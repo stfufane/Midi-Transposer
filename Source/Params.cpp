@@ -9,7 +9,6 @@ MidiParams::~MidiParams()
     inputChannel->removeListener(this);
     outputChannel->removeListener(this);
     octaveTranspose->removeListener(this);
-    bypassOtherChannels->removeListener(this);
 }
 
 void MidiParams::addParams(AudioProcessor& p)
@@ -17,12 +16,10 @@ void MidiParams::addParams(AudioProcessor& p)
     p.addParameter(inputChannel = new AudioParameterInt(ParamIDs::inChannel, "Input Channel", 1, 16, 1, "Input Channel"));
     p.addParameter(outputChannel = new AudioParameterInt(ParamIDs::outChannel, "Output Channel", 1, 16, 1, "Output Channel"));
     p.addParameter(octaveTranspose = new AudioParameterInt(ParamIDs::octaveTranspose, "Transpose Octaves", -1, 4, 0, "Transpose Octaves"));
-    p.addParameter(bypassOtherChannels = new AudioParameterBool(ParamIDs::bypassChannels, "Bypass Other Channels", false, "Bypass Other Channels"));
 
     inputChannel->addListener(this);
     outputChannel->addListener(this);
     octaveTranspose->addListener(this);
-    bypassOtherChannels->addListener(this);
 }
 
 void MidiParams::parameterValueChanged(int, float)

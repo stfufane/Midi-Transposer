@@ -7,7 +7,6 @@ namespace ParamIDs
     static String inChannel{ "in_channel" };
     static String outChannel{ "out_channel" };
     static String octaveTranspose{ "octave_transpose" };
-    static String bypassChannels{ "bypass_other_channels" };
     static String noteTranspose{ "_noteTranspose" };
     static String noteInterval{ "_interval_" };
 }
@@ -53,7 +52,6 @@ struct MidiParams : AudioProcessorParameter::Listener
     AudioParameterInt* inputChannel = nullptr;
     AudioParameterInt* outputChannel = nullptr;
     AudioParameterInt* octaveTranspose = nullptr;
-    AudioParameterBool* bypassOtherChannels = nullptr;
 };
 
 // Forward declarations for readability

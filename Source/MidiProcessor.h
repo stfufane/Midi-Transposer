@@ -22,7 +22,6 @@ private:
     std::atomic<int>  inputChannel{ 1 };
     std::atomic<int>  outputChannel{ 1 };
     std::atomic<int>  octaveTranspose{ 0 };
-    std::atomic<bool> bypassOtherChannels{ false };
     std::vector< std::vector<int> > mappingNotes;
     
     int lastNoteOn{ -1 };

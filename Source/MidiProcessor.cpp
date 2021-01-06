@@ -26,16 +26,17 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     for (const auto metadata: midiMessages)
     {
         const auto m = metadata.getMessage();
-        const auto matchingChannel = (m.getChannel() == inputChannel);
         // Only notes on and off from input channel are processed, the rest is passed through.
-        if (matchingChannel && m.isNoteOnOrOff())
+        if (m.getChannel() == inputChannel)
         {
-            mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), metadata.samplePosition);
-        }
-        else 
-        {
-            if (!bypassOtherChannels || matchingChannel)
+            if (m.isNoteOnOrOff())
+            {
+                mapNote(m.getNoteNumber(), m.getVelocity(), m.isNoteOn(), metadata.samplePosition);
+            }
+            else
+            {
                 processedMidi.addEvent(m, metadata.samplePosition);
+            } 
         }
     }
     midiMessages.swapWith(processedMidi);
@@ -146,7 +147,6 @@ void MidiProcessor::updateMidiParams()
 {
     inputChannel = midiParams.inputChannel->get();
     outputChannel = midiParams.outputChannel->get();
-    bypassOtherChannels = midiParams.bypassOtherChannels->get();
     octaveTranspose = midiParams.octaveTranspose->get();
 }
 

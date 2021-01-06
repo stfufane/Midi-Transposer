@@ -11,8 +11,8 @@ public:
     AttachedComponent<CompType, CompAttachment>(RangedAudioParameter& param, Component& parent, std::function<void(CompType&)> init = nullptr)
     {
         if (init != nullptr) init(component);
-        attachment.reset(new CompAttachment(param, component));
         parent.addAndMakeVisible(component);
+        attachment.reset(new CompAttachment(param, component));
         attachment->sendInitialUpdate();
     }
     CompType component;
@@ -20,11 +20,16 @@ private:
     std::unique_ptr<CompAttachment> attachment;
 };
 
-class SemitoneSlider : public Slider
+class NumericSlider : public Slider
 {
 public:
+    NumericSlider() {};
+    NumericSlider(const String& u) : unity(u) {}
     String getTextFromValue(double value) override 
     {
-        return (value == 0 ? "0 semitone" : (value < 0 ? "-" : "+") + String(std::abs(value)) + " semitones");
+        return (value == 0 ? "0 " + unity : (value < 0 ? "-" : "+") + String(std::abs(value)) + " " + unity + "s");
     }
+    void setUnity(const String& u) { unity = u; }
+    
+    String unity {};
 };

@@ -5,16 +5,20 @@
 #include "../PluginProcessor.h"
 
 constexpr auto NB_NOTES = 12;
+constexpr auto NB_INTERVALS = 12;
+
+using Track = Grid::TrackInfo;
+using Fr = Grid::Fr;
 
 /**
- * This will contain all the interval switches for a given note.
+ * This panel holds the 12 interval buttons for a note + a semitone transposition slider.
  */
-struct IntervalsChoice : public Component
+struct IntervalsPanel : public Component
 {
-    IntervalsChoice(int index, MidiBassPedalChordsAudioProcessor& processor) : noteIndex(index)
+    IntervalsPanel(MidiBassPedalChordsAudioProcessor& processor, int index) : noteIndex(index)
     {
-        buttons.reserve(NB_NOTES);
-        for (auto i = 0; i < NB_NOTES; i++)
+        intervalsChoices.reserve(NB_INTERVALS);
+        for (auto i = 0; i < NB_INTERVALS; i++)
         {
             auto button = new AttachedComponent<TextButton, ButtonParameterAttachment>(
                 *processor.midiProcessor.noteParams.notes[noteIndex]->intervals[i]->interval, *this,
@@ -23,51 +27,61 @@ struct IntervalsChoice : public Component
                     button.setClickingTogglesState(true);
                 }
             );
-            buttons.emplace_back(button);
+            intervalsChoices.emplace_back(button);
         }
+
+        transpose = std::make_unique< AttachedComponent<NumericSlider, SliderParameterAttachment> >(
+            *processor.midiProcessor.noteParams.notes[noteIndex]->transpose, *this,
+            [](NumericSlider& slider) {
+                slider.setUnity("semitone");
+                slider.setNormalisableRange({-12, 12, 1});
+                slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+                slider.setTooltip("Choose the number of semitones you want to transpose the note.");
+            }
+        );
+        resized();
     }
 
     void paint(Graphics&) override {}
+
     void resized() override
     {
-        auto width = getLocalBounds().getWidth() * 0.8;
-        auto x = width * 0.1;
-        auto height = getLocalBounds().getHeight() / float(NB_NOTES);
-        for (size_t i = 0; i < buttons.size(); i++)
-            buttons[i].get()->component.setBounds(x, height * i, width, height);
+        Grid grid;
+
+        grid.templateColumns    = { Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)) };
+        grid.templateRows       = { Track(Fr(1)), Track(Fr(1)) };
+        grid.alignItems         = Grid::AlignItems::center;
+        grid.alignContent       = Grid::AlignContent::center;
+        grid.setGap(Grid::Px(10));
+
+        for (auto i: { 1, 3, 4, 5, 6, 8, 10, 11, 0, 2, -1, -1, -1, 7, 9, -1}) {
+            if (i > -1) {
+                grid.items.add(intervalsChoices[i].get()->component);
+            } else {
+                grid.items.add(nullptr);
+            }
+        }
+
+        auto totalBounds = getLocalBounds();
+        grid.performLayout (getLocalBounds().reduced(10, 40));
+
+        // Center the transpose slider manually;
+        auto width = totalBounds.getWidth();
+        auto height = totalBounds.getHeight();
+        auto slider_x = width * 5.0 / 16.0;
+        auto slider_y = height / 2.0;
+        auto slider_width = width / 4.0;
+        auto slider_height = height / 2.0;
+
+        // Resize the textbox.
+        auto& slider = transpose.get()->component;
+        slider.setBounds(Rectangle<int>(slider_x, slider_y, slider_width, slider_height).reduced(0, 20));
+        slider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 20);
     }
 
     int noteIndex;
-    std::vector<std::unique_ptr<AttachedComponent<TextButton, ButtonParameterAttachment>>> buttons;
-};
-
-struct IntervalsPanel : public Component
-{
-    IntervalsPanel(MidiBassPedalChordsAudioProcessor& processor)
-    {
-        intervalsChoices.reserve(NB_NOTES);
-        for (auto i = 0; i < NB_NOTES; i++)
-        {
-            auto intervalsChoice = new IntervalsChoice(i, processor);
-            intervalsChoices.emplace_back(intervalsChoice);
-            addAndMakeVisible(intervalsChoice);
-        }
-    }
-
-    void paint(Graphics& g) override 
-    {
-        g.fillAll(juce::Colours::white);
-    }
-
-    void resized() override
-    {
-        auto width = getLocalBounds().getWidth() / float(NB_NOTES);
-        auto height = getLocalBounds().getHeight();
-        for (auto& intervalsChoice: intervalsChoices)
-            intervalsChoice->setBounds(width * intervalsChoice->noteIndex, 0, width, height);
-    }
-
-    std::vector<std::unique_ptr<IntervalsChoice>> intervalsChoices;
+    std::unique_ptr<AttachedComponent<NumericSlider, SliderParameterAttachment>> transpose;
+    std::vector<std::unique_ptr<AttachedComponent<TextButton, ButtonParameterAttachment>>> intervalsChoices;
 };
 
 /**
@@ -78,57 +92,39 @@ struct IntervalsPanel : public Component
  */
 struct NotesHeader : public Component
 {
-    NotesHeader(int index, MidiBassPedalChordsAudioProcessor& processor) 
+    NotesHeader(int index) 
         : noteIndex(index), noteLabel("noteLabel", Notes::labels[index])
     {
+        addMouseListener(this, true);
         noteLabel.setColour(Label::ColourIds::textColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
         noteLabel.setJustificationType(Justification::centredTop);
         addAndMakeVisible(noteLabel);
-
-        chordChoice.addItemList({"maj", "min", "maj7"}, 1);
-        addAndMakeVisible(chordChoice);
-
-        transpose = std::make_unique< AttachedComponent<SemitoneSlider, SliderParameterAttachment> >(
-            *processor.midiProcessor.noteParams.notes[noteIndex]->transpose, *this,
-            [this](SemitoneSlider& slider) {
-                slider.setNormalisableRange({-12, 12, 1});
-                slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-                slider.setColour(Slider::textBoxTextColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
-                slider.setColour(Slider::textBoxOutlineColourId, Notes::whiteNotes[noteIndex] ? Colours::white : Colours::black);
-                slider.setTooltip("Choose the number of semitones you want to transpose the note.");
-            }
-        );
     }
 
     void paint(Graphics& g) override
     {
         g.fillAll(Notes::getColour(noteIndex));
+        if (isEdited)
+        {
+            g.setColour (juce::Colours::red);
+            auto size = 10;
+            g.fillEllipse (getLocalBounds().getWidth() / 2 - size / 2.0, getLocalBounds().getHeight() - size * 2.0, size, size);
+        }
     }
 
-    void resized() override
-    {
-        Grid grid;
-        using Track = Grid::TrackInfo;
-        using Fr = Grid::Fr;
- 
-        grid.templateRows       = { Track(Fr(1)), Track(Fr(3)), Track(Fr(1)) };
-        grid.templateColumns    = { Track(Fr(1)) };
+    void resized() override {
+        noteLabel.setBounds(0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight());
+    }
 
-        grid.items = { GridItem(noteLabel), GridItem(transpose.get()->component), GridItem(chordChoice) };
-
-        grid.performLayout (getLocalBounds());
-
-        // Resize the textbox.
-        auto& slider = transpose.get()->component;
-        auto slider_width = slider.getLocalBounds().getWidth();
-        auto slider_height = slider.getLocalBounds().getHeight();
-        slider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, slider_width, slider_height / 3.0);
+    void mouseDown(const MouseEvent&) override {
+        if (changeNote != nullptr)
+            changeNote(noteIndex);
     }
 
     int noteIndex;
+    bool isEdited = false;
     Label noteLabel;
-    std::unique_ptr<AttachedComponent<SemitoneSlider, SliderParameterAttachment>> transpose;
-    ComboBox chordChoice;
+    std::function<void(int index)> changeNote = nullptr;
 };
 
 /**
@@ -136,13 +132,12 @@ struct NotesHeader : public Component
  */ 
 struct PanelHeader : public Component
 {
-    PanelHeader(MidiBassPedalChordsAudioProcessor& processor)
+    PanelHeader()
     {
-        notesHeaders.reserve(NB_NOTES);
         for (int i = 0; i < NB_NOTES; i++)
         {
-            auto noteHeader = new NotesHeader(i, processor);
-            notesHeaders.emplace_back(noteHeader);
+            auto noteHeader = new NotesHeader(i);
+            notesHeaders.add(noteHeader);
             addAndMakeVisible(noteHeader);
         }
     }
@@ -158,7 +153,7 @@ struct PanelHeader : public Component
         
     }
 
-    std::vector<std::unique_ptr<NotesHeader>> notesHeaders;
+    OwnedArray<NotesHeader> notesHeaders;
 };
 
 /**
@@ -166,10 +161,35 @@ struct PanelHeader : public Component
  */
 struct NotesPanel : public Component
 {
-    NotesPanel(MidiBassPedalChordsAudioProcessor& processor) : panelHeader(processor), intervalsPanel(processor)
+    NotesPanel(MidiBassPedalChordsAudioProcessor& processor, const int index)
     {
         addAndMakeVisible(panelHeader);
-        addAndMakeVisible(intervalsPanel);
+        initIntervalsPanel(processor, index);
+        updateNoteEdited(index);
+        for (auto& noteHeader: panelHeader.notesHeaders) 
+        {
+            noteHeader->changeNote = [this, &processor](int index) 
+            { 
+                initIntervalsPanel(processor, index);
+                updateNoteEdited(index);
+            };
+        }
+    }
+
+    void initIntervalsPanel(MidiBassPedalChordsAudioProcessor& processor, int index)
+    {
+        intervalsPanel.reset(new IntervalsPanel(processor, index));
+        addAndMakeVisible(intervalsPanel.get());
+        resized();
+    }
+
+    void updateNoteEdited(int index)
+    {
+        for (auto& noteHeader: panelHeader.notesHeaders) 
+        {
+            noteHeader->isEdited = (noteHeader->noteIndex == index);
+        }
+        repaint();
     }
 
     void paint(Graphics&) override { }
@@ -177,17 +197,15 @@ struct NotesPanel : public Component
     void resized() override
     {
         Grid grid;
-        using Track = Grid::TrackInfo;
-        using Fr = Grid::Fr;
  
-        grid.templateColumns    = { Track (Fr (1)) };
-        grid.templateRows       = { Track (Fr (2)), Track (Fr (8)) };
+        grid.templateColumns    = { Track(Fr(1)) };
+        grid.templateRows       = { Track(Fr(1)), Track(Fr(2)) };
 
-        grid.items = { GridItem(panelHeader), GridItem(intervalsPanel) };
+        grid.items = { GridItem(panelHeader).withMargin(GridItem::Margin(15)), GridItem(intervalsPanel.get()) };
 
         grid.performLayout (getLocalBounds());
     }
 
     PanelHeader panelHeader;
-    IntervalsPanel intervalsPanel;
+    std::unique_ptr<IntervalsPanel> intervalsPanel = nullptr;
 };
