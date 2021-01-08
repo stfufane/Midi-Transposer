@@ -7,15 +7,15 @@
  */
 struct UISettings
 {
-    UISettings() { }
+    UISettings() = default;
     // Get it from the plugin state
     UISettings(XmlElement* xml)
     {
         if (xml != nullptr)
         {
-            exists = true;
             width = xml->getIntAttribute("width");
             height = xml->getIntAttribute("height");
+            lastNoteIndex = xml->getIntAttribute("lastNoteIndex");
         }
     }
 
@@ -25,10 +25,11 @@ struct UISettings
         XmlElement* xml = new XmlElement("UISettings");
         xml->setAttribute("width", width);
         xml->setAttribute("height", height);
+        xml->setAttribute("lastNoteIndex", lastNoteIndex);
         return xml;
     }
 
-    bool exists = false;
     int width = 0;
     int height = 0;
+    int lastNoteIndex = 0;
 };

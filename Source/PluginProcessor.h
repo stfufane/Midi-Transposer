@@ -47,7 +47,7 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     //==============================================================================    
-    void setUISettings(int w, int h);
+    void setEditorSize(int w, int h);
     UISettings uiSettings;
 
     MidiProcessor midiProcessor;

@@ -12,14 +12,14 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     : AudioProcessorEditor(&p), 
       processor(p), 
       midiPanel(p.midiProcessor.midiParams), 
-      notesPanel(p.midiProcessor.noteParams, 0)
+      notesPanel(p.midiProcessor.noteParams, processor.uiSettings)
 {
     addAndMakeVisible(midiPanel);
     addAndMakeVisible(notesPanel);
 
     setResizable(true, true);
     // Restore the last size if it exists.
-    if (processor.uiSettings.exists) {
+    if (processor.uiSettings.width != 0) {
         setSize(processor.uiSettings.width, processor.uiSettings.height);
     } else {
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -47,5 +47,5 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
 
     grid.performLayout (getLocalBounds());
 
-    processor.setUISettings(getWidth(), getHeight());
+    processor.setEditorSize(getWidth(), getHeight());
 }

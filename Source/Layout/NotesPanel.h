@@ -38,7 +38,7 @@ struct IntervalsPanel : public Component
                 slider.setTooltip("Choose the number of semitones you want to transpose the note.");
             }
         );
-        resized();
+        //resized();
     }
 
     void paint(Graphics&) override {}
@@ -159,19 +159,21 @@ struct PanelHeader : public Component
  */
 struct NotesPanel : public Component
 {
-    NotesPanel(NoteParams& noteParams, const int index)
+    NotesPanel(NoteParams& noteParams, UISettings& uiSettings)
     {
+        auto index = uiSettings.lastNoteIndex;
         auto noteParam = noteParams.notes[index].get();
         addAndMakeVisible(panelHeader);
         initIntervalsPanel(*noteParam);
         updateNoteEdited(index);
         for (auto& noteHeader: panelHeader.notesHeaders) 
         {
-            noteHeader->changeNote = [this, &noteParams](int index) 
+            noteHeader->changeNote = [this, &noteParams, &uiSettings] (int index) 
             { 
                 auto noteParam = noteParams.notes[index].get();
                 initIntervalsPanel(*noteParam);
                 updateNoteEdited(index);
+                uiSettings.lastNoteIndex = index;
             };
         }
     }

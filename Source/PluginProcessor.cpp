@@ -129,11 +129,10 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
     }
 }
 
-void MidiBassPedalChordsAudioProcessor::setUISettings(int w, int h) 
+void MidiBassPedalChordsAudioProcessor::setEditorSize(int w, int h) 
 {
     uiSettings.width = w;
     uiSettings.height = h;
-    uiSettings.exists = true;
 }
 
 //==============================================================================
