@@ -9,7 +9,10 @@ using Fr = Grid::Fr;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
-    : AudioProcessorEditor(&p), processor(p), midiPanel(p), notesPanel(p, 0)
+    : AudioProcessorEditor(&p), 
+      processor(p), 
+      midiPanel(p.midiProcessor.midiParams), 
+      notesPanel(p.midiProcessor.noteParams, 0)
 {
     addAndMakeVisible(midiPanel);
     addAndMakeVisible(notesPanel);

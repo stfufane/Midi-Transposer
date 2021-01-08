@@ -9,10 +9,10 @@ using Fr = Grid::Fr;
 
 struct MidiPanel : public Component
 {
-    MidiPanel(MidiBassPedalChordsAudioProcessor& processor)
+    MidiPanel(MidiParams& midiParams)
     {
         inputChannel = std::make_unique< AttachedComponent<Slider, SliderParameterAttachment> >(
-            *processor.midiProcessor.midiParams.inputChannel, *this,
+            *midiParams.inputChannel, *this,
             [](Slider& slider) {
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
                 slider.setNormalisableRange({1, 16, 1});
@@ -21,7 +21,7 @@ struct MidiPanel : public Component
         );
 
         outputChannel = std::make_unique< AttachedComponent<Slider, SliderParameterAttachment> >(
-            *processor.midiProcessor.midiParams.outputChannel, *this,
+            *midiParams.outputChannel, *this,
             [](Slider& slider) {
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
                 slider.setNormalisableRange({1, 16, 1});
@@ -30,7 +30,7 @@ struct MidiPanel : public Component
         );
 
         octaveTranspose = std::make_unique< AttachedComponent<NumericSlider, SliderParameterAttachment> >(
-            *processor.midiProcessor.midiParams.octaveTranspose, *this,
+            *midiParams.octaveTranspose, *this,
             [](NumericSlider& slider) {
                 slider.setUnity("octave");
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);

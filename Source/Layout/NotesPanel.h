@@ -15,23 +15,22 @@ using Fr = Grid::Fr;
  */
 struct IntervalsPanel : public Component
 {
-    IntervalsPanel(MidiBassPedalChordsAudioProcessor& processor, int index) : noteIndex(index)
+    IntervalsPanel(NoteParam& noteParam)
     {
         intervalsChoices.reserve(NB_INTERVALS);
         for (auto i = 0; i < NB_INTERVALS; i++)
         {
-            auto button = new AttachedComponent<TextButton, ButtonParameterAttachment>(
-                *processor.midiProcessor.noteParams.notes[noteIndex]->intervals[i]->interval, *this,
+            intervalsChoices.emplace_back(new AttachedComponent<TextButton, ButtonParameterAttachment>(
+                *noteParam.intervals[i]->interval, *this,
                 [&i](TextButton& button) {
                     button.setButtonText(Notes::intervals[i]);
                     button.setClickingTogglesState(true);
                 }
-            );
-            intervalsChoices.emplace_back(button);
+            ));
         }
 
         transpose = std::make_unique< AttachedComponent<NumericSlider, SliderParameterAttachment> >(
-            *processor.midiProcessor.noteParams.notes[noteIndex]->transpose, *this,
+            *noteParam.transpose, *this,
             [](NumericSlider& slider) {
                 slider.setUnity("semitone");
                 slider.setNormalisableRange({-12, 12, 1});
@@ -79,7 +78,6 @@ struct IntervalsPanel : public Component
         slider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 20);
     }
 
-    int noteIndex;
     std::unique_ptr<AttachedComponent<NumericSlider, SliderParameterAttachment>> transpose;
     std::vector<std::unique_ptr<AttachedComponent<TextButton, ButtonParameterAttachment>>> intervalsChoices;
 };
@@ -108,7 +106,7 @@ struct NotesHeader : public Component
         {
             g.setColour (juce::Colours::red);
             auto size = 10;
-            g.fillEllipse (getLocalBounds().getWidth() / 2 - size / 2.0, getLocalBounds().getHeight() - size * 2.0, size, size);
+            g.fillEllipse (getLocalBounds().getWidth() / 2.0 - size / 2.0, getLocalBounds().getHeight() - size * 2.0, size, size);
         }
     }
 
@@ -161,24 +159,26 @@ struct PanelHeader : public Component
  */
 struct NotesPanel : public Component
 {
-    NotesPanel(MidiBassPedalChordsAudioProcessor& processor, const int index)
+    NotesPanel(NoteParams& noteParams, const int index)
     {
+        auto noteParam = noteParams.notes[index].get();
         addAndMakeVisible(panelHeader);
-        initIntervalsPanel(processor, index);
+        initIntervalsPanel(*noteParam);
         updateNoteEdited(index);
         for (auto& noteHeader: panelHeader.notesHeaders) 
         {
-            noteHeader->changeNote = [this, &processor](int index) 
+            noteHeader->changeNote = [this, &noteParams](int index) 
             { 
-                initIntervalsPanel(processor, index);
+                auto noteParam = noteParams.notes[index].get();
+                initIntervalsPanel(*noteParam);
                 updateNoteEdited(index);
             };
         }
     }
 
-    void initIntervalsPanel(MidiBassPedalChordsAudioProcessor& processor, int index)
+    void initIntervalsPanel(NoteParam& noteParam)
     {
-        intervalsPanel.reset(new IntervalsPanel(processor, index));
+        intervalsPanel.reset(new IntervalsPanel(noteParam));
         addAndMakeVisible(intervalsPanel.get());
         resized();
     }
