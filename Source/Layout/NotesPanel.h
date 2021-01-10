@@ -38,7 +38,6 @@ struct IntervalsPanel : public Component
                 slider.setTooltip("Choose the number of semitones you want to transpose the note.");
             }
         );
-        //resized();
     }
 
     void paint(Graphics&) override {}
@@ -94,14 +93,14 @@ struct NotesHeader : public Component
         : noteIndex(index), noteLabel("noteLabel", Notes::labels[index])
     {
         addMouseListener(this, true);
-        noteLabel.setColour(Label::ColourIds::textColourId, Notes::whiteNotes[noteIndex] ? Colours::black : Colours::white);
+        noteLabel.setColour(Label::ColourIds::textColourId, whiteNotes[noteIndex] ? Colours::black : Colours::white);
         noteLabel.setJustificationType(Justification::centredTop);
         addAndMakeVisible(noteLabel);
     }
 
     void paint(Graphics& g) override
     {
-        g.fillAll(Notes::getColour(noteIndex));
+        g.fillAll(whiteNotes[noteIndex] ? Colours::white : Colours::black);
         if (isEdited)
         {
             g.setColour (juce::Colours::red);
@@ -123,6 +122,7 @@ struct NotesHeader : public Component
     bool isEdited = false;
     Label noteLabel;
     std::function<void(int index)> changeNote = nullptr;
+    std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
 };
 
 /**
@@ -148,7 +148,6 @@ struct PanelHeader : public Component
         auto height = getLocalBounds().getHeight();
         for (auto& noteHeader: notesHeaders)
             noteHeader->setBounds(width * noteHeader->noteIndex, 0, width, height);
-        
     }
 
     OwnedArray<NotesHeader> notesHeaders;

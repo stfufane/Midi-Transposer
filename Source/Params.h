@@ -17,8 +17,6 @@ namespace Notes
     static StringArray names { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
     static StringArray labels { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
     static StringArray intervals { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
-    static std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
-    static Colour getColour(int index) { return whiteNotes[index] ? Colours::white : Colours::black; };
 }
 
 struct ParamHelper

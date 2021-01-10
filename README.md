@@ -14,7 +14,12 @@ It was built using version 6.0.5 of JUCE on Windows 10 with Visual Studio 2019 (
 
 You're welcome to clone it and use it as you want. And if you see stupid code, don't hesitate to tell me, I'll be happy to improve and fix it :) 
 
-## CMake
+## Build
+
+### Projucer ###
+The project is compatible with the projucer so you can just open it and export to your favorite compatible IDE.
+
+### CMake ###
 
 To build the project using CMake, use the command line
 
@@ -33,17 +38,28 @@ For a great guide about configuring a CMake project with Visual Studio Code, I a
 
 ## Features
 
-
-![screenshot](./BassPedalVST.png "Screenshot")
-
-
-* Input Midi Channel : Defines from which channel the incoming MIDI events will be processed
-* Output Midi Channel : Defines to which channel the processed MIDI events will be routed
-* Octave Transpose : If a value other than 0 is selected, the root note will be played at its original height and the selected chord will be transposed to the chosen octave
-* Bypass other channels : If this is checked, all events from other channels than the input MIDI channel selected will be filtered. Otherwise they'll pass without manipulation.
+The interface is a work in progress. I made the layout and now am working on the look and feel part to make a better design. The features are fully functional.
 
 
-Then for each note, you can select the associated root note (meaning every note could become a G# for example) and the chord that will be played.
+![screenshot](./plugin_interface.png "Screenshot")
+
+### Left part ###
+
+* **Input Midi Channel** : Defines from which channel the incoming MIDI events will be processed
+* **Output Midi Channel** : Defines to which channel the processed MIDI events will be routed
+* **Octave Transpose** : If a value other than 0 is selected, the root note will be played at its original height and the selected chord will be transposed to the chosen octave
+
+### Right part ###
+
+You can edit each note separately. When you click on a key, the corresponding settings are displayed in the bottom panel. There you can select which intervals will be played. You can also decide to transpose the whole chord by a number of semitones.
 
 
 And that's it, it's pretty straight forward.
+
+
+## Next
+
+Some ideas I have in mind to improve it :
+ * Design (obviously)
+ * Arpeggiator
+ * Separate output MIDI channels for selected intervals
