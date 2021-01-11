@@ -19,21 +19,26 @@ private:
     MidiBuffer processedMidi;
 
     // Local variables that get their values from parameters
-    std::atomic<int>  inputChannel{ 1 };
-    std::atomic<int>  outputChannel{ 1 };
+    std::atomic<int>  inputChannel{ 0 };
+    std::atomic<int>  outputChannel{ 0 };
     std::atomic<int>  octaveTranspose{ 0 };
     std::vector< std::vector<int> > mappingNotes;
     
     int lastNoteOn{ -1 };
-    int currentNoteOutputChannel{ 1 };
-    std::vector<int> currentInputNotesOn;
-    std::vector<int> currentOutputNotesOn;
+
+    struct NoteState {
+        int note;
+        int channel;
+        uint8 velocity;
+    };
+    std::vector<NoteState> currentInputNotesOn;
+    std::vector<NoteState> currentOutputNotesOn;
     
     // -----------------------------------
     // Process the input midi events
-    void mapNote(const int note, const uint8 velocity, const bool noteOn, const int samplePosition);
-    void playMappedNotes(const int note, const uint8 velocity, const int samplePosition);
-    void playNote(const int note, const uint8 velocity, const int samplePosition);
+    void mapNote(const MidiMessage& m, const int samplePosition);
+    void playMappedNotes(const NoteState& noteState, const int samplePosition);
+    void playNote(const NoteState& noteState, const int samplePosition);
     void stopCurrentNotes(const uint8 velocity, const int samplePosition);
     void removeHeldNote(const int note);
     // -----------------------------------

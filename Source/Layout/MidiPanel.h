@@ -15,7 +15,8 @@ struct MidiPanel : public Component
             *midiParams.inputChannel, *this,
             [](Slider& slider) {
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-                slider.setNormalisableRange({1, 16, 1});
+                slider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 100, 20);
+                slider.setNormalisableRange({0, 16, 1});
                 slider.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
             }
         );
@@ -24,7 +25,8 @@ struct MidiPanel : public Component
             *midiParams.outputChannel, *this,
             [](Slider& slider) {
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-                slider.setNormalisableRange({1, 16, 1});
+                slider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 100, 20);
+                slider.setNormalisableRange({0, 16, 1});
                 slider.setTooltip("The transposed events will be routed to this channel.");
             }
         );
@@ -34,6 +36,7 @@ struct MidiPanel : public Component
             [](NumericSlider& slider) {
                 slider.setUnity("octave");
                 slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+                slider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 100, 20);
                 slider.setNormalisableRange({-1, 4, 1});
                 slider.setTooltip("This will play the root note at its original position and transpose the chord.");
             }
@@ -55,10 +58,6 @@ struct MidiPanel : public Component
         };
 
         grid.performLayout (getLocalBounds());
-
-        inputChannel->component.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 20);
-        outputChannel->component.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 20);
-        octaveTranspose->component.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 20);
     }
 
     std::unique_ptr< AttachedComponent<Slider, SliderParameterAttachment> > inputChannel;
