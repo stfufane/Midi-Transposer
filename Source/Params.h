@@ -9,6 +9,7 @@ namespace ParamIDs
     static String octaveTranspose{ "octave_transpose" };
     static String noteTranspose{ "_noteTranspose" };
     static String noteInterval{ "_interval_" };
+    static String mapNote{ "_mapNote"};
 }
 
 namespace Notes
@@ -84,6 +85,7 @@ struct NoteParam : AudioProcessorParameter::Listener
     String noteName;
     String noteLabel;
 
+    AudioParameterBool* mapNote = nullptr;
     AudioParameterInt* transpose = nullptr;
     std::vector<std::unique_ptr<IntervalParam>> intervals;
 

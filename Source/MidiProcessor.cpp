@@ -158,14 +158,25 @@ void MidiProcessor::updateMidiParams()
 void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
 {
     std::vector<int> new_mapping;
-    auto transpose = noteParam.transpose->get();
-    // Add the transposed value first, it's the root note.
-    new_mapping.push_back(transpose);
+    // There's a toggle button on each note saying if it should be mapped or not.
+    // If not we just use the default value, which is the base note without transposition.
+    auto mapNote = noteParam.mapNote->get();
+    if (mapNote)
+    {
+        auto transpose = noteParam.transpose->get();
+        // Add the transposed value first, it's the root note.
+        new_mapping.push_back(transpose);
 
-    // Then add the selected intervals.
-    for (size_t i = 0; i < noteParam.intervals.size(); i++)
-        if (noteParam.intervals[i]->interval->get())
-            new_mapping.push_back(transpose + (i + 1));
+        // Then add the selected intervals.
+        for (size_t i = 0; i < noteParam.intervals.size(); i++)
+            if (noteParam.intervals[i]->interval->get())
+                new_mapping.push_back(transpose + (i + 1));
+    }
+    else
+    {
+        new_mapping.push_back(0);
+    }
+    
     
     // Finally, replace the old mapping.
     mappingNotes[noteParam.noteIndex].swap(new_mapping);
