@@ -111,7 +111,7 @@ void MidiProcessor::playMappedNotes(const NoteState& noteState, const int sample
 void MidiProcessor::playNote(const NoteState& noteState, const int samplePosition)
 {
     if (noteState.note >= 0 && noteState.note < 128) {
-        processedMidi.addEvent(MidiMessage::noteOn(outputChannel, noteState.note, noteState.velocity), samplePosition);
+        processedMidi.addEvent(MidiMessage::noteOn(noteState.channel, noteState.note, noteState.velocity), samplePosition);
         currentOutputNotesOn.push_back(noteState);
     }
 }
@@ -176,7 +176,6 @@ void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
     {
         new_mapping.push_back(0);
     }
-    
     
     // Finally, replace the old mapping.
     mappingNotes[noteParam.noteIndex].swap(new_mapping);

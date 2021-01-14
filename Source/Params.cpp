@@ -71,6 +71,7 @@ void NoteParam::addParams(AudioProcessor& p)
         interval->interval->addListener(this);
     }
     
+    mapNote->addListener(this);
     transpose->addListener(this);
 }
 
