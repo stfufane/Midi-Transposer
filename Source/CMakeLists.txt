@@ -29,11 +29,11 @@ juce_add_plugin("${BaseTargetName}"
 	FORMATS VST3
 	PRODUCT_NAME "MidiBassPedalChords")
 
-FILE(GLOB CppSources *.cpp)
+FILE(GLOB CppSources *.cpp Layout/*.cpp)
 target_sources(${BaseTargetName} PRIVATE
         ${CppSources})
 		
-# add_images_from_directory(${BaseTargetName} ../Resources)
+add_images_from_directory(${BaseTargetName} ../Images)
 
 juce_generate_juce_header(${BaseTargetName})
 

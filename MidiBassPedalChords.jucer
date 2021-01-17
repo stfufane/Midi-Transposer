@@ -5,6 +5,15 @@
               pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn"
               version="0.2" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="j2Knjj" name="Midi Bass Pedal Chords">
+    <GROUP id="{9445A112-82A0-E8F1-2A1D-68187DF6DFB2}" name="Images">
+      <FILE id="OXSEOr" name="buttons.png" compile="0" resource="1" file="Images/buttons.png"/>
+      <FILE id="cdHoZS" name="key_black_sprites.png" compile="0" resource="1"
+            file="Images/key_black_sprites.png"/>
+      <FILE id="eXXS77" name="key_white_sprites.png" compile="0" resource="1"
+            file="Images/key_white_sprites.png"/>
+      <FILE id="dN5fS2" name="power_button.png" compile="0" resource="1"
+            file="Images/power_button.png"/>
+    </GROUP>
     <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Layout">
       <FILE id="pnGT62" name="Helpers.h" compile="0" resource="0" file="Source/Layout/Helpers.h"/>
       <FILE id="cuPRKx" name="MidiPanel.h" compile="0" resource="0" file="Source/Layout/MidiPanel.h"/>
