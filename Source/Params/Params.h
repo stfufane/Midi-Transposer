@@ -51,6 +51,8 @@ struct MidiParams : juce::AudioProcessorParameter::Listener
     juce::AudioParameterInt* inputChannel = nullptr;
     juce::AudioParameterInt* outputChannel = nullptr;
     juce::AudioParameterInt* octaveTranspose = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParams)
 };
 
 // Forward declarations for readability
@@ -66,6 +68,8 @@ struct NoteParams
     void addParams(juce::AudioProcessor& p);
 
     std::vector<std::unique_ptr<NoteParam>> notes;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteParams)
 };
 
 /*
@@ -90,6 +94,8 @@ struct NoteParam : juce::AudioProcessorParameter::Listener
     std::vector<std::unique_ptr<IntervalParam>> intervals;
 
     std::function<void()> update = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteParam)
 };
 
 /**
@@ -105,4 +111,6 @@ struct IntervalParam
     int degree;
     juce::String noteName;
     juce::String noteLabel;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IntervalParam)
 };

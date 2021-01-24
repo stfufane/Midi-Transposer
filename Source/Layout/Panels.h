@@ -25,6 +25,8 @@ struct HeaderPanel : public juce::Component
     std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > inputChannel;
     std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > outputChannel;
     std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > octaveTranspose;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HeaderPanel)
 };
 
 /**
@@ -39,6 +41,8 @@ struct IntervalsPanel : public juce::Component
     juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
     std::unique_ptr<AttachedComponent<RotarySlider, juce::SliderParameterAttachment>> transpose;
     std::vector<std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>>> intervalsChoices;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IntervalsPanel)
 };
 
 /**
@@ -58,6 +62,8 @@ struct NoteKey : public juce::Component
     bool isOver = false;
     juce::Image* keyImage = nullptr;
     std::function<void(int index)> changeNote = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteKey)
 };
 
 /**
@@ -71,6 +77,8 @@ struct NoteMappingToggle : public juce::Component
     int noteIndex;
     juce::Image* powerImage = nullptr;
     std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteMappingToggle)
 };
 
 /**
@@ -88,4 +96,6 @@ struct KeysPanel : public juce::Component
     juce::Image whiteKey { juce::ImageCache::getFromMemory(BinaryData::key_white_sprites_png, BinaryData::key_white_sprites_pngSize) };
     juce::Image blackKey { juce::ImageCache::getFromMemory(BinaryData::key_black_sprites_png, BinaryData::key_black_sprites_pngSize) };
     juce::Image powerImage { juce::ImageCache::getFromMemory(BinaryData::power_button_png, BinaryData::power_button_pngSize) };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KeysPanel)
 };

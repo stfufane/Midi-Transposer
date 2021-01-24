@@ -18,6 +18,8 @@ public:
     CompType component;
 private:
     std::unique_ptr<CompAttachment> attachment;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachedComponent)
 };
 
 /**
@@ -27,6 +29,8 @@ struct RotarySlider : public juce::Slider
 {
     RotarySlider() 
         : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag , juce::Slider::TextEntryBoxPosition::NoTextBox) { };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RotarySlider)
 };
 
 /**
@@ -36,6 +40,7 @@ struct RotarySlider : public juce::Slider
 class IndexedToggleButton : public juce::ToggleButton
 {
 public:
+    IndexedToggleButton() : juce::ToggleButton() { };
     void paintButton (juce::Graphics& g, bool, bool) override
     {
         // Calculations needed to draw the button centered in its container,
@@ -77,4 +82,6 @@ private:
     float ratio { 1.0f };
     bool centered { true };
     juce::Image* buttonsImage = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IndexedToggleButton)
 };
