@@ -4,7 +4,7 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties())
+     : juce::AudioProcessor (BusesProperties())
 #else
     : 
 #endif
@@ -16,7 +16,7 @@ MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
 MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor() {}
 
 //==============================================================================
-const String MidiBassPedalChordsAudioProcessor::getName() const
+const juce::String MidiBassPedalChordsAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
@@ -28,22 +28,22 @@ double MidiBassPedalChordsAudioProcessor::getTailLengthSeconds() const { return 
 int MidiBassPedalChordsAudioProcessor::getNumPrograms() { return 1; }
 int MidiBassPedalChordsAudioProcessor::getCurrentProgram() { return 0; }
 void MidiBassPedalChordsAudioProcessor::setCurrentProgram (int) { }
-const String MidiBassPedalChordsAudioProcessor::getProgramName (int) { return {}; }
-void MidiBassPedalChordsAudioProcessor::changeProgramName (int, const String&) { }
+const juce::String MidiBassPedalChordsAudioProcessor::getProgramName (int) { return {}; }
+void MidiBassPedalChordsAudioProcessor::changeProgramName (int, const juce::String&) { }
 
 //==============================================================================
 void MidiBassPedalChordsAudioProcessor::prepareToPlay (double, int) {}
 void MidiBassPedalChordsAudioProcessor::releaseResources() {}
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const juce::AudioProcessor::BusesLayout& layouts) const
 {
     ignoreUnused (layouts);
     return true;
 }
 #endif
 
-void MidiBassPedalChordsAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void MidiBassPedalChordsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     buffer.clear();
     // The real processing is made in the MidiProcessor class.
@@ -53,17 +53,17 @@ void MidiBassPedalChordsAudioProcessor::processBlock (AudioBuffer<float>& buffer
 //==============================================================================
 bool MidiBassPedalChordsAudioProcessor::hasEditor() const { return true; }
 
-AudioProcessorEditor* MidiBassPedalChordsAudioProcessor::createEditor()
+juce::AudioProcessorEditor* MidiBassPedalChordsAudioProcessor::createEditor()
 {
     return new MidiBassPedalChordsAudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessor::getStateInformation (MemoryBlock& destData)
+void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    XmlElement xml("PluginState");
+    juce::XmlElement xml("PluginState");
 
-    XmlElement* params = new XmlElement("Params");
+    juce::XmlElement* params = new juce::XmlElement("Params");
     for (auto& param : getParameters())
         params->setAttribute(ParamHelper::getParamID(param), param->getValue());
 
@@ -107,7 +107,7 @@ void MidiBassPedalChordsAudioProcessor::setEditorSize(int w, int h)
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new MidiBassPedalChordsAudioProcessor();
 }

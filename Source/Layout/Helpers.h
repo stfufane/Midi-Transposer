@@ -8,7 +8,7 @@ template <typename CompType, typename CompAttachment>
 class AttachedComponent
 {
 public:
-    AttachedComponent<CompType, CompAttachment>(RangedAudioParameter& param, Component& parent, std::function<void(CompType&)> init = nullptr)
+    AttachedComponent<CompType, CompAttachment>(juce::RangedAudioParameter& param, juce::Component& parent, std::function<void(CompType&)> init = nullptr)
     {
         if (init != nullptr) init(component);
         parent.addAndMakeVisible(component);
@@ -23,20 +23,20 @@ private:
 /**
  *  Utility class to instanciate sliders with specific style and positions directly.
  */
-struct RotarySlider : public Slider
+struct RotarySlider : public juce::Slider
 {
     RotarySlider() 
-        : Slider(Slider::SliderStyle::RotaryHorizontalVerticalDrag , Slider::TextEntryBoxPosition::NoTextBox) { };
+        : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag , juce::Slider::TextEntryBoxPosition::NoTextBox) { };
 };
 
 /**
  * This is a custom toggle button that seeks a specific part of a sprite image to display
  * depending on the interval index. It centers it in the local bounds of the component.
  */
-class IndexedToggleButton : public ToggleButton
+class IndexedToggleButton : public juce::ToggleButton
 {
 public:
-    void paintButton (Graphics& g, bool, bool) override
+    void paintButton (juce::Graphics& g, bool, bool) override
     {
         // Calculations needed to draw the button centered in its container,
         // maximizing its bigger side.
@@ -61,7 +61,7 @@ public:
             buttonWidth * index, buttonHeight * y_index, buttonWidth, buttonHeight);
     }
     
-    void setImage(Image* image, int i, float nb_tiles, bool center = true)
+    void setImage(juce::Image* image, int i, float nb_tiles, bool center = true)
     {
         index = i;
         buttonsImage = image;
@@ -76,5 +76,5 @@ private:
     float buttonHeight { 0.0f };
     float ratio { 1.0f };
     bool centered { true };
-    Image* buttonsImage = nullptr;
+    juce::Image* buttonsImage = nullptr;
 };

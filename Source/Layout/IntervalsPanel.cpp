@@ -5,7 +5,7 @@ IntervalsPanel::IntervalsPanel(NoteParam& noteParam)
     intervalsChoices.reserve(NB_INTERVALS);
     for (auto i = 0; i < NB_INTERVALS; i++)
     {
-        intervalsChoices.emplace_back(new AttachedComponent<IndexedToggleButton, ButtonParameterAttachment>(
+        intervalsChoices.emplace_back(new AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>(
             *noteParam.intervals[i]->interval, *this, 
             [this, &i](IndexedToggleButton& button) {
                 button.setImage(&buttonsImage, i, NB_INTERVALS);
@@ -13,7 +13,7 @@ IntervalsPanel::IntervalsPanel(NoteParam& noteParam)
         ));
     }
 
-    transpose = std::make_unique< AttachedComponent<RotarySlider, SliderParameterAttachment> >(
+    transpose = std::make_unique< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> >(
         *noteParam.transpose, *this,
         [](RotarySlider& slider) {
             slider.setNormalisableRange({-12, 12, 1});
@@ -22,20 +22,20 @@ IntervalsPanel::IntervalsPanel(NoteParam& noteParam)
     );
 }
 
-void IntervalsPanel::paint(Graphics& g)
+void IntervalsPanel::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::black);
+    g.fillAll(juce::Colours::black);
 }
 
 void IntervalsPanel::resized()
 {
-    Grid grid;
+    juce::Grid grid;
 
     grid.templateColumns    = { Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)), Track(Fr(1)) };
     grid.templateRows       = { Track(Fr(1)), Track(Fr(1)) };
-    grid.alignItems         = Grid::AlignItems::center;
-    grid.alignContent       = Grid::AlignContent::center;
-    grid.setGap(Grid::Px(5));
+    grid.alignItems         = juce::Grid::AlignItems::center;
+    grid.alignContent       = juce::Grid::AlignContent::center;
+    grid.setGap(juce::Grid::Px(5));
 
     for (auto i: { 1, 3, 4, 5, 6, 8, 10, 11, 0, 2, -1, -1, -1, 7, 9, -1}) {
         if (i > -1) {
@@ -61,5 +61,5 @@ void IntervalsPanel::resized()
 
     // Resize the textbox.
     auto& slider = transpose.get()->component;
-    slider.setBounds(Rectangle<int>(sliderX, sliderY, sliderWidth, sliderHeight)); 
+    slider.setBounds(juce::Rectangle<int>(sliderX, sliderY, sliderWidth, sliderHeight)); 
 }

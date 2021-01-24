@@ -5,14 +5,14 @@
 #include "Layout/Helpers.h"
 #include "Layout/Panels.h"
 
-class MidiBassPedalChordsAudioProcessorEditor : public AudioProcessorEditor
+class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&);
     ~MidiBassPedalChordsAudioProcessorEditor();
 
     //==============================================================================
-    void paint(Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
 private:
     MidiBassPedalChordsAudioProcessor& processor;
@@ -25,7 +25,7 @@ private:
     KeysPanel keysPanel;
     std::unique_ptr<IntervalsPanel> intervalsPanel = nullptr;
 
-    TooltipWindow tooltipWindow;
+    juce::TooltipWindow tooltipWindow;
 
     void initIntervalsPanel(NoteParam& noteParam);
     void updateNoteEdited(const int index);

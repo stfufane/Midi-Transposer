@@ -8,8 +8,8 @@ class MidiProcessor
 public:
     MidiProcessor();
 
-    void process(MidiBuffer& midiMessages);
-    void addParameters(AudioProcessor& p);
+    void process(juce::MidiBuffer& midiMessages);
+    void addParameters(juce::AudioProcessor& p);
 
     MidiParams& getMidiParams();
     NoteParams& getNoteParams();
@@ -18,7 +18,7 @@ private:
     MidiParams midiParams{ [this]() { updateMidiParams(); } };
     NoteParams noteParams;
 
-    MidiBuffer processedMidi;
+    juce::MidiBuffer processedMidi;
 
     // Local variables that get their values from parameters
     std::atomic<int>  inputChannel{ 0 };
@@ -38,7 +38,7 @@ private:
     
     // -----------------------------------
     // Process the input midi events
-    void mapNote(const MidiMessage& m, const int samplePosition);
+    void mapNote(const juce::MidiMessage& m, const int samplePosition);
     void playMappedNotes(const NoteState& noteState, const int samplePosition);
     void playNote(const NoteState& noteState, const int samplePosition);
     void stopCurrentNotes(const uint8 velocity, const int samplePosition);

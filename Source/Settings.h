@@ -9,7 +9,7 @@ struct UISettings
 {
     UISettings() = default;
     // Get it from the plugin state
-    UISettings(XmlElement* xml)
+    UISettings(juce::XmlElement* xml)
     {
         if (xml != nullptr)
         {
@@ -20,9 +20,9 @@ struct UISettings
     }
 
     // Build the XML representation to save in plugin state.
-    XmlElement* getXml() 
+    juce::XmlElement* getXml() 
     {
-        XmlElement* xml = new XmlElement("UISettings");
+        juce::XmlElement* xml = new juce::XmlElement("UISettings");
         xml->setAttribute("width", width);
         xml->setAttribute("height", height);
         xml->setAttribute("lastNoteIndex", lastNoteIndex);

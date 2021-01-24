@@ -30,6 +30,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 option(JUCE_BUILD_EXTRAS "Build JUCE Extras" ON)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 
+# option(DONT_SET_USING_JUCE_NAMESPACE "Do not add using namespace juce" ON)
+
 # Include the last JUCE version from the Git repository so it's a subdirectory of the project
 update_from_git(juce "https://github.com/juce-framework/juce" master)
 

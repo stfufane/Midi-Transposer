@@ -1,10 +1,10 @@
 #include "Panels.h"
 
-NoteKey::NoteKey(int index, Image* image) 
+NoteKey::NoteKey(int index, juce::Image* image) 
     : noteIndex(index), keyImage(image)
 { }
 
-void NoteKey::paint(Graphics& g)
+void NoteKey::paint(juce::Graphics& g)
 {
     g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(), 
                 0, 0, keyImage->getWidth() / 3.0, keyImage->getHeight());
@@ -20,19 +20,19 @@ void NoteKey::paint(Graphics& g)
     }
 }
 
-void NoteKey::mouseDown(const MouseEvent&) 
+void NoteKey::mouseDown(const juce::MouseEvent&) 
 {
     if (changeNote != nullptr)
         changeNote(noteIndex);
 }
 
-void NoteKey::mouseEnter(const MouseEvent&)  
+void NoteKey::mouseEnter(const juce::MouseEvent&)  
 {
     isOver = true;
     repaint();
 }
 
-void NoteKey::mouseExit(const MouseEvent&)
+void NoteKey::mouseExit(const juce::MouseEvent&)
 {
     isOver = false;
     repaint();

@@ -14,7 +14,7 @@ NoteParams& MidiProcessor::getNoteParams()
     return noteParams;
 }
 
-void MidiProcessor::addParameters(AudioProcessor& p)
+void MidiProcessor::addParameters(juce::AudioProcessor& p)
 {
     midiParams.addParams(p);
     for (auto& noteParam : noteParams.notes) {
@@ -30,7 +30,7 @@ void MidiProcessor::addParameters(AudioProcessor& p)
     initParameters();
 }
 
-void MidiProcessor::process(MidiBuffer& midiMessages)
+void MidiProcessor::process(juce::MidiBuffer& midiMessages)
 {
     processedMidi.clear();
     for (const auto metadata: midiMessages)
@@ -57,7 +57,7 @@ void MidiProcessor::process(MidiBuffer& midiMessages)
     We want the input to be monophonic so we need to know which was the last played note and 
     if there are some notes still on to be played when the last one is released.
 */
-void MidiProcessor::mapNote(const MidiMessage& m, const int samplePosition)
+void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition)
 {
     // The output channel will be the original one or the one defined by the parameter knob.
     const auto channel = (outputChannel == 0) ? m.getChannel() : (int)outputChannel;
@@ -121,7 +121,7 @@ void MidiProcessor::playMappedNotes(const NoteState& noteState, const int sample
 void MidiProcessor::playNote(const NoteState& noteState, const int samplePosition)
 {
     if (noteState.note >= 0 && noteState.note < 128) {
-        processedMidi.addEvent(MidiMessage::noteOn(noteState.channel, noteState.note, noteState.velocity), samplePosition);
+        processedMidi.addEvent(juce::MidiMessage::noteOn(noteState.channel, noteState.note, noteState.velocity), samplePosition);
         currentOutputNotesOn.push_back(noteState);
     }
 }
@@ -129,7 +129,7 @@ void MidiProcessor::playNote(const NoteState& noteState, const int samplePositio
 void MidiProcessor::stopCurrentNotes(const uint8 velocity, const int samplePosition)
 {
     for (const auto& noteState: currentOutputNotesOn) {
-        processedMidi.addEvent(MidiMessage::noteOff(noteState.channel, noteState.note, velocity), samplePosition);
+        processedMidi.addEvent(juce::MidiMessage::noteOff(noteState.channel, noteState.note, velocity), samplePosition);
     }
 }
 

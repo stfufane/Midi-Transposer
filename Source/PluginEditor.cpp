@@ -7,7 +7,7 @@ constexpr auto MAX_RESIZE = 1.5;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
-    : AudioProcessorEditor(&p), 
+    : juce::AudioProcessorEditor(&p), 
       processor(p), 
       uiSettings(p.getUISettings()),
       noteParams(p.getMidiProcessor().getNoteParams()),
@@ -61,21 +61,21 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessorEditor::paint(Graphics& g) 
+void MidiBassPedalChordsAudioProcessorEditor::paint(juce::Graphics& g) 
 {
-    g.fillAll(Colours::white);
+    g.fillAll(juce::Colours::white);
 }
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() 
 {
     processor.setEditorSize(getWidth(), getHeight());
 
-    Grid grid;
+    juce::Grid grid;
  
     grid.templateColumns    = { Track(Fr(1)) };
     grid.templateRows       = { Track(Fr(3)), Track(Fr(7)) };
 
-    grid.items = { GridItem(headerPanel), GridItem(keysPanel) };
+    grid.items = { juce::GridItem(headerPanel), juce::GridItem(keysPanel) };
 
     grid.performLayout (getLocalBounds());
 

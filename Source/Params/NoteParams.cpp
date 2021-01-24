@@ -10,7 +10,7 @@ NoteParams::NoteParams()
         notes.emplace_back(new NoteParam(i));
 }
 
-void NoteParams::addParams(AudioProcessor& p)
+void NoteParams::addParams(juce::AudioProcessor& p)
 {
     for (auto& note : notes) {
         note->addParams(p);

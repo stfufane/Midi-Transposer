@@ -1,9 +1,9 @@
 #include "Panels.h"
 
-NoteMappingToggle::NoteMappingToggle(int index, NoteParam& noteParam, Image* image) 
+NoteMappingToggle::NoteMappingToggle(int index, NoteParam& noteParam, juce::Image* image) 
     : noteIndex(index), powerImage(image)
 {
-    mapChoice = std::make_unique<AttachedComponent<IndexedToggleButton, ButtonParameterAttachment>>(
+    mapChoice = std::make_unique<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>>(
         *noteParam.mapNote, *this, 
         [this](IndexedToggleButton& button) {
             button.setImage(powerImage, 0, 1, false);
