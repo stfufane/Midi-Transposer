@@ -45,20 +45,21 @@ void IntervalsPanel::resized()
         }
     }
 
-    // auto totalBounds = getLocalBounds();
-    grid.performLayout (getLocalBounds().reduced(getLocalBounds().getWidth() / 10.0f, getLocalBounds().getHeight() / 10.0f));
+    auto totalBounds = getLocalBounds();
+    auto xMargin = totalBounds.getWidth() / 10.0f;
+    auto yMargin = totalBounds.getHeight() / 10.0f;
+    auto gridBounds = totalBounds.reduced(xMargin, yMargin);
+    grid.performLayout (gridBounds);
 
     // Center the transpose slider manually;
-    /* 
-    auto width = totalBounds.getWidth();
+    auto width = gridBounds.getWidth();
     auto height = totalBounds.getHeight();
-    auto slider_x = width * 5.0 / 16.0;
-    auto slider_y = height / 2.0;
-    auto slider_width = width / 4.0;
-    auto slider_height = height / 2.0;
+    auto sliderX = xMargin + width * 5.0f / 16.0f;
+    auto sliderY = height / 2.0f;
+    auto sliderWidth = width / 4.0f;
+    auto sliderHeight = height / 2.0f;
 
     // Resize the textbox.
     auto& slider = transpose.get()->component;
-    slider.setBounds(Rectangle<int>(slider_x, slider_y, slider_width, slider_height)); 
-    */
+    slider.setBounds(Rectangle<int>(sliderX, sliderY, sliderWidth, sliderHeight)); 
 }

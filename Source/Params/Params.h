@@ -1,6 +1,6 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <JuceHeader.h>
 
 namespace ParamIDs
 {
@@ -97,10 +97,8 @@ struct NoteParam : AudioProcessorParameter::Listener
  */
 struct IntervalParam
 {
-    IntervalParam(NoteParam& noteParam, int i) 
-        : degree(i), noteName(noteParam.noteName), noteLabel(noteParam.noteLabel)
-    {}
-
+    IntervalParam(NoteParam& noteParam, int i);
+    
     void addParam(AudioProcessor& p);
 
     AudioParameterBool* interval;

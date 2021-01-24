@@ -2,7 +2,6 @@
 
 HeaderPanel::HeaderPanel(MidiParams& midiParams)
 {
-    addMouseListener(this, true);
     inputChannel = std::make_unique< AttachedComponent<RotarySlider, SliderParameterAttachment> >(
         *midiParams.inputChannel, *this,
         [](RotarySlider& slider) {
@@ -26,12 +25,6 @@ HeaderPanel::HeaderPanel(MidiParams& midiParams)
             slider.setTooltip("This will play the root note at its original position and transpose the chord.");
         }
     );
-}
-
-void HeaderPanel::mouseDown(const MouseEvent&)
-{
-    if (onClick != nullptr)
-        onClick();
 }
 
 void HeaderPanel::paint(Graphics& g)

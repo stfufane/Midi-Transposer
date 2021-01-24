@@ -5,26 +5,23 @@ constexpr auto WINDOW_WIDTH = 600;
 constexpr auto WINDOW_HEIGHT = WINDOW_WIDTH / WINDOW_RATIO;
 constexpr auto MAX_RESIZE = 1.5;
 
-// using Track = Grid::TrackInfo;
-// using Fr = Grid::Fr;
-
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : AudioProcessorEditor(&p), 
       processor(p), 
-      uiSettings(p.uiSettings),
-      noteParams(p.midiProcessor.noteParams),
-      midiParams(p.midiProcessor.midiParams),
-      headerPanel(p.midiProcessor.midiParams),
-      keysPanel(p.midiProcessor.noteParams)
+      uiSettings(p.getUISettings()),
+      noteParams(p.getMidiProcessor().getNoteParams()),
+      midiParams(p.getMidiProcessor().getMidiParams()),
+      headerPanel(p.getMidiProcessor().getMidiParams()),
+      keysPanel(p.getMidiProcessor().getNoteParams())
 {
     setResizable(true, true);
     // Restore the last size if it exists.
-    // if (processor.uiSettings.width != 0) {
-    //     setSize(processor.uiSettings.width, processor.uiSettings.height);
-    // } else {
+    if (uiSettings.width != 0) {
+        setSize(uiSettings.width, uiSettings.height);
+    } else {
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    // }
+    }
     setResizeLimits(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH * MAX_RESIZE, WINDOW_HEIGHT * MAX_RESIZE);
     getConstrainer()->setFixedAspectRatio(WINDOW_RATIO);
 
@@ -42,21 +39,23 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     for (auto& noteKey: keysPanel.noteKeys) 
     {
         noteKey->changeNote = [this] (int index) 
-        { 
-            auto noteParam = noteParams.notes[index].get();
-            initIntervalsPanel(*noteParam);
+        {
+            if (uiSettings.lastNoteIndex == index)
+            {
+                intervalsPanel.get()->setVisible(false);
+                resized();
+                index = -1;
+            }
+            else
+            {
+                auto noteParam = noteParams.notes[index].get();
+                initIntervalsPanel(*noteParam);
+            }
+            
             updateNoteEdited(index);
             uiSettings.lastNoteIndex = index;
         };
     }
-
-    // Reset the edited note when clicking the header.
-    headerPanel.onClick = [this]()
-    {
-        updateNoteEdited(-1);
-        if (intervalsPanel != nullptr)
-            intervalsPanel.get()->setVisible(false);
-    };
 }
 
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
@@ -74,7 +73,7 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     Grid grid;
  
     grid.templateColumns    = { Track(Fr(1)) };
-    grid.templateRows       = { Track(Fr(2)), Track(Fr(7)) };
+    grid.templateRows       = { Track(Fr(3)), Track(Fr(7)) };
 
     grid.items = { GridItem(headerPanel), GridItem(keysPanel) };
 
@@ -82,10 +81,8 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
 
     if (intervalsPanel != nullptr)
     {
-        auto width = getLocalBounds().getWidth();
-        auto height = getLocalBounds().getHeight();
-        auto intervalsHeight = width / 4.0f;
-        intervalsPanel.get()->setBounds(0, height - intervalsHeight, width, intervalsHeight);
+        auto intervalsHeight = headerPanel.getHeight();
+        intervalsPanel.get()->setBounds(0, 0, getWidth(), intervalsHeight);
     }
 }
 

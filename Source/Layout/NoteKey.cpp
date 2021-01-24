@@ -2,9 +2,7 @@
 
 NoteKey::NoteKey(int index, Image* image) 
     : noteIndex(index), keyImage(image)
-{
-    addMouseListener(this, true);
-}
+{ }
 
 void NoteKey::paint(Graphics& g)
 {

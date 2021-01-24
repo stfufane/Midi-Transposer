@@ -21,33 +21,9 @@ const String MidiBassPedalChordsAudioProcessor::getName() const
     return JucePlugin_Name;
 }
 
-bool MidiBassPedalChordsAudioProcessor::acceptsMidi() const
-{
-   #if JucePlugin_WantsMidiInput
-    return true;
-   #else
-    return false;
-   #endif
-}
-
-bool MidiBassPedalChordsAudioProcessor::producesMidi() const
-{
-   #if JucePlugin_ProducesMidiOutput
-    return true;
-   #else
-    return false;
-   #endif
-}
-
-bool MidiBassPedalChordsAudioProcessor::isMidiEffect() const
-{
-   #if JucePlugin_IsMidiEffect
-    return true;
-   #else
-    return false;
-   #endif
-}
-
+bool MidiBassPedalChordsAudioProcessor::acceptsMidi() const { return true; }
+bool MidiBassPedalChordsAudioProcessor::producesMidi() const { return true; }
+bool MidiBassPedalChordsAudioProcessor::isMidiEffect() const { return true; }
 double MidiBassPedalChordsAudioProcessor::getTailLengthSeconds() const { return 0.0; }
 int MidiBassPedalChordsAudioProcessor::getNumPrograms() { return 1; }
 int MidiBassPedalChordsAudioProcessor::getCurrentProgram() { return 0; }
@@ -62,24 +38,8 @@ void MidiBassPedalChordsAudioProcessor::releaseResources() {}
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
     return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
 }
 #endif
 
@@ -127,6 +87,16 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
 
         uiSettings = UISettings(xml->getChildByName("UISettings"));
     }
+}
+
+MidiProcessor& MidiBassPedalChordsAudioProcessor::getMidiProcessor()
+{
+    return midiProcessor;
+}
+
+UISettings& MidiBassPedalChordsAudioProcessor::getUISettings()
+{
+    return uiSettings;
 }
 
 void MidiBassPedalChordsAudioProcessor::setEditorSize(int w, int h) 

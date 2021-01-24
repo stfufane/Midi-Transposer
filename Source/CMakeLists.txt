@@ -29,7 +29,7 @@ juce_add_plugin("${BaseTargetName}"
 	FORMATS VST3
 	PRODUCT_NAME "MidiBassPedalChords")
 
-FILE(GLOB CppSources *.cpp Layout/*.cpp)
+FILE(GLOB CppSources *.cpp Layout/*.cpp Params/*.cpp)
 target_sources(${BaseTargetName} PRIVATE
         ${CppSources})
 		

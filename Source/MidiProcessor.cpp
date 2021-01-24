@@ -4,6 +4,16 @@ MidiProcessor::MidiProcessor()
     : mappingNotes(12, std::vector<int>(1, 0))
 {}
 
+MidiParams& MidiProcessor::getMidiParams()
+{
+    return midiParams;
+}
+
+NoteParams& MidiProcessor::getNoteParams()
+{
+    return noteParams;
+}
+
 void MidiProcessor::addParameters(AudioProcessor& p)
 {
     midiParams.addParams(p);

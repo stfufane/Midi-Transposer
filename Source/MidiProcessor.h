@@ -1,7 +1,7 @@
 #pragma once
 
 #include "JuceHeader.h"
-#include "Params.h"
+#include "Params/Params.h"
 
 class MidiProcessor
 {
@@ -9,13 +9,15 @@ public:
     MidiProcessor();
 
     void process(MidiBuffer& midiMessages);
-
     void addParameters(AudioProcessor& p);
 
+    MidiParams& getMidiParams();
+    NoteParams& getNoteParams();
+private:
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
     MidiParams midiParams{ [this]() { updateMidiParams(); } };
     NoteParams noteParams;
-private:
+
     MidiBuffer processedMidi;
 
     // Local variables that get their values from parameters

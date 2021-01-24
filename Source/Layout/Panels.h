@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 #include "Helpers.h"
-#include "../Params.h"
+#include "../Params/Params.h"
 
 constexpr auto NB_NOTES = 12;
 constexpr auto NB_INTERVALS = 12;
@@ -17,11 +17,9 @@ struct HeaderPanel : public Component
 {
     HeaderPanel(MidiParams& midiParams);
 
-    void mouseDown(const MouseEvent&) override;
     void paint(Graphics& g) override;
     void resized() override;
 
-    std::function<void()> onClick = nullptr;
     Image background { ImageCache::getFromMemory(BinaryData::header_jpg, BinaryData::header_jpgSize) };
 
     std::unique_ptr< AttachedComponent<RotarySlider, SliderParameterAttachment> > inputChannel;
