@@ -10,7 +10,7 @@ MidiParams::~MidiParams()
     octaveTranspose->removeListener(this);
 }
 
-void MidiParams::addParams(AudioProcessor& p)
+void MidiParams::addParams(juce::AudioProcessor& p)
 {
     p.addParameter(inputChannel    = new juce::AudioParameterInt(ParamIDs::inChannel, "Input Channel", 0, 16, 1, "Input Channel"));
     p.addParameter(outputChannel   = new juce::AudioParameterInt(ParamIDs::outChannel, "Output Channel", 0, 16, 1, "Output Channel"));

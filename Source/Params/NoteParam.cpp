@@ -8,7 +8,7 @@ NoteParam::NoteParam(const int i)
 {
     intervals.reserve(Notes::names.size());
     for (int i = 0; i < Notes::count; i++)
-        intervals.emplace_back(new IntervalParam(*this, i));
+        intervals.emplace_back(new IntervalParam(noteName, noteLabel, i));
 }
 
 NoteParam::~NoteParam()

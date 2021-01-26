@@ -3,11 +3,7 @@
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : juce::AudioProcessor (BusesProperties())
-#else
-    : 
-#endif
+    : juce::AudioProcessor (juce::AudioProcessor::BusesProperties().withInput("Input", juce::AudioChannelSet::mono(), true))
 { 
     // Add the parameters and listeners from the midi processor.
     midiProcessor.addParameters(*this);
@@ -32,22 +28,19 @@ const juce::String MidiBassPedalChordsAudioProcessor::getProgramName (int) { ret
 void MidiBassPedalChordsAudioProcessor::changeProgramName (int, const juce::String&) { }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessor::prepareToPlay (double, int) {}
 void MidiBassPedalChordsAudioProcessor::releaseResources() {}
+bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const juce::AudioProcessor::BusesLayout&) const { return true; }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
-bool MidiBassPedalChordsAudioProcessor::isBusesLayoutSupported (const juce::AudioProcessor::BusesLayout& layouts) const
+void MidiBassPedalChordsAudioProcessor::prepareToPlay (double sampleRate, int) 
 {
-    ignoreUnused (layouts);
-    return true;
+    midiProcessor.prepareToPlay(sampleRate);
 }
-#endif
 
 void MidiBassPedalChordsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     buffer.clear();
     // The real processing is made in the MidiProcessor class.
-    midiProcessor.process(midiMessages);
+    midiProcessor.process(midiMessages, buffer.getNumSamples(), getPlayHead());
 }
 
 //==============================================================================

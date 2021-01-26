@@ -1,38 +1,28 @@
 #include "MidiProcessor.h"
 
 MidiProcessor::MidiProcessor()
-    : mappingNotes(12, std::vector<int>(1, 0))
+    : notesMapping(12, std::vector<int>(1, 0))
 {}
 
-MidiParams& MidiProcessor::getMidiParams()
+/*================================================================ */
+// PROCESS
+/*================================================================ */
+void MidiProcessor::prepareToPlay(const double rate)
 {
-    return midiParams;
+    sampleRate = static_cast<float> (rate);
+    time = 0;
+    currentNote = 0;
+    lastArpeggiatorNote.reset();
 }
 
-NoteParams& MidiProcessor::getNoteParams()
-{
-    return noteParams;
-}
-
-void MidiProcessor::addParameters(juce::AudioProcessor& p)
-{
-    midiParams.addParams(p);
-    for (auto& noteParam : noteParams.notes) {
-        noteParam->addParams(p);
-    }
-
-    // Each note param has its own listener and lambda function so only the corresponding note
-    // is updated in the mappingNotes vector. It also avoids testing paramID in parameterChanged method.
-    for (auto& noteParam : noteParams.notes) {
-        noteParam->update = [this, &noteParam]() { updateNoteMapping(*noteParam); };
-    }
-
-    initParameters();
-}
-
-void MidiProcessor::process(juce::MidiBuffer& midiMessages)
+void MidiProcessor::process(juce::MidiBuffer& midiMessages, const int numSamples, juce::AudioPlayHead* playHead)
 {
     processedMidi.clear();
+
+    /**
+     * This will filter notes on/off and keep other messages.
+     * In arpeggiator mode it will just calculate the chord notes to play
+     */
     for (const auto metadata: midiMessages)
     {
         const auto m = metadata.getMessage();
@@ -40,18 +30,26 @@ void MidiProcessor::process(juce::MidiBuffer& midiMessages)
         if (inputChannel == 0 || m.getChannel() == inputChannel)
         {
             if (m.isNoteOnOrOff())
-            {
                 mapNote(m, metadata.samplePosition);
-            }
             else
-            {
                 processedMidi.addEvent(m, metadata.samplePosition);
-            } 
         }
     }
+
+    /**
+     * If arpeggiator is activated, we need to calculate which note will be sent at which time.
+     */
+    if (arpeggiatorActivated)
+    {
+        arpeggiate(numSamples, getNoteDuration(playHead));
+    }
+
     midiMessages.swapWith(processedMidi);
 }
 
+/*================================================================ */
+// CHORD MAPPING
+/*================================================================ */
 /*
     There are many cases to take in account here.
     We want the input to be monophonic so we need to know which was the last played note and 
@@ -61,7 +59,7 @@ void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition
 {
     // The output channel will be the original one or the one defined by the parameter knob.
     const auto channel = (outputChannel == 0) ? m.getChannel() : (int)outputChannel;
-    const NoteState noteState = { m.getNoteNumber(), channel, m.getVelocity() };
+    const NoteState noteState { m.getNoteNumber(), channel, m.getVelocity() };
     if (m.isNoteOn())
     {
         // Add the note to the vector of current notes played.
@@ -69,9 +67,8 @@ void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition
 
         // If the note changed, turn off the previous notes before adding the new ones.
         if (noteState.note != lastNoteOn && lastNoteOn > -1)
-        {
             stopCurrentNotes(noteState.velocity, samplePosition);
-        }
+        
         // Play the received note.
         playMappedNotes(noteState, samplePosition);
     }
@@ -87,13 +84,13 @@ void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition
             stopCurrentNotes(noteState.velocity, samplePosition);
 
             // If there were still some notes held, play the last one.
-            if (currentInputNotesOn.size() > 0) {
-                // Then play the last note from the vector of active input notes.
+            if (currentInputNotesOn.size() > 0)
                 playMappedNotes(currentInputNotesOn.back(), samplePosition);
-            }
-            else {
+            else 
+            {
                 // No note is currently played.
-                lastNoteOn = -1;
+                lastNoteOn = -1; 
+                currentOutputNotesOn.clear();
             }
         }
     }
@@ -101,36 +98,29 @@ void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition
 
 void MidiProcessor::playMappedNotes(const NoteState& noteState, const int samplePosition)
 {
+    // First recalculate the output notes vector.
+    auto mappedNotes = getMappedNotes(noteState);
+    currentOutputNotesOn.swap(mappedNotes);
+    playCurrentNotes(samplePosition);
     lastNoteOn = noteState.note;
-    // First clear the output notes vector to replace its values.
-    currentOutputNotesOn.clear();
-
-    const int baseNote = lastNoteOn % 12;
-    // If there's an octave transpose, add the root note at its original height.
-    if (octaveTranspose != 0) {
-        const int noteToPlay = lastNoteOn + mappingNotes[baseNote][0];
-        playNote({noteToPlay, noteState.channel, noteState.velocity}, samplePosition);
-    }
-    // Then add all the notes from the mapping vector at the transposed height.
-    for (const auto mappedNote: mappingNotes[baseNote]) {
-        const int noteToPlay = lastNoteOn + mappedNote + (octaveTranspose * 12);
-        playNote({noteToPlay, noteState.channel, noteState.velocity}, samplePosition);
-    }
 }
 
-void MidiProcessor::playNote(const NoteState& noteState, const int samplePosition)
+void MidiProcessor::playCurrentNotes(const int samplePosition)
 {
-    if (noteState.note >= 0 && noteState.note < 128) {
-        processedMidi.addEvent(juce::MidiMessage::noteOn(noteState.channel, noteState.note, noteState.velocity), samplePosition);
-        currentOutputNotesOn.push_back(noteState);
-    }
+    // Nothing to do here if arpeggiator is on, it has its own loop to play the notes.
+    if (arpeggiatorActivated) return;
+
+    for (const auto noteState: currentOutputNotesOn)
+        if (noteState.note >= 0 && noteState.note < 128) 
+            processedMidi.addEvent(juce::MidiMessage::noteOn(noteState.channel, noteState.note, noteState.velocity), samplePosition);
 }
 
 void MidiProcessor::stopCurrentNotes(const uint8 velocity, const int samplePosition)
 {
-    for (const auto& noteState: currentOutputNotesOn) {
+    if (arpeggiatorActivated) return;
+
+    for (const auto& noteState: currentOutputNotesOn) 
         processedMidi.addEvent(juce::MidiMessage::noteOff(noteState.channel, noteState.note, velocity), samplePosition);
-    }
 }
 
 void MidiProcessor::removeHeldNote(const int note)
@@ -145,11 +135,108 @@ void MidiProcessor::removeHeldNote(const int note)
     }
 }
 
+std::vector<MidiProcessor::NoteState> MidiProcessor::getMappedNotes(const NoteState& noteState)
+{
+    std::vector<NoteState> mappedNotes;
+    const int baseNote = noteState.note % 12;
+
+    // If there's an octave transpose, add the root note at its original height.
+    if (octaveTranspose != 0)
+        mappedNotes.push_back(noteState);
+
+    // Then add all the notes from the mapping vector at the transposed height.
+    for (const auto noteMapping: notesMapping[baseNote])
+        mappedNotes.push_back({noteState.note + noteMapping + (octaveTranspose * 12), noteState.channel, noteState.velocity});
+
+    return mappedNotes;
+}
+
 /*================================================================ */
+// ARPEGGIATOR
+/*================================================================ */
+void MidiProcessor::arpeggiate(const int numSamples, int noteDuration)
+{
+    if ((time + numSamples) >= noteDuration)
+    {
+        auto offset = jmax (0, jmin ((int) (noteDuration - time), numSamples - 1));
+
+        if (lastArpeggiatorNote.note > -1)
+        {
+            processedMidi.addEvent (juce::MidiMessage::noteOff (lastArpeggiatorNote.channel, lastArpeggiatorNote.note), offset);
+            lastArpeggiatorNote.reset();
+        }
+
+        if (currentOutputNotesOn.size() > 0)
+        {
+            currentNote = (currentNote + 1) % currentOutputNotesOn.size();
+            lastArpeggiatorNote = currentOutputNotesOn[currentNote];
+            processedMidi.addEvent(juce::MidiMessage::noteOn(lastArpeggiatorNote.channel, lastArpeggiatorNote.note, lastArpeggiatorNote.velocity), offset);
+        }
+    }
+
+    time = (time + numSamples) % noteDuration;
+}
+
+int MidiProcessor::getNoteDuration(juce::AudioPlayHead* playHead)
+{
+    int noteDuration;
+    arpeggiatorRate = arpeggiatorParams.rate->get();
+    
+    // TODO https://docs.juce.com/master/structAudioPlayHead_1_1CurrentPositionInfo.html
+    juce::AudioPlayHead::CurrentPositionInfo positionInfo;
+    if (arpeggiatorParams.synced->get() && playHead != nullptr && playHead->getCurrentPosition(positionInfo))
+    {
+        auto bpm = positionInfo.bpm;
+        auto samplesPerBeat = sampleRate / (bpm / 60.0f);
+        noteDuration = static_cast<int> (std::ceil(samplesPerBeat * 0.25f ));
+    }
+    else
+    {
+        noteDuration = static_cast<int> (std::ceil (sampleRate * 0.25f * (0.1f + (1.0f - (arpeggiatorRate)))));
+    }
+
+    return noteDuration;
+}
+
+/*================================================================ */
+// PARAMETERS
+/*================================================================ */
+MidiParams& MidiProcessor::getMidiParams()
+{
+    return midiParams;
+}
+
+NoteParams& MidiProcessor::getNoteParams()
+{
+    return noteParams;
+}
+
+ArpeggiatorParams& MidiProcessor::getArpeggiatorParams()
+{
+    return arpeggiatorParams;
+}
+
+void MidiProcessor::addParameters(juce::AudioProcessor& p)
+{
+    midiParams.addParams(p);
+    arpeggiatorParams.addParams(p);
+    for (auto& noteParam : noteParams.notes) {
+        noteParam->addParams(p);
+    }
+
+    // Each note param has its own listener and lambda function so only the corresponding note
+    // is updated in the notesMapping vector. It also avoids testing paramID in parameterChanged method.
+    for (auto& noteParam : noteParams.notes) {
+        noteParam->update = [this, &noteParam]() { updateNoteMapping(*noteParam); };
+    }
+
+    initParameters();
+}
 
 void MidiProcessor::initParameters()
 {
     updateMidiParams();
+    updateArpeggiatorParams();
     
     for (auto& noteParam: noteParams.notes)
     {
@@ -162,6 +249,19 @@ void MidiProcessor::updateMidiParams()
     inputChannel = midiParams.inputChannel->get();
     outputChannel = midiParams.outputChannel->get();
     octaveTranspose = midiParams.octaveTranspose->get();
+}
+
+void MidiProcessor::updateArpeggiatorParams()
+{
+    arpeggiatorActivated = arpeggiatorParams.activated->get();
+    if (arpeggiatorActivated)
+    {
+        lastNoteOn = -1;
+    }
+    else
+    {
+        lastArpeggiatorNote.reset();
+    }
 }
 
 // This method is called by the lambda associated to every noteParam when one of the note parameters is updated.
@@ -188,5 +288,5 @@ void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
     }
     
     // Finally, replace the old mapping.
-    mappingNotes[noteParam.noteIndex].swap(new_mapping);
+    notesMapping[noteParam.noteIndex].swap(new_mapping);
 }

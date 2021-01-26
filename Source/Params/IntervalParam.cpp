@@ -3,8 +3,8 @@
 /*********************************************
  * IntervalParam
  *********************************************/
-IntervalParam::IntervalParam(NoteParam& noteParam, int i) 
-    : degree(i), noteName(noteParam.noteName), noteLabel(noteParam.noteLabel)
+IntervalParam::IntervalParam(const String& name, const String& label, int i) 
+    : degree(i), noteName(name), noteLabel(label)
 {}
 
 void IntervalParam::addParam(juce::AudioProcessor& p)
