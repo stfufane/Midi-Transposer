@@ -17,57 +17,52 @@ public:
     ArpeggiatorParams& getArpeggiatorParams();
 private:
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
-    MidiParams midiParams{ [this]() { updateMidiParams(); } };
+    MidiParams midiParams;
     NoteParams noteParams;
-    ArpeggiatorParams arpeggiatorParams{ [this]() { updateArpeggiatorParams(); } };
+    ArpeggiatorParams arpeggiatorParams;
 
     juce::MidiBuffer processedMidi;
 
-    // Local variables that get their values from parameters
-    std::atomic<int>  inputChannel{ 0 };
-    std::atomic<int>  outputChannel{ 0 };
-    std::atomic<int>  octaveTranspose{ 0 };
     std::vector< std::vector<int> > notesMapping;
-
-    std::atomic<bool> arpeggiatorActivated{ false };
-    std::atomic<float> arpeggiatorRate{ 0.5f };
     
-    // Used to calculate the arpeggiator note positions.
-    float sampleRate;
-    int time;
-    
-    int currentNote;
-    int lastNoteOn{ -1 };
-
     struct NoteState {
-        int note;
+        int note { -1 };
         int channel;
         juce::uint8 velocity;
 
         void reset() { note = -1; }
     };
+    NoteState lastNoteOn;
     std::vector<NoteState> currentInputNotesOn;
     std::vector<NoteState> currentOutputNotesOn;
-    NoteState lastArpeggiatorNote;
+
+    // Used to calculate the arpeggiator note positions.
+    struct Arpeggiator 
+    {
+        float sampleRate;
+        int time;
+        int currentNote;
+        NoteState lastNote;
+    };
+    Arpeggiator arp;
     
     // -----------------------------------
     // Process the input midi events
     void mapNote(const juce::MidiMessage& m, const int samplePosition);
     void playMappedNotes(const NoteState& noteState, const int samplePosition);
-    std::vector<NoteState> getMappedNotes(const NoteState& noteState);
+    std::vector<NoteState> getMappedNotes(const NoteState& noteState) const;
     void playCurrentNotes(const int samplePosition);
     void stopCurrentNotes(const uint8 velocity, const int samplePosition);
     void removeHeldNote(const int note);
 
-    void arpeggiate(const int numSamples, const int noteDuration);
-    int getNoteDuration(juce::AudioPlayHead* playHead);
+    void arpeggiate(const int numSamples);
+    void arpeggiateSync(const int numSamples, juce::AudioPlayHead* playHead);
+    int arpeggiatorNoteDuration() const;
     // -----------------------------------
 
     // -----------------------------------
     // Manage mapping values
     void initParameters();
-    void updateMidiParams();
-    void updateArpeggiatorParams();
     void updateNoteMapping(const NoteParam& noteParam);
     // -----------------------------------
 

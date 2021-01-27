@@ -12,6 +12,7 @@ namespace ParamIDs
     static juce::String mapNote                 { "_mapNote" };
     static juce::String arpeggiatorActivated    { "arpeggiator_activated" };
     static juce::String arpeggiatorSync         { "arpeggiator_sync" };
+    static juce::String arpeggiatorSyncRate     { "arpeggiator_sync_rate" };
     static juce::String arpeggiatorRate         { "arpeggiator_rate" };
 }
 
@@ -21,6 +22,21 @@ namespace Notes
     static juce::StringArray names      { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
     static juce::StringArray labels     { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
     static juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
+
+    struct Duration
+    {
+        juce::String label;
+        float division;
+    };
+
+    static std::vector<Notes::Duration> durations {
+        { "whole note", 4.0f },
+        { "half note", 2.0f },
+        { "quarter note", 1.0f },
+        { "eighth note", 0.5f },
+        { "eighth note triplet", 1.0f / 3.0f },
+        { "sixteenth note", 0.25f }
+    };
 }
 
 struct ParamHelper
@@ -38,17 +54,11 @@ struct ParamHelper
     Simple structure that contains the 4 basic parameters at the top of the plugin.
     Whenever one of them is updated, the parameterChanged method will update the local atomic values for all of them.
 */
-struct MidiParams : juce::AudioProcessorParameter::Listener
+struct MidiParams
 {
-    MidiParams(std::function<void()> lambda) : update(lambda) {}
-    ~MidiParams();
+    MidiParams() {}
 
     void addParams(juce::AudioProcessor& p);
-
-    void parameterValueChanged(int, float) override;
-    void parameterGestureChanged(int, bool) override {}
-
-    std::function<void()> update = nullptr;
 
     juce::AudioParameterInt* inputChannel    = nullptr;
     juce::AudioParameterInt* outputChannel   = nullptr;
@@ -60,20 +70,15 @@ struct MidiParams : juce::AudioProcessorParameter::Listener
 /**
  * These are all the parameters related to the arpeggiator
  */
-struct ArpeggiatorParams : juce::AudioProcessorParameter::Listener
+struct ArpeggiatorParams
 {
-    ArpeggiatorParams(std::function<void()> lambda) : update(lambda) {}
-    ~ArpeggiatorParams();
+    ArpeggiatorParams() {}
 
     void addParams(juce::AudioProcessor& p);
 
-    void parameterValueChanged(int, float) override;
-    void parameterGestureChanged(int, bool) override {}
-
-    std::function<void()> update = nullptr;
-
     juce::AudioParameterBool*  activated = nullptr;
     juce::AudioParameterBool*  synced    = nullptr;
+    juce::AudioParameterInt*   syncRate  = nullptr;
     juce::AudioParameterFloat* rate      = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArpeggiatorParams)

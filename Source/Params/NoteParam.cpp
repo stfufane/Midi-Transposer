@@ -3,8 +3,8 @@
 /***********************************************
  * NoteParam
  ***********************************************/ 
-NoteParam::NoteParam(const int i)
-    : noteIndex(i), noteName(Notes::names[i]), noteLabel(Notes::labels[i])
+NoteParam::NoteParam(const int index)
+    : noteIndex(index), noteName(Notes::names[index]), noteLabel(Notes::labels[index])
 {
     intervals.reserve(Notes::names.size());
     for (int i = 0; i < Notes::count; i++)

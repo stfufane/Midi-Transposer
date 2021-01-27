@@ -27,6 +27,8 @@
       <FILE id="oCeckl" name="Panels.h" compile="0" resource="0" file="Source/Layout/Panels.h"/>
     </GROUP>
     <GROUP id="{371FF7C0-4655-6912-3672-E3E6E6104C95}" name="Params">
+      <FILE id="Zjnfdr" name="ArpeggiatorParams.cpp" compile="1" resource="0"
+            file="Source/Params/ArpeggiatorParams.cpp"/>
       <FILE id="GsXmxc" name="IntervalParam.cpp" compile="1" resource="0"
             file="Source/Params/IntervalParam.cpp"/>
       <FILE id="B2F56s" name="MidiParams.cpp" compile="1" resource="0" file="Source/Params/MidiParams.cpp"/>
