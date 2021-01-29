@@ -23,19 +23,19 @@ namespace Notes
     static juce::StringArray labels     { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
     static juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
 
-    struct Duration
+    struct Division
     {
         juce::String label;
-        float division;
+        double division;
     };
 
-    static std::vector<Notes::Duration> durations {
-        { "whole note", 4.0f },
-        { "half note", 2.0f },
-        { "quarter note", 1.0f },
-        { "eighth note", 0.5f },
-        { "eighth note triplet", 1.0f / 3.0f },
-        { "sixteenth note", 0.25f }
+    static std::vector<Notes::Division> divisions {
+        { "whole note", 4.0 },
+        { "half note", 2.0 },
+        { "quarter note", 1.0 },
+        { "eighth note", 0.5 },
+        { "eighth note triplet", 1.0 / 3.0 },
+        { "sixteenth note", 0.25 }
     };
 }
 

@@ -39,10 +39,21 @@ private:
     // Used to calculate the arpeggiator note positions.
     struct Arpeggiator 
     {
-        float sampleRate;
-        int time;
-        int currentNote;
-        NoteState lastNote;
+        float     sampleRate;
+        int       time;
+        double    division;
+        double    lastBeatPosition;
+        int       currentIndex;
+        NoteState currentNote;
+
+        void reset()
+        {
+            time             = 0;
+            currentIndex     = 0;
+            division         = 0.;
+            lastBeatPosition = 0.;
+            currentNote.reset();
+        }
     };
     Arpeggiator arp;
     
@@ -55,9 +66,11 @@ private:
     void stopCurrentNotes(const uint8 velocity, const int samplePosition);
     void removeHeldNote(const int note);
 
-    void arpeggiate(const int numSamples);
-    void arpeggiateSync(const int numSamples, juce::AudioPlayHead* playHead);
-    int arpeggiatorNoteDuration() const;
+    void processArpeggiator(const int numSamples, juce::AudioPlayHead* playHead);
+    int  getArpeggiatorNoteDuration(const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
+    void arpeggiate(const int numSamples, const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
+    void arpeggiateSync(const int numSamples, const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
+    void playArpeggiatorNote(const int offset);
     // -----------------------------------
 
     // -----------------------------------
