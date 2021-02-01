@@ -42,16 +42,18 @@ private:
         float     sampleRate;
         int       time;
         double    division;
-        double    lastBeatPosition;
+        double    nextBeatPosition;
         int       currentIndex;
+        int       noteUpdated;
         NoteState currentNote;
 
         void reset()
         {
             time             = 0;
             currentIndex     = 0;
+            noteUpdated      = -1;
             division         = 0.;
-            lastBeatPosition = 0.;
+            nextBeatPosition = 0.;
             currentNote.reset();
         }
     };

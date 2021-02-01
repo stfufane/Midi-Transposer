@@ -108,6 +108,7 @@ void MidiProcessor::playMappedNotes(const NoteState& noteState, const int sample
     currentOutputNotesOn.swap(mappedNotes);
     playCurrentNotes(samplePosition);
     lastNoteOn = noteState;
+    arp.currentIndex = 0;
 }
 
 void MidiProcessor::playCurrentNotes(const int samplePosition)
@@ -167,6 +168,19 @@ void MidiProcessor::processArpeggiator(const int numSamples, juce::AudioPlayHead
     if (playHead != nullptr)
         hasPositionInfo = playHead->getCurrentPosition(positionInfo);
 
+    // Update the arpeggiated notes if there's been an update in NoteParam listener
+    // and the updated mapping is the current played note.
+    if (arp.noteUpdated > -1 && (lastNoteOn.note % 12) == arp.noteUpdated)
+    {
+        auto mappedNotes = getMappedNotes(lastNoteOn);
+        if (mappedNotes.size() < currentOutputNotesOn.size())
+            arp.currentIndex = juce::jmin(arp.currentIndex, (int)mappedNotes.size() - 1);
+        currentOutputNotesOn.swap(mappedNotes);
+        arp.noteUpdated = -1;
+    }
+
+    // The synced arpeggiator is used only in a DAW context currently playing.
+    // The note duration will still use the current BPM to be calculated anyway.
     if (arpeggiatorParams.synced->get() && hasPositionInfo && positionInfo.isPlaying)
         arpeggiateSync(numSamples, positionInfo);
     else
@@ -189,13 +203,36 @@ int MidiProcessor::getArpeggiatorNoteDuration(const juce::AudioPlayHead::Current
 void MidiProcessor::arpeggiate(const int numSamples, const juce::AudioPlayHead::CurrentPositionInfo& positionInfo)
 {
     auto noteDuration = getArpeggiatorNoteDuration(positionInfo);
-    if ((arp.time + numSamples) >= noteDuration)
+    /*
+    There are two possibilities here :
+    - The number of samples of the current block is less than the number of samples of the note duration.
+      => There can be only one note played during the block and it will happen when note duration is before the next block compared
+         to the elapsed time since last note was played.
+    - The number of samples of the current block is greater than the number of samples of the note duration.
+      => We loop through the number of samples and count elapsed time until no more note can be played.
+    */
+    if (numSamples < noteDuration)
     {
-        auto offset = jmax (0, jmin ((int) (noteDuration - arp.time), numSamples - 1));
-        playArpeggiatorNote(offset);
+        if ((arp.time + numSamples) >= noteDuration)
+        {
+            auto offset = juce::jmax (0, juce::jmin ((int) (noteDuration - arp.time), numSamples - 1));
+            playArpeggiatorNote(offset);
+        }
+        arp.time = (arp.time + numSamples) % noteDuration;
     }
-
-    arp.time = (arp.time + numSamples) % noteDuration;
+    else
+    {
+        while (arp.time < numSamples)
+        {
+            auto offset = arp.time + noteDuration;
+            if (offset < numSamples)
+            {
+                playArpeggiatorNote(offset);
+            }
+            arp.time += noteDuration;
+        }
+        arp.time = arp.time % numSamples;
+    }
 }
 
 // The synced arpeggiator is used when there's a track playing in a DAW, and it requires a few calculations to snap to the grid.
@@ -203,39 +240,41 @@ void MidiProcessor::arpeggiateSync(const int numSamples, const juce::AudioPlayHe
 {
     auto beatPosition = positionInfo.ppqPosition;
     auto samplesPerBeat = arp.sampleRate / (positionInfo.bpm / 60.);
-    auto beatsPerBlock = numSamples / samplesPerBeat;
+    int  offset { 0 };
 
-    // Reset the position calculation if the division has changed.
-    if (arp.division != Notes::divisions[arpeggiatorParams.syncRate->get()].division)
-        arp.lastBeatPosition = 0.;
-
-    // Update the current division from parameter
-    arp.division = Notes::divisions[arpeggiatorParams.syncRate->get()].division;
-
-    // We need to get the current quarter note and see what's the next candidate position to snap to the current time division.
-    double nextBeatPosition { 0. };
-    if (arp.lastBeatPosition == 0.)
+    while (offset < numSamples)
     {
-        int nb_divisions = 1;
-        while (nextBeatPosition == 0.)
+        // Reset the position calculation if the division has changed.
+        auto lastDivision = Notes::divisions[arpeggiatorParams.syncRate->get()].division;
+        if (arp.division != lastDivision)
         {
-            auto nextDivision = std::floor(beatPosition) + (nb_divisions * arp.division);
-            if (nextDivision >= beatPosition)
-                nextBeatPosition = nextDivision;
-
-            nb_divisions ++;
+            // Update the current division from parameter
+            arp.division = lastDivision;
+            arp.nextBeatPosition = 0.;
         }
-    }
-    else
-        nextBeatPosition = arp.lastBeatPosition + arp.division;
 
-    // The next "snapping" time division occurs in this block! We need to calculate the offset here and play the note.
-    if (nextBeatPosition <= (beatPosition + beatsPerBlock))
-    {
-        auto offset = static_cast<int> ( ((nextBeatPosition - beatPosition) / beatsPerBlock) * numSamples );
-        playArpeggiatorNote(offset);
-        
-        arp.lastBeatPosition = nextBeatPosition;
+        // We need to get the current quarter note and see what's the next candidate position to snap to the current time division.
+        if (arp.nextBeatPosition == 0.)
+        {
+            int nb_divisions = 1;
+            while (arp.nextBeatPosition == 0.)
+            {
+                // For divisions greather than 1.0, we just snap to the next quarter note.
+                auto nextDivision = std::floor(beatPosition) + (nb_divisions * juce::jmin(1., arp.division));
+                if (nextDivision >= beatPosition)
+                    arp.nextBeatPosition = nextDivision;
+
+                nb_divisions ++;
+            }
+        }
+
+        // The next "snapping" time division occurs in this block! We need to calculate the offset here and play the note.
+        offset = static_cast<int> ((arp.nextBeatPosition - beatPosition) * samplesPerBeat);
+        if (offset < numSamples)
+        {
+            playArpeggiatorNote(offset);
+            arp.nextBeatPosition += arp.division;
+        }
     }
 }
 
@@ -251,7 +290,7 @@ void MidiProcessor::playArpeggiatorNote(const int offset)
     {
         arp.currentNote = currentOutputNotesOn[arp.currentIndex];
         processedMidi.addEvent(juce::MidiMessage::noteOn(arp.currentNote.channel, arp.currentNote.note, arp.currentNote.velocity), offset);
-        arp.currentIndex = (arp.currentIndex + 1) % currentOutputNotesOn.size();
+        arp.currentIndex = (arp.currentIndex + 1) % ((int) currentOutputNotesOn.size());
     }
 }
 
@@ -324,10 +363,6 @@ void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
     // Finally, replace the old mapping.
     notesMapping[noteParam.noteIndex].swap(new_mapping);
 
-    // If arpeggiator is on, we can update the chord directly.
-    if (arpeggiatorParams.activated->get() && lastNoteOn.note != -1)
-    {
-        auto mappedNotes = getMappedNotes(lastNoteOn);
-        currentOutputNotesOn.swap(mappedNotes);
-    }
+    // Notify arpeggiator that there's been an update on this note.
+    arp.noteUpdated = noteParam.noteIndex;
 }

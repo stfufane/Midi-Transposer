@@ -15,28 +15,28 @@
       <FILE id="dN5fS2" name="power_button.png" compile="0" resource="1"
             file="Images/power_button.png"/>
     </GROUP>
-    <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Layout">
-      <FILE id="Gt17hO" name="HeaderPanel.cpp" compile="1" resource="0" file="Source/Layout/HeaderPanel.cpp"/>
-      <FILE id="pnGT62" name="Helpers.h" compile="0" resource="0" file="Source/Layout/Helpers.h"/>
-      <FILE id="jL3Ek3" name="IntervalsPanel.cpp" compile="1" resource="0"
-            file="Source/Layout/IntervalsPanel.cpp"/>
-      <FILE id="YXrSok" name="KeysPanel.cpp" compile="1" resource="0" file="Source/Layout/KeysPanel.cpp"/>
-      <FILE id="zHXZWH" name="NoteKey.cpp" compile="1" resource="0" file="Source/Layout/NoteKey.cpp"/>
-      <FILE id="k929zu" name="NoteMappingToggle.cpp" compile="1" resource="0"
-            file="Source/Layout/NoteMappingToggle.cpp"/>
-      <FILE id="oCeckl" name="Panels.h" compile="0" resource="0" file="Source/Layout/Panels.h"/>
-    </GROUP>
-    <GROUP id="{371FF7C0-4655-6912-3672-E3E6E6104C95}" name="Params">
-      <FILE id="Zjnfdr" name="ArpeggiatorParams.cpp" compile="1" resource="0"
-            file="Source/Params/ArpeggiatorParams.cpp"/>
-      <FILE id="GsXmxc" name="IntervalParam.cpp" compile="1" resource="0"
-            file="Source/Params/IntervalParam.cpp"/>
-      <FILE id="B2F56s" name="MidiParams.cpp" compile="1" resource="0" file="Source/Params/MidiParams.cpp"/>
-      <FILE id="Ltgy5r" name="NoteParam.cpp" compile="1" resource="0" file="Source/Params/NoteParam.cpp"/>
-      <FILE id="sxSMsD" name="NoteParams.cpp" compile="1" resource="0" file="Source/Params/NoteParams.cpp"/>
-      <FILE id="xX8dPe" name="Params.h" compile="0" resource="0" file="Source/Params/Params.h"/>
-    </GROUP>
     <GROUP id="{DCDAF334-DD30-3195-88D8-06B875B498F4}" name="Source">
+      <GROUP id="{438F7C02-EB27-2219-D7CC-48072DC7597E}" name="Layout">
+        <FILE id="Gt17hO" name="HeaderPanel.cpp" compile="1" resource="0" file="Source/Layout/HeaderPanel.cpp"/>
+        <FILE id="pnGT62" name="Helpers.h" compile="0" resource="0" file="Source/Layout/Helpers.h"/>
+        <FILE id="jL3Ek3" name="IntervalsPanel.cpp" compile="1" resource="0"
+              file="Source/Layout/IntervalsPanel.cpp"/>
+        <FILE id="YXrSok" name="KeysPanel.cpp" compile="1" resource="0" file="Source/Layout/KeysPanel.cpp"/>
+        <FILE id="zHXZWH" name="NoteKey.cpp" compile="1" resource="0" file="Source/Layout/NoteKey.cpp"/>
+        <FILE id="k929zu" name="NoteMappingToggle.cpp" compile="1" resource="0"
+              file="Source/Layout/NoteMappingToggle.cpp"/>
+        <FILE id="oCeckl" name="Panels.h" compile="0" resource="0" file="Source/Layout/Panels.h"/>
+      </GROUP>
+      <GROUP id="{371FF7C0-4655-6912-3672-E3E6E6104C95}" name="Params">
+        <FILE id="Zjnfdr" name="ArpeggiatorParams.cpp" compile="1" resource="0"
+              file="Source/Params/ArpeggiatorParams.cpp"/>
+        <FILE id="GsXmxc" name="IntervalParam.cpp" compile="1" resource="0"
+              file="Source/Params/IntervalParam.cpp"/>
+        <FILE id="B2F56s" name="MidiParams.cpp" compile="1" resource="0" file="Source/Params/MidiParams.cpp"/>
+        <FILE id="Ltgy5r" name="NoteParam.cpp" compile="1" resource="0" file="Source/Params/NoteParam.cpp"/>
+        <FILE id="sxSMsD" name="NoteParams.cpp" compile="1" resource="0" file="Source/Params/NoteParams.cpp"/>
+        <FILE id="xX8dPe" name="Params.h" compile="0" resource="0" file="Source/Params/Params.h"/>
+      </GROUP>
       <FILE id="bEJIwc" name="MidiProcessor.cpp" compile="1" resource="0"
             file="Source/MidiProcessor.cpp"/>
       <FILE id="FTyAVW" name="MidiProcessor.h" compile="0" resource="0" file="Source/MidiProcessor.h"/>
