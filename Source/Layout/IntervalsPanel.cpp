@@ -13,19 +13,17 @@ IntervalsPanel::IntervalsPanel(NoteParam& noteParam)
         ));
     }
 
-    transpose = std::make_unique< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> >(
+    transpose = std::make_unique< AttachedComponent<SemitoneSlider, juce::SliderParameterAttachment> >(
         *noteParam.transpose, *this,
-        [](RotarySlider& slider) {
+        [](SemitoneSlider& slider) {
             slider.setNormalisableRange({-12, 12, 1});
+            slider.setColour(juce::Slider::ColourIds::textBoxOutlineColourId, juce::Colours::transparentBlack);
             slider.setTooltip("Choose the number of semitones you want to transpose the note.");
         }
     );
 }
 
-void IntervalsPanel::paint(juce::Graphics& g)
-{
-    g.fillAll(juce::Colours::black);
-}
+void IntervalsPanel::paint(juce::Graphics&) {}
 
 void IntervalsPanel::resized()
 {
@@ -57,7 +55,7 @@ void IntervalsPanel::resized()
     auto sliderX = xMargin + width * 5.0f / 16.0f;
     auto sliderY = height / 2.0f;
     auto sliderWidth = width / 4.0f;
-    auto sliderHeight = height / 2.0f;
+    auto sliderHeight = ( height - yMargin * 2.0f ) / 2.0f;
 
     // Resize the textbox.
     auto& slider = transpose.get()->component;

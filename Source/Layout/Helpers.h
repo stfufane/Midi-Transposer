@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "../Params/Params.h"
 
 // Each GUI component linked to a parameter is created as an AttachedComponent to manage the attachment in the same object.
 // It's automatically made visible when it's initialised. The init parameter function can be used to define the component properties.
@@ -10,9 +11,9 @@ class AttachedComponent
 public:
     AttachedComponent<CompType, CompAttachment>(juce::RangedAudioParameter& param, juce::Component& parent, std::function<void(CompType&)> init = nullptr)
     {
-        if (init != nullptr) init(component);
-        parent.addAndMakeVisible(component);
         attachment.reset(new CompAttachment(param, component));
+        parent.addAndMakeVisible(component);
+        if (init != nullptr) init(component);
         attachment->sendInitialUpdate();
     }
     CompType component;
@@ -22,15 +23,54 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachedComponent)
 };
 
-/**
- *  Utility class to instanciate sliders with specific style and positions directly.
- */
-struct RotarySlider : public juce::Slider
+struct HorizontalSlider : public juce::Slider
 {
-    RotarySlider() 
-        : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag , juce::Slider::TextEntryBoxPosition::NoTextBox) { };
+    HorizontalSlider()
+        : juce::Slider(juce::Slider::SliderStyle::LinearHorizontal, juce::Slider::TextEntryBoxPosition::TextBoxRight) 
+    {
+        setTextBoxIsEditable(false);
+    };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RotarySlider)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HorizontalSlider)
+};
+
+struct SyncRateSlider : public HorizontalSlider
+{
+    SyncRateSlider() : HorizontalSlider() 
+    {
+        setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, getTextBoxWidth(), getTextBoxHeight());
+    };
+
+    juce::String getTextFromValue(double value) override
+    {
+        return Notes::divisions[(int) value].label;
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SyncRateSlider)
+};
+
+struct SemitoneSlider : public HorizontalSlider
+{
+    SemitoneSlider() : HorizontalSlider() {};
+
+    juce::String getTextFromValue(double value) override
+    {
+        return juce::String(value) + " semitone" + (std::abs(value) > 1 ? "s" : "");
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SemitoneSlider)
+};
+
+struct OctaveSlider : public HorizontalSlider
+{
+    OctaveSlider() : HorizontalSlider() {};
+
+    juce::String getTextFromValue(double value) override
+    {
+        return juce::String(value) + " octave" + (std::abs(value) > 1 ? "s" : "");
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OctaveSlider)
 };
 
 /**

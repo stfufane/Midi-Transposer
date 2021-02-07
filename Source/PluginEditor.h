@@ -25,6 +25,8 @@ private:
     KeysPanel keysPanel;
     std::unique_ptr<IntervalsPanel> intervalsPanel = nullptr;
 
+    juce::Image backgroundImage { juce::ImageCache::getFromMemory(BinaryData::background_jpg, BinaryData::background_jpgSize) };
+
     juce::TooltipWindow tooltipWindow;
 
     void initIntervalsPanel(NoteParam& noteParam);

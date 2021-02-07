@@ -15,16 +15,25 @@ using Fr = juce::Grid::Fr;
  */
 struct HeaderPanel : public juce::Component
 {
-    HeaderPanel(MidiParams& midiParams);
+    HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams);
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    juce::Image background { juce::ImageCache::getFromMemory(BinaryData::header_jpg, BinaryData::header_jpgSize) };
+    juce::Label lblInputChannel    { "lblInputChannel",    "Input Channel" };
+    juce::Label lblOutputChannel   { "lblOutputChannel",   "Output Channel" };
+    juce::Label lblOctaveTranspose { "lblOctaveTranspose", "Transposition" };
 
-    std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > inputChannel;
-    std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > outputChannel;
-    std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > octaveTranspose;
+    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > inputChannel;
+    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > outputChannel;
+    std::unique_ptr< AttachedComponent<OctaveSlider, juce::SliderParameterAttachment> > octaveTranspose;
+
+    juce::Label lblArpRate { "lblArpRate", "Rate" };
+
+    std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpActivated;
+    std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpSynced;
+    std::unique_ptr< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> > arpSyncRate;
+    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > arpRate;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HeaderPanel)
 };
@@ -39,7 +48,8 @@ struct IntervalsPanel : public juce::Component
     void resized() override;
 
     juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
-    std::unique_ptr<AttachedComponent<RotarySlider, juce::SliderParameterAttachment>> transpose;
+
+    std::unique_ptr<AttachedComponent<SemitoneSlider, juce::SliderParameterAttachment>> transpose;
     std::vector<std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>>> intervalsChoices;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IntervalsPanel)

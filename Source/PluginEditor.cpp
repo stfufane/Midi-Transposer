@@ -1,9 +1,9 @@
 #include "PluginEditor.h"
 
-constexpr auto WINDOW_RATIO = 1.5; //12.0 / 9.0;
-constexpr auto WINDOW_WIDTH = 600;
+constexpr auto WINDOW_RATIO = 16.0f / 10.0f;
+constexpr auto WINDOW_WIDTH = 800.0f;
 constexpr auto WINDOW_HEIGHT = WINDOW_WIDTH / WINDOW_RATIO;
-constexpr auto MAX_RESIZE = 1.5;
+constexpr auto MAX_RESIZE = 1.5f;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
@@ -12,7 +12,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
       uiSettings(p.getUISettings()),
       noteParams(p.getMidiProcessor().getNoteParams()),
       midiParams(p.getMidiProcessor().getMidiParams()),
-      headerPanel(p.getMidiProcessor().getMidiParams()),
+      headerPanel(p.getMidiProcessor().getMidiParams(), p.getMidiProcessor().getArpeggiatorParams()),
       keysPanel(p.getMidiProcessor().getNoteParams())
 {
     setResizable(true, true);
@@ -63,7 +63,8 @@ MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEdito
 //==============================================================================
 void MidiBassPedalChordsAudioProcessorEditor::paint(juce::Graphics& g) 
 {
-    g.fillAll(juce::Colours::white);
+    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), 
+        0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
 }
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() 
@@ -83,7 +84,7 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     {
         auto intervalsHeight = headerPanel.getHeight();
         intervalsPanel.get()->setBounds(0, 0, getWidth(), intervalsHeight);
-    }
+    }         
 }
 
 void MidiBassPedalChordsAudioProcessorEditor::initIntervalsPanel(NoteParam& noteParam)
@@ -99,5 +100,6 @@ void MidiBassPedalChordsAudioProcessorEditor::updateNoteEdited(const int index)
     {
         noteKey->isEdited = (noteKey->noteIndex == index);
     }
+    headerPanel.setAlpha((float) index == -1);
     repaint();
 }

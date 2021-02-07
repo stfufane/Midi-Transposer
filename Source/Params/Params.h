@@ -30,12 +30,15 @@ namespace Notes
     };
 
     static std::vector<Notes::Division> divisions {
-        { "whole note", 4.0 },
-        { "half note", 2.0 },
-        { "quarter note", 1.0 },
-        { "eighth note", 0.5 },
-        { "eighth note triplet", 1.0 / 3.0 },
-        { "sixteenth note", 0.25 }
+        { "Whole note", 4.0 },
+        { "Half note", 2.0 },
+        { "Dotted quarter note", 1.5 },
+        { "Quarter note", 1.0 },
+        { "Dotted 8th note", 0.75 },
+        { "Quarter note triplet", 2.0 / 3.0 },
+        { "8th note", 0.5 },
+        { "8th note triplet", 1.0 / 3.0 },
+        { "16th note", 0.25 }
     };
 }
 

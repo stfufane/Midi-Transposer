@@ -43,15 +43,16 @@ The interface is a work in progress. I made the layout and now am working on the
 
 ![screenshot](./plugin_interface.png "Screenshot")
 
-### Left part ###
-
 * **Input Midi Channel** : Defines from which channel the incoming MIDI events will be processed
 * **Output Midi Channel** : Defines to which channel the processed MIDI events will be routed
 * **Octave Transpose** : If a value other than 0 is selected, the root note will be played at its original height and the selected chord will be transposed to the chosen octave
+* **Arpeggiator** : Self explanatory :)
 
-### Right part ###
+![screenshot](./plugin_interface2.png "Screenshot")
 
-You can edit each note separately. When you click on a key, the corresponding settings are displayed in the bottom panel. There you can select which intervals will be played. You can also decide to transpose the whole chord by a number of semitones.
+When you click on a note, you have access to the intervals panel.
+
+There you can select which intervals will be played for the selected note. You can also decide to transpose the whole chord by a number of semitones. To close the panel, click again on the note.
 
 
 And that's it, it's pretty straight forward.
@@ -61,5 +62,6 @@ And that's it, it's pretty straight forward.
 
 Some ideas I have in mind to improve it :
  * Design (obviously)
- * Arpeggiator
- * Separate output MIDI channels for selected intervals
+ * Shortcuts to add some intervals to all notes
+ * Presets to quickly change configuration
+ * More intervals eventually (jazz chords all the way!)

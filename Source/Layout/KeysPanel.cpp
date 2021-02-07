@@ -17,10 +17,13 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
 
 void KeysPanel::resized()
 {
-    auto width = getLocalBounds().getWidth() / float(NB_NOTES);
+    auto xMargin = getWidth() * 0.1208f;
+    auto width = (getWidth() - (2.0f * xMargin)) / float(NB_NOTES + 1);
     auto height = getLocalBounds().getHeight();
-    for (auto& noteHeader: noteKeys)
-        noteHeader->setBounds(width * noteHeader->noteIndex, 0, width, height);
-    for (auto& noteMappingToggle: noteMappingToggles)
-        noteMappingToggle->setBounds(width * noteMappingToggle->noteIndex, 0, width, width);
+    for (auto i = 0; i < noteKeys.size(); i++)
+    {
+        auto x = (i < 5 ? i : i + 1);
+        noteKeys[i]->setBounds(xMargin + width * x, 0, width, height);
+        noteMappingToggles[i]->setBounds(xMargin + width * x, 0, width, width);
+    }
 }
