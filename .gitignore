@@ -1,6 +1,10 @@
 .cache/
+.idea/
 .vscode/
+.vs/
 build/
+out/
 Builds/
 JuceLibraryCode/
 
+/CMakeSettings.json

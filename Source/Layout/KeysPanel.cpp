@@ -17,8 +17,8 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
 
 void KeysPanel::resized()
 {
-    auto xMargin = getWidth() * 0.1208f;
-    auto width = (getWidth() - (2.0f * xMargin)) / float(NB_NOTES + 1);
+    auto xMargin = static_cast<int>(static_cast<float>(getWidth()) * 0.1208f);
+    auto width = (getWidth() - (2 * xMargin)) / (NB_NOTES + 1);
     auto height = getLocalBounds().getHeight();
     for (auto i = 0; i < noteKeys.size(); i++)
     {

@@ -12,7 +12,7 @@ class MidiBassPedalChordsAudioProcessor : public juce::AudioProcessor
 public:
     //==============================================================================
     MidiBassPedalChordsAudioProcessor();
-    ~MidiBassPedalChordsAudioProcessor();
+    ~MidiBassPedalChordsAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;

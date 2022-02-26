@@ -20,5 +20,5 @@ NoteMappingToggle::NoteMappingToggle(int index, NoteParam& noteParam, juce::Imag
 
 void NoteMappingToggle::resized()
 {
-    mapChoice.get()->component.setBounds(getLocalBounds());
+    mapChoice->component.setBounds(getLocalBounds());
 }

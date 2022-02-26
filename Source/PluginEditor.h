@@ -8,8 +8,8 @@
 class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&);
-    ~MidiBassPedalChordsAudioProcessorEditor();
+    explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor&);
+    ~MidiBassPedalChordsAudioProcessorEditor() override;
 
     //==============================================================================
     void paint(juce::Graphics&) override;
@@ -30,7 +30,7 @@ private:
     juce::TooltipWindow tooltipWindow;
 
     void initIntervalsPanel(NoteParam& noteParam);
-    void updateNoteEdited(const int index);
+    void updateNoteEdited(int index);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiBassPedalChordsAudioProcessorEditor)
 };

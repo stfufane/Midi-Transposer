@@ -43,7 +43,7 @@ struct HeaderPanel : public juce::Component
  */
 struct IntervalsPanel : public juce::Component
 {
-    IntervalsPanel(NoteParam& noteParam);
+    explicit IntervalsPanel(NoteParam& noteParam);
     void paint(juce::Graphics& g) override;
     void resized() override;
 
@@ -96,7 +96,7 @@ struct NoteMappingToggle : public juce::Component
  */ 
 struct KeysPanel : public juce::Component
 {
-    KeysPanel(NoteParams& noteParams);
+    explicit KeysPanel(NoteParams& noteParams);
     void resized() override;
 
     juce::OwnedArray<NoteKey> noteKeys;

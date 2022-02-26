@@ -59,7 +59,7 @@ struct ParamHelper
 */
 struct MidiParams
 {
-    MidiParams() {}
+    MidiParams() = default;
 
     void addParams(juce::AudioProcessor& p);
 
@@ -75,7 +75,7 @@ struct MidiParams
  */
 struct ArpeggiatorParams
 {
-    ArpeggiatorParams() {}
+    ArpeggiatorParams() = default;
 
     void addParams(juce::AudioProcessor& p);
 
@@ -92,7 +92,7 @@ struct ArpeggiatorParams
  */
 struct IntervalParam
 {
-    IntervalParam(const String& name, const String& label, int i);
+    IntervalParam(juce::String name, juce::String label, int i);
     
     void addParam(juce::AudioProcessor& p);
 
@@ -105,13 +105,13 @@ struct IntervalParam
 };
 
 /*
-This represents the structure for a note with its tranposition and selected intervals.
+This represents the structure for a note with its transposition and selected intervals.
 The update function is called on parameter changed to update the mappingNotes vector of the processor.
 */
 struct NoteParam : juce::AudioProcessorParameter::Listener
 {
-    NoteParam(const int i);
-    ~NoteParam();
+    explicit NoteParam(int i);
+    ~NoteParam() override;
 
     void addParams(juce::AudioProcessor& p);
     void parameterValueChanged(int, float) override;

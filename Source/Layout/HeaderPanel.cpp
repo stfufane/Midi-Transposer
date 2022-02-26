@@ -97,9 +97,12 @@ void HeaderPanel::resized()
         juce::GridItem(arpRate->component).withArea(2, 5)
     };
     
-    grid.performLayout (getLocalBounds().reduced(0, getHeight() / 10.f));
+    grid.performLayout (getLocalBounds().reduced(0, getHeight() / 10));
 
     // Make the rate slider text box larger.
     auto& rateSlider = arpSyncRate->component;
-    rateSlider.setTextBoxStyle(rateSlider.getTextBoxPosition(), false, rateSlider.getWidth() * 0.9f, rateSlider.getTextBoxHeight());
+    rateSlider.setTextBoxStyle(rateSlider.getTextBoxPosition(),
+                               false,
+                               rateSlider.getWidth() * 10 / 9,
+                               rateSlider.getTextBoxHeight());
 }

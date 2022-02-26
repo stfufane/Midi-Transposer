@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "MidiProcessor.h"
 
 constexpr auto WINDOW_RATIO = 16.0f / 10.0f;
 constexpr auto WINDOW_WIDTH = 800.0f;
@@ -42,7 +43,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         {
             if (uiSettings.lastNoteIndex == index)
             {
-                intervalsPanel.get()->setVisible(false);
+                intervalsPanel->setVisible(false);
                 resized();
                 index = -1;
             }
@@ -58,7 +59,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     }
 }
 
-MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() { }
+MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor() = default;
 
 //==============================================================================
 void MidiBassPedalChordsAudioProcessorEditor::paint(juce::Graphics& g) 
@@ -83,13 +84,13 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     if (intervalsPanel != nullptr)
     {
         auto intervalsHeight = headerPanel.getHeight();
-        intervalsPanel.get()->setBounds(0, 0, getWidth(), intervalsHeight);
+        intervalsPanel->setBounds(0, 0, getWidth(), intervalsHeight);
     }         
 }
 
 void MidiBassPedalChordsAudioProcessorEditor::initIntervalsPanel(NoteParam& noteParam)
     {
-        intervalsPanel.reset(new IntervalsPanel(noteParam));
+        intervalsPanel = std::make_unique<IntervalsPanel>(noteParam);
         addAndMakeVisible(intervalsPanel.get());
         resized();
     }

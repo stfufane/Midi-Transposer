@@ -9,7 +9,7 @@ MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
     midiProcessor.addParameters(*this);
 }
 
-MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor() {}
+MidiBassPedalChordsAudioProcessor::~MidiBassPedalChordsAudioProcessor() = default;
 
 //==============================================================================
 const juce::String MidiBassPedalChordsAudioProcessor::getName() const
@@ -56,7 +56,7 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
 {
     juce::XmlElement xml("PluginState");
 
-    juce::XmlElement* params = new juce::XmlElement("Params");
+    auto* params = new juce::XmlElement("Params");
     for (auto& param : getParameters())
         params->setAttribute(ParamHelper::getParamID(param), param->getValue());
 
@@ -75,7 +75,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
         auto params = xml->getChildByName("Params");
         if (params != nullptr) {
             for (auto& param : getParameters())
-                param->setValueNotifyingHost(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue()));
+                param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue())));
         }
 
         uiSettings = UISettings(xml->getChildByName("UISettings"));
