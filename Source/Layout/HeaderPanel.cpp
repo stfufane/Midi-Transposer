@@ -1,7 +1,11 @@
 #include "Panels.h"
 
+HeaderPanel::HeaderPanel(MidiBassPedalChordsAudioProcessor& p)
 HeaderPanel::HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams)
 {
+    auto& midiParams = p.getMidiProcessor().getMidiParams();
+    auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
+
     inputChannel = std::make_unique< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> >(
         *midiParams.inputChannel, *this,
         [](HorizontalSlider& slider) {
@@ -66,8 +70,6 @@ HeaderPanel::HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams)
     addAndMakeVisible(lblOctaveTranspose);
     addAndMakeVisible(lblArpRate);
 }
-
-void HeaderPanel::paint(juce::Graphics&) {}
 
 void HeaderPanel::resized()
 {

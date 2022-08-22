@@ -8,3 +8,4 @@ Builds/
 JuceLibraryCode/
 
 /CMakeSettings.json
+/cmake-build-debug/

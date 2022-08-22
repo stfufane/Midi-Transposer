@@ -56,11 +56,12 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
 {
     juce::XmlElement xml("PluginState");
 
-    auto* params = new juce::XmlElement("Params");
-    for (auto& param : getParameters())
-        params->setAttribute(ParamHelper::getParamID(param), param->getValue());
+    auto* xml_params = new juce::XmlElement("Params");
+    for (auto& param : getParameters()) {
+        xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
+    }
 
-    xml.addChildElement(params);
+    xml.addChildElement(xml_params);
     xml.addChildElement(uiSettings.getXml());
 
     copyXmlToBinary(xml, destData);
@@ -70,29 +71,21 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
 {
     auto xml = getXmlFromBinary(data, sizeInBytes);
 
-    if (xml != nullptr)
-    {
+    if (xml != nullptr) {
         auto params = xml->getChildByName("Params");
         if (params != nullptr) {
-            for (auto& param : getParameters())
-                param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue())));
+            for (auto& param: getParameters()) {
+                param->setValueNotifyingHost(
+                        static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param),
+                                                                      param->getValue())));
+            }
         }
 
         uiSettings = UISettings(xml->getChildByName("UISettings"));
     }
 }
 
-MidiProcessor& MidiBassPedalChordsAudioProcessor::getMidiProcessor()
-{
-    return midiProcessor;
-}
-
-UISettings& MidiBassPedalChordsAudioProcessor::getUISettings()
-{
-    return uiSettings;
-}
-
-void MidiBassPedalChordsAudioProcessor::setEditorSize(int w, int h) 
+void MidiBassPedalChordsAudioProcessor::saveEditorSize(int w, int h)
 {
     uiSettings.width = w;
     uiSettings.height = h;

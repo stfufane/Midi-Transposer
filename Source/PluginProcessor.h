@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 #include "MidiProcessor.h"
-#include "Settings.h"
+#include "UISettings.h"
 
 /**
  * 
@@ -46,10 +46,11 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
     //==============================================================================
-    MidiProcessor& getMidiProcessor();
-    UISettings& getUISettings();
-    void setEditorSize(int w, int h);
+    MidiProcessor& getMidiProcessor() { return midiProcessor; }
+    UISettings& getUISettings() { return uiSettings; }
+    void saveEditorSize(int w, int h);
 private:
     UISettings uiSettings;
 

@@ -289,9 +289,7 @@ void MidiProcessor::addParameters(juce::AudioProcessor& p)
 {
     midiParams.addParams(p);
     arpeggiatorParams.addParams(p);
-    for (auto& noteParam: noteParams.notes) {
-        noteParam->addParams(p);
-    }
+    noteParams.addParams(p);
 
     // Each note param has its own listener and lambda function so only the corresponding note
     // is updated in the notesMapping vector. It also avoids testing paramID in parameterChanged method.
@@ -310,20 +308,20 @@ void MidiProcessor::initParameters()
 }
 
 // This method is called by the lambda associated to every noteParam when one of the note parameters is updated.
-void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
+void MidiProcessor::updateNoteMapping(const NoteParam& inNoteParam)
 {
     std::vector<int> new_mapping;
     // There's a toggle button on each note saying if it should be mapped or not.
     // If not we just use the default value, which is the base note without transposition.
-    auto mapNote = noteParam.mapNote->get();
-    if (mapNote) {
-        auto transpose = noteParam.transpose->get();
+    const auto map_note = inNoteParam.mapNote->get();
+    if (map_note) {
+        auto transpose = inNoteParam.transpose->get();
         // Add the transposed value first, it's the root note.
         new_mapping.push_back(transpose);
 
         // Then add the selected intervals.
-        for (size_t i = 0; i < noteParam.intervals.size(); i++) {
-            if (noteParam.intervals[i]->interval->get()) {
+        for (size_t i = 0; i < inNoteParam.intervals.size(); i++) {
+            if (inNoteParam.intervals[i]->interval->get()) {
                 new_mapping.push_back(transpose + (static_cast<int>(i) + 1));
             }
         }
@@ -332,8 +330,8 @@ void MidiProcessor::updateNoteMapping(const NoteParam& noteParam)
     }
 
     // Finally, replace the old mapping.
-    notesMapping[noteParam.noteIndex].swap(new_mapping);
+    notesMapping[inNoteParam.noteIndex].swap(new_mapping);
 
     // Notify arpeggiator that there's been an update on this note.
-    arp.noteUpdated = noteParam.noteIndex;
+    arp.noteUpdated = inNoteParam.noteIndex;
 }

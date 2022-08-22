@@ -4,24 +4,24 @@
 
 namespace ParamIDs
 {
-    static juce::String inChannel               { "in_channel" };
-    static juce::String outChannel              { "out_channel" };
-    static juce::String octaveTranspose         { "octave_transpose" };
-    static juce::String noteTranspose           { "_noteTranspose" };
-    static juce::String noteInterval            { "_interval_" };
-    static juce::String mapNote                 { "_mapNote" };
-    static juce::String arpeggiatorActivated    { "arpeggiator_activated" };
-    static juce::String arpeggiatorSync         { "arpeggiator_sync" };
-    static juce::String arpeggiatorSyncRate     { "arpeggiator_sync_rate" };
-    static juce::String arpeggiatorRate         { "arpeggiator_rate" };
+    static const juce::String inChannel               { "in_channel" };
+    static const juce::String outChannel              { "out_channel" };
+    static const juce::String octaveTranspose         { "octave_transpose" };
+    static const juce::String noteTranspose           { "_noteTranspose" };
+    static const juce::String noteInterval            { "_interval_" };
+    static const juce::String mapNote                 { "_mapNote" };
+    static const juce::String arpeggiatorActivated    { "arpeggiator_activated" };
+    static const juce::String arpeggiatorSync         { "arpeggiator_sync" };
+    static const juce::String arpeggiatorSyncRate     { "arpeggiator_sync_rate" };
+    static const juce::String arpeggiatorRate         { "arpeggiator_rate" };
 }
 
 namespace Notes
 {
-    static int count { 12 };
-    static juce::StringArray names      { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
-    static juce::StringArray labels     { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
-    static juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
+    static const int count { 12 };
+    static const juce::StringArray names      { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
+    static const juce::StringArray labels     { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
+    static const juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
 
     struct Division
     {
@@ -29,7 +29,7 @@ namespace Notes
         double division;
     };
 
-    static std::vector<Notes::Division> divisions {
+    static const std::vector<Notes::Division> divisions {
         { "Whole note", 4.0 },
         { "Half note", 2.0 },
         { "Dotted quarter note", 1.5 },
@@ -92,7 +92,8 @@ struct ArpeggiatorParams
  */
 struct IntervalParam
 {
-    IntervalParam(juce::String name, juce::String label, int i);
+    IntervalParam() = delete;
+    explicit IntervalParam(juce::String name, juce::String label, int i);
     
     void addParam(juce::AudioProcessor& p);
 
@@ -110,6 +111,7 @@ The update function is called on parameter changed to update the mappingNotes ve
 */
 struct NoteParam : juce::AudioProcessorParameter::Listener
 {
+    NoteParam() = delete;
     explicit NoteParam(int i);
     ~NoteParam() override;
 

@@ -3,8 +3,12 @@
 #include <JuceHeader.h>
 #include "../Params/Params.h"
 
-// Each GUI component linked to a parameter is created as an AttachedComponent to manage the attachment in the same object.
-// It's automatically made visible when it's initialised. The init parameter function can be used to define the component properties.
+/**
+ * @brief Each GUI component linked to a parameter is created as an AttachedComponent to manage the attachment in the same object.
+ * It's automatically made visible when it's initialised. The init parameter function can be used to define the component properties.
+ * @tparam CompType The type of component to display (slider, button, etc.)
+ * @tparam CompAttachment The ParameterAttachment linked to the component.
+ */
 template <typename CompType, typename CompAttachment>
 class AttachedComponent
 {
@@ -74,7 +78,7 @@ struct OctaveSlider : public HorizontalSlider
 };
 
 /**
- * This is a custom toggle button that seeks a specific part of a sprite image to display
+ * @brief This is a custom toggle button that seeks a specific part of a sprite image to display
  * depending on the interval index. It centers it in the local bounds of the component.
  */
 class IndexedToggleButton : public juce::ToggleButton

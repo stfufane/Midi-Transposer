@@ -78,7 +78,7 @@ private:
     // -----------------------------------
     // Manage mapping values
     void initParameters();
-    void updateNoteMapping(const NoteParam& noteParam);
+    void updateNoteMapping(const NoteParam& inNoteParam);
     // -----------------------------------
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiProcessor)

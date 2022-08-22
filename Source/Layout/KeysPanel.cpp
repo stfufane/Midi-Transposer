@@ -17,13 +17,15 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
 
 void KeysPanel::resized()
 {
-    auto xMargin = static_cast<int>(static_cast<float>(getWidth()) * 0.1208f);
-    auto width = (getWidth() - (2 * xMargin)) / (NB_NOTES + 1);
+    auto xMargin = static_cast<float>(getWidth()) * 0.1208f;
+    auto width = (static_cast<float>(getWidth()) - (2 * xMargin)) / (NB_NOTES + 1);
     auto height = getLocalBounds().getHeight();
     for (auto i = 0; i < noteKeys.size(); i++)
     {
-        auto x = (i < 5 ? i : i + 1);
-        noteKeys[i]->setBounds(xMargin + width * x, 0, width, height);
-        noteMappingToggles[i]->setBounds(xMargin + width * x, 0, width, width);
+        auto x = (i < 5 ? static_cast<float>(i) : static_cast<float>(i + 1));
+        auto key_x = static_cast<int>(xMargin + width * x);
+        auto key_width = static_cast<int>(width);
+        noteKeys[i]->setBounds(key_x, 0, key_width, height);
+        noteMappingToggles[i]->setBounds(key_x, 0, key_width, key_width);
     }
 }

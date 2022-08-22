@@ -3,33 +3,36 @@
 #include <JuceHeader.h>
 
 /**
- * A representation of the last UI settings to restore it when loading the editor
+ * @brief A representation of the last UI settings to restore it when loading the editor
  */
 struct UISettings
 {
     UISettings() = default;
     // Get it from the plugin state
-    UISettings(juce::XmlElement* xml)
+    explicit UISettings(juce::XmlElement* xml)
     {
         if (xml != nullptr)
         {
             width = xml->getIntAttribute("width");
             height = xml->getIntAttribute("height");
             lastNoteIndex = xml->getIntAttribute("lastNoteIndex");
+            presetName = xml->getStringAttribute("presetName");
         }
     }
 
     // Build the XML representation to save in plugin state.
-    juce::XmlElement* getXml() 
+    juce::XmlElement* getXml() const
     {
-        juce::XmlElement* xml = new juce::XmlElement("UISettings");
+        auto* xml = new juce::XmlElement("UISettings");
         xml->setAttribute("width", width);
         xml->setAttribute("height", height);
         xml->setAttribute("lastNoteIndex", lastNoteIndex);
+        xml->setAttribute("presetName", presetName);
         return xml;
     }
 
     int width = 0;
     int height = 0;
     int lastNoteIndex = 0;
+    juce::String presetName { "Default" };
 };

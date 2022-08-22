@@ -1,54 +1,50 @@
 #include "PluginEditor.h"
-#include "MidiProcessor.h"
 
-constexpr auto WINDOW_RATIO = 16.0f / 10.0f;
-constexpr auto WINDOW_WIDTH = 800.0f;
-constexpr auto WINDOW_HEIGHT = WINDOW_WIDTH / WINDOW_RATIO;
-constexpr auto MAX_RESIZE = 1.5f;
+constexpr auto kWindowRatio = 16.0f / 10.0f;
+constexpr auto kWindowWidth = 800.0f;
+constexpr auto kWindowHeight = kWindowWidth / kWindowRatio;
+constexpr auto kMaxResize = 1.5f;
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), 
-      processor(p), 
-      uiSettings(p.getUISettings()),
-      noteParams(p.getMidiProcessor().getNoteParams()),
-      midiParams(p.getMidiProcessor().getMidiParams()),
-      headerPanel(p.getMidiProcessor().getMidiParams(), p.getMidiProcessor().getArpeggiatorParams()),
+      headerPanel(p),
       keysPanel(p.getMidiProcessor().getNoteParams())
 {
     setResizable(true, true);
+
+    // Retrieve useful data from the processor.
+    auto& uiSettings = p.getUISettings();
+    auto& noteParams = p.getMidiProcessor().getNoteParams();
+
     // Restore the last size if it exists.
     if (uiSettings.width != 0) {
         setSize(uiSettings.width, uiSettings.height);
     } else {
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        setSize(kWindowWidth, kWindowHeight);
     }
-    setResizeLimits(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH * MAX_RESIZE, WINDOW_HEIGHT * MAX_RESIZE);
-    getConstrainer()->setFixedAspectRatio(WINDOW_RATIO);
+    setResizeLimits(kWindowWidth, kWindowHeight, kWindowWidth * kMaxResize, kWindowHeight * kMaxResize);
+    getConstrainer()->setFixedAspectRatio(kWindowRatio);
 
     addAndMakeVisible(headerPanel);
     addAndMakeVisible(keysPanel);
 
     auto index = uiSettings.lastNoteIndex;
     updateNoteEdited(index);
-    if (index > -1) 
-    {
+    if (index > -1) {
         auto noteParam = noteParams.notes[index].get();
         initIntervalsPanel(*noteParam);
     }
     
-    for (auto& noteKey: keysPanel.noteKeys) 
-    {
-        noteKey->changeNote = [this] (int index) 
+    for (auto& noteKey: keysPanel.noteKeys) {
+        noteKey->changeNote = [this, &uiSettings, &noteParams] (int index)
         {
-            if (uiSettings.lastNoteIndex == index)
-            {
+            if (uiSettings.lastNoteIndex == index) {
                 intervalsPanel->setVisible(false);
                 resized();
                 index = -1;
             }
-            else
-            {
+            else {
                 auto noteParam = noteParams.notes[index].get();
                 initIntervalsPanel(*noteParam);
             }
@@ -70,7 +66,8 @@ void MidiBassPedalChordsAudioProcessorEditor::paint(juce::Graphics& g)
 
 void MidiBassPedalChordsAudioProcessorEditor::resized() 
 {
-    processor.setEditorSize(getWidth(), getHeight());
+    auto* p = dynamic_cast<MidiBassPedalChordsAudioProcessor*>(&processor);
+    p->saveEditorSize(getWidth(), getHeight());
 
     juce::Grid grid;
  
@@ -101,6 +98,6 @@ void MidiBassPedalChordsAudioProcessorEditor::updateNoteEdited(const int index)
     {
         noteKey->isEdited = (noteKey->noteIndex == index);
     }
-    headerPanel.setAlpha((float) index == -1);
+    headerPanel.setAlpha(index == -1 ? 1.f : 0.f);
     repaint();
 }

@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "Helpers.h"
 #include "../Params/Params.h"
+#include "../PluginProcessor.h"
 
 constexpr auto NB_NOTES = 12;
 constexpr auto NB_INTERVALS = 12;
@@ -15,9 +16,9 @@ using Fr = juce::Grid::Fr;
  */
 struct HeaderPanel : public juce::Component
 {
-    HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams);
+    HeaderPanel() = delete;
+    explicit HeaderPanel(MidiBassPedalChordsAudioProcessor& p);
 
-    void paint(juce::Graphics& g) override;
     void resized() override;
 
     juce::Label lblInputChannel    { "lblInputChannel",    "Input Channel" };
@@ -39,10 +40,11 @@ struct HeaderPanel : public juce::Component
 };
 
 /**
- * This panel holds the 12 interval buttons for a note + a semitone transposition slider.
+ * @brief This panel holds the 12 interval buttons for a note + a semitone transposition slider.
  */
 struct IntervalsPanel : public juce::Component
 {
+    IntervalsPanel() = delete;
     explicit IntervalsPanel(NoteParam& noteParam);
     void paint(juce::Graphics& g) override;
     void resized() override;
@@ -56,11 +58,12 @@ struct IntervalsPanel : public juce::Component
 };
 
 /**
- * The drawing of a key with an event to display its intervals.
+ * @brief The drawing of a key with an event to display its intervals.
  */
 struct NoteKey : public juce::Component
 {
-    NoteKey(int index, Image* image);
+    NoteKey() = delete;
+    explicit NoteKey(int index, Image* image);
 
     void paint(juce::Graphics& g) override;
     void mouseDown(const juce::MouseEvent&) override;
@@ -77,11 +80,12 @@ struct NoteKey : public juce::Component
 };
 
 /**
- * This is the power on/off button on top of each note.
+ * @brief This is the power on/off button on top of each note.
  */
 struct NoteMappingToggle : public juce::Component
 {
-    NoteMappingToggle(int index, NoteParam& noteParam, juce::Image* image);
+    NoteMappingToggle() = delete;
+    explicit NoteMappingToggle(int index, NoteParam& noteParam, juce::Image* image);
     void resized() override;
 
     int noteIndex;
@@ -92,10 +96,11 @@ struct NoteMappingToggle : public juce::Component
 };
 
 /**
- * The header contains all the note names + their transposition sliders.
+ * @brief The header contains all the note names + their transposition sliders.
  */ 
 struct KeysPanel : public juce::Component
 {
+    KeysPanel() = delete;
     explicit KeysPanel(NoteParams& noteParams);
     void resized() override;
 
