@@ -29,9 +29,22 @@ juce_add_plugin("${BaseTargetName}"
 	FORMATS VST3
 	PRODUCT_NAME "MidiBassPedalChords")
 
-FILE(GLOB CppSources *.cpp Layout/*.cpp Params/*.cpp)
 target_sources(${BaseTargetName} PRIVATE
-        ${CppSources})
+		PluginProcessor.cpp
+		PluginEditor.cpp
+		MidiProcessor.cpp
+		PresetBrowser/PresetManager.cpp
+		Params/ArpeggiatorParams.cpp
+		Params/IntervalParam.cpp
+		Params/MidiParams.cpp
+		Params/NoteParam.cpp
+		Params/NoteParams.cpp
+		Layout/HeaderPanel.cpp
+		Layout/IntervalsPanel.cpp
+		Layout/KeysPanel.cpp
+		Layout/NoteKey.cpp
+		Layout/NoteMappingToggle.cpp
+		Layout/PresetsPanel.cpp)
 		
 add_images_from_directory(${BaseTargetName} ../Images)
 

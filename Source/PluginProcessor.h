@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "MidiProcessor.h"
 #include "UISettings.h"
+#include "PresetBrowser/PresetManager.h"
 
 /**
  * 
@@ -50,10 +51,11 @@ public:
     //==============================================================================
     MidiProcessor& getMidiProcessor() { return midiProcessor; }
     UISettings& getUISettings() { return uiSettings; }
+    PresetBrowser::PresetManager& getPresetManager() { return presetManager; }
     void saveEditorSize(int w, int h);
 private:
     UISettings uiSettings;
-
+    PresetBrowser::PresetManager presetManager;
     MidiProcessor midiProcessor;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiBassPedalChordsAudioProcessor)

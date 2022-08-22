@@ -1,7 +1,7 @@
 #include "Panels.h"
 
 HeaderPanel::HeaderPanel(MidiBassPedalChordsAudioProcessor& p)
-HeaderPanel::HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams)
+    : presetsPanel(std::make_unique<PresetsPanel>(p.getPresetManager()))
 {
     auto& midiParams = p.getMidiProcessor().getMidiParams();
     auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
@@ -69,6 +69,7 @@ HeaderPanel::HeaderPanel(MidiParams& midiParams, ArpeggiatorParams& arpParams)
     addAndMakeVisible(lblOutputChannel);
     addAndMakeVisible(lblOctaveTranspose);
     addAndMakeVisible(lblArpRate);
+    addAndMakeVisible(presetsPanel.get());
 }
 
 void HeaderPanel::resized()
@@ -96,7 +97,8 @@ void HeaderPanel::resized()
         juce::GridItem(arpSynced->component).withArea(1, 5),
         juce::GridItem(lblArpRate).withArea(2, 4),
         juce::GridItem(arpSyncRate->component).withArea(2, 5),
-        juce::GridItem(arpRate->component).withArea(2, 5)
+        juce::GridItem(arpRate->component).withArea(2, 5),
+        juce::GridItem(presetsPanel.get()).withArea(3, 4, 3, 6)
     };
     
     grid.performLayout (getLocalBounds().reduced(0, getHeight() / 10));

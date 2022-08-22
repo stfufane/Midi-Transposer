@@ -3,7 +3,8 @@
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
-    : juce::AudioProcessor (juce::AudioProcessor::BusesProperties().withInput("Input", juce::AudioChannelSet::mono(), true))
+    : juce::AudioProcessor (juce::AudioProcessor::BusesProperties().withInput("Input", juce::AudioChannelSet::mono(), true)),
+      presetManager(*this)
 { 
     // Add the parameters and listeners from the midi processor.
     midiProcessor.addParameters(*this);
@@ -60,6 +61,8 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
     for (auto& param : getParameters()) {
         xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
     }
+    // Store the name of the current preset.
+    uiSettings.presetName = presetManager.getCurrentPreset();
 
     xml.addChildElement(xml_params);
     xml.addChildElement(uiSettings.getXml());
@@ -82,6 +85,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
         }
 
         uiSettings = UISettings(xml->getChildByName("UISettings"));
+        presetManager.setCurrentPreset(uiSettings.presetName);
     }
 }
 

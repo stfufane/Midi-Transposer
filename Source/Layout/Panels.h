@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "Helpers.h"
 #include "../Params/Params.h"
+#include "../PresetBrowser/PresetManager.h"
 #include "../PluginProcessor.h"
 
 constexpr auto NB_NOTES = 12;
@@ -12,7 +13,51 @@ using Track = juce::Grid::TrackInfo;
 using Fr = juce::Grid::Fr;
 
 /**
- * The header with MIDI params
+ * @brief Contains the current preset name + presets browsing/save/load
+ */
+class PresetsPanel : public juce::Component, juce::Button::Listener
+{
+public:
+    PresetsPanel() = delete;
+    explicit PresetsPanel(PresetBrowser::PresetManager& pm);
+    ~PresetsPanel() override;
+
+    void initButton(juce::Button& ioButton, const juce::String& inText);
+
+    void resized() override;
+    void buttonClicked(juce::Button* button) override;
+
+    void validatePresetSave(int result);
+private:
+    PresetBrowser::PresetManager& presetManager; // Only a reference, the audio processor is owning it.
+
+    juce::Label presetNameLabel { "lblPresetName", "Default"};
+    juce::TextButton presetLoadButton { "btnLoadPreset" };
+    juce::TextButton presetSaveButton { "btnSavePreset" };
+    juce::TextButton presetResetButton { "btnResetPreset" };
+
+    std::unique_ptr<juce::FileChooser> fileChooser = nullptr;
+
+    std::unique_ptr<juce::AlertWindow> presetNameChooser = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetsPanel)
+};
+
+/**
+ * @brief A callback struct used by the AlertWindow to validate the user input.
+ */
+struct PresetNameDialogChosen
+{
+    void operator() (int result) const noexcept
+    {
+        panel.validatePresetSave(result);
+    }
+
+    PresetsPanel& panel;
+};
+
+/**
+ * @brief The header with MIDI params and Arpeggiator params + preset manager
  */
 struct HeaderPanel : public juce::Component
 {
@@ -35,6 +80,8 @@ struct HeaderPanel : public juce::Component
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpSynced;
     std::unique_ptr< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> > arpSyncRate;
     std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > arpRate;
+
+    std::unique_ptr<PresetsPanel> presetsPanel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HeaderPanel)
 };
