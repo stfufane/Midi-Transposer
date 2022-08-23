@@ -2,8 +2,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Layout/Helpers.h"
-#include "Layout/Panels.h"
+#include "GUI/Panels.h"
 
 class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
 {

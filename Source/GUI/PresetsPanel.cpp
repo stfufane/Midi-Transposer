@@ -1,21 +1,36 @@
 #include "Panels.h"
 
+/**
+ * @brief A callback struct used by the AlertWindow to validate the user input.
+ */
+struct PresetNameDialogChosen
+{
+    void operator() (int result) const noexcept
+    {
+        panel.validatePresetSave(result);
+    }
+
+    PresetsPanel& panel;
+};
+
 PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
 : presetManager(pm)
 {
-    addAndMakeVisible(presetNameLabel);
-    presetNameLabel.setText(presetManager.getCurrentPreset(), juce::NotificationType::dontSendNotification);
+    addAndMakeVisible(presetListComboBox);
+    presetListComboBox.setTextWhenNothingSelected("Default");
+    presetListComboBox.setMouseCursor(juce::MouseCursor::PointingHandCursor);
+    presetListComboBox.addListener(this);
+    updatePresetsList();
 
     initButton(presetSaveButton, "Save");
-    initButton(presetLoadButton, "Load");
     initButton(presetResetButton, "Reset");
 }
 
 PresetsPanel::~PresetsPanel()
 {
     presetSaveButton.removeListener(this);
-    presetLoadButton.removeListener(this);
     presetResetButton.removeListener(this);
+    presetListComboBox.removeListener(this);
 }
 
 void PresetsPanel::initButton(juce::Button &ioButton, const juce::String &inText)
@@ -28,29 +43,12 @@ void PresetsPanel::initButton(juce::Button &ioButton, const juce::String &inText
 
 void PresetsPanel::buttonClicked(juce::Button *button)
 {
-    if (button == &presetLoadButton) {
-        fileChooser = std::make_unique<FileChooser>(
-                "Choose the preset you want to load",
-                presetManager.getPresetPath(),
-                "*." + PresetBrowser::PresetManager::kPresetsExtension
-        );
-
-        fileChooser->launchAsync(FileBrowserComponent::openMode, [&](const FileChooser &chooser) {
-            const auto result_file = chooser.getResult();
-            const auto preset_name = result_file.getFileNameWithoutExtension();
-            if (presetManager.loadPreset(preset_name)) {
-                presetNameLabel.setText(preset_name, juce::NotificationType::dontSendNotification);
-            }
-        });
-        return;
-    }
-
     if (button == &presetSaveButton) {
         presetNameChooser = std::make_unique<AlertWindow> ("Save this preset",
                                                           "Choose the name for your preset.",
                                                           MessageBoxIconType::NoIcon);
 
-        presetNameChooser->addTextEditor ("preset", "My cool preset", "Preset name :");
+        presetNameChooser->addTextEditor ("preset", presetManager.getCurrentPreset(), "Preset name :");
         presetNameChooser->addButton ("OK",     1, KeyPress (KeyPress::returnKey, 0, 0));
         presetNameChooser->addButton ("Cancel", 0, KeyPress (KeyPress::escapeKey, 0, 0));
 
@@ -60,8 +58,24 @@ void PresetsPanel::buttonClicked(juce::Button *button)
 
     if (button == &presetResetButton) {
         presetManager.resetPreset();
-        presetNameLabel.setText(presetManager.getCurrentPreset(), juce::NotificationType::dontSendNotification);
+        presetListComboBox.setSelectedItemIndex(-1, juce::NotificationType::dontSendNotification);
     }
+}
+
+void PresetsPanel::comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged)
+{
+    if (comboBoxThatHasChanged == &presetListComboBox) {
+        presetManager.loadPreset(presetListComboBox.getItemText(presetListComboBox.getSelectedItemIndex()));
+    }
+}
+
+void PresetsPanel::updatePresetsList()
+{
+    presetListComboBox.clear(dontSendNotification);
+    const auto allPresets = presetManager.getAllPresets();
+    const auto currentPreset = presetManager.getCurrentPreset();
+    presetListComboBox.addItemList(allPresets, 1);
+    presetListComboBox.setSelectedItemIndex(allPresets.indexOf(currentPreset), dontSendNotification);
 }
 
 void PresetsPanel::validatePresetSave(int result)
@@ -76,7 +90,7 @@ void PresetsPanel::validatePresetSave(int result)
     auto preset_name = presetNameChooser->getTextEditorContents ("preset");
     //TODO: Some input validation.
     if (presetManager.savePreset(preset_name)) {
-        presetNameLabel.setText(preset_name, juce::NotificationType::dontSendNotification);
+        updatePresetsList();
     }
 }
 
@@ -85,8 +99,7 @@ void PresetsPanel::resized()
     auto button_width = getWidth() / 5;
     const auto height = getHeight() / 2;
     const auto y = getHeight() / 4;
-    presetSaveButton.setBounds(0, y, button_width, height);
-    presetLoadButton.setBounds(button_width, y, button_width, height);
-    presetResetButton.setBounds(button_width * 2, y, button_width, height);
-    presetNameLabel.setBounds(button_width * 3, 0, button_width * 2, getHeight());
+    presetListComboBox.setBounds(0, y, button_width * 3, height);
+    presetSaveButton.setBounds(button_width * 3, y, button_width, height);
+    presetResetButton.setBounds(button_width * 4, y, button_width, height);
 }

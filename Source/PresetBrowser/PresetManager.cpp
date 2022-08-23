@@ -78,4 +78,14 @@ namespace PresetBrowser {
         }
         currentPreset = "Default";
     }
+
+    juce::StringArray PresetManager::getAllPresets() {
+        juce::StringArray presets;
+        const auto fileArray = presetsPath.findChildFiles(
+                File::TypesOfFileToFind::findFiles, false, "*." + kPresetsExtension);
+        for (const auto& file : fileArray) {
+            presets.add(file.getFileNameWithoutExtension());
+        }
+        return presets;
+    }
 }

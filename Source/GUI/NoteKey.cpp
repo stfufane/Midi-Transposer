@@ -6,13 +6,11 @@ NoteKey::NoteKey(int index, juce::Image* image)
 
 void NoteKey::paint(juce::Graphics& g)
 {
-    if (isEdited)
-    {
+    if (isEdited) {
         g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(), 
                 keyImage->getWidth() / 2, 0, keyImage->getWidth() / 2, keyImage->getHeight());
     }
-    if (isOver)
-    {
+    if (isOver) {
         g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(), 
                 0, 0, keyImage->getWidth() / 2, keyImage->getHeight());
     }
@@ -20,8 +18,9 @@ void NoteKey::paint(juce::Graphics& g)
 
 void NoteKey::mouseDown(const juce::MouseEvent&) 
 {
-    if (changeNote != nullptr)
+    if (changeNote != nullptr) {
         changeNote(noteIndex);
+    }
 }
 
 void NoteKey::mouseEnter(const juce::MouseEvent&)  

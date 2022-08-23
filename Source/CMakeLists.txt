@@ -39,12 +39,12 @@ target_sources(${BaseTargetName} PRIVATE
 		Params/MidiParams.cpp
 		Params/NoteParam.cpp
 		Params/NoteParams.cpp
-		Layout/HeaderPanel.cpp
-		Layout/IntervalsPanel.cpp
-		Layout/KeysPanel.cpp
-		Layout/NoteKey.cpp
-		Layout/NoteMappingToggle.cpp
-		Layout/PresetsPanel.cpp)
+		GUI/HeaderPanel.cpp
+		GUI/IntervalsPanel.cpp
+		GUI/KeysPanel.cpp
+		GUI/NoteKey.cpp
+		GUI/NoteMappingToggle.cpp
+		GUI/PresetsPanel.cpp)
 		
 add_images_from_directory(${BaseTargetName} ../Images)
 

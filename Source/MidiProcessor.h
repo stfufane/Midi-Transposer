@@ -39,7 +39,7 @@ private:
     // Used to calculate the arpeggiator note positions.
     struct Arpeggiator 
     {
-        float     sampleRate { };
+        float     sampleRate;
         int       time { 0 };
         double    division { 0. };
         double    nextBeatPosition { 0. };

@@ -53,9 +53,8 @@ struct ParamHelper
     }
 };
 
-/*
-    Simple structure that contains the 4 basic parameters at the top of the plugin.
-    Whenever one of them is updated, the parameterChanged method will update the local atomic values for all of them.
+/**
+ * @brief Simple structure that contains the 3 MIDI parameters at the top of the plugin.
 */
 struct MidiParams
 {

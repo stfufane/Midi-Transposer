@@ -27,6 +27,12 @@ namespace PresetBrowser {
          */
         void resetPreset();
 
+        /**
+         * @brief Reads the presets directory to get all the presets
+         * @return An array of String to populate the combobox
+         */
+        juce::StringArray getAllPresets();
+
         const juce::File& getPresetPath() const { return presetsPath; }
         const juce::String& getCurrentPreset() const { return currentPreset; }
         void setCurrentPreset(const juce::String& inPreset) { currentPreset = inPreset; }
