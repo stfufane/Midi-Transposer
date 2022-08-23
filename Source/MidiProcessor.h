@@ -69,9 +69,9 @@ private:
     void removeHeldNote(int note);
 
     void processArpeggiator(int numSamples, juce::AudioPlayHead* playHead);
-    int  getArpeggiatorNoteDuration(const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
-    void arpeggiate(int numSamples, const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
-    void arpeggiateSync(int numSamples, const juce::AudioPlayHead::CurrentPositionInfo& positionInfo);
+    int  getArpeggiatorNoteDuration(const juce::AudioPlayHead::PositionInfo& positionInfo);
+    void arpeggiate(int numSamples, const juce::AudioPlayHead::PositionInfo& positionInfo);
+    void arpeggiateSync(int numSamples, const juce::AudioPlayHead::PositionInfo& positionInfo);
     void playArpeggiatorNote(int offset);
     // -----------------------------------
 
