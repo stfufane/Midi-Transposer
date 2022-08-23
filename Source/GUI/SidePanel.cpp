@@ -1,7 +1,10 @@
-#include "Panels.h"
+#include "SidePanel.h"
 
-HeaderPanel::HeaderPanel(MidiBassPedalChordsAudioProcessor& p)
-    : presetsPanel(std::make_unique<PresetsPanel>(p.getPresetManager()))
+namespace Gui
+{
+
+SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
+    : juce::Component("Side Panel")
 {
     auto& midiParams = p.getMidiProcessor().getMidiParams();
     auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
@@ -64,49 +67,59 @@ HeaderPanel::HeaderPanel(MidiBassPedalChordsAudioProcessor& p)
             };
         }
     );
-    
-    addAndMakeVisible(lblInputChannel);
-    addAndMakeVisible(lblOutputChannel);
-    addAndMakeVisible(lblOctaveTranspose);
-    addAndMakeVisible(lblArpRate);
-    addAndMakeVisible(presetsPanel.get());
+
+    initLabel(lblInputChannel);
+    initLabel(lblOutputChannel);
+    initLabel(lblOctaveTranspose);
+    initLabel(lblArpRate);
 }
 
-void HeaderPanel::resized()
+void SidePanel::initLabel(juce::Label& ioLabel)
 {
-    juce::Grid grid;
+    ioLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
+    ioLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(ioLabel);
+}
 
-    grid.templateRows    = { Track (Fr(1)), Track (Fr(1)), Track (Fr(1)) };
-    grid.templateColumns = { Track (Fr(1)), Track (Fr(1)), Track (Fr(1)), Track(Fr(1)), Track(Fr(1)) };
-    grid.alignContent    = Grid::AlignContent::center;
-    grid.justifyContent  = Grid::JustifyContent::center;
-    grid.alignItems      = Grid::AlignItems::center;
-    grid.justifyItems    = Grid::JustifyItems::center;
-
+void SidePanel::resized()
+{
     arpRate->component.setVisible(!arpSynced->component.getToggleState());
     arpSyncRate->component.setVisible(arpSynced->component.getToggleState());
 
-    grid.items = {
-        juce::GridItem(lblInputChannel).withArea(1, 1),
-        juce::GridItem(inputChannel->component).withArea(1, 2), 
-        juce::GridItem(lblOutputChannel).withArea(2, 1),
-        juce::GridItem(outputChannel->component).withArea(2, 2),
-        juce::GridItem(lblOctaveTranspose).withArea(3, 1),
-        juce::GridItem(octaveTranspose->component).withArea(3, 2),
-        juce::GridItem(arpActivated->component).withArea(1, 4),
-        juce::GridItem(arpSynced->component).withArea(1, 5),
-        juce::GridItem(lblArpRate).withArea(2, 4),
-        juce::GridItem(arpSyncRate->component).withArea(2, 5),
-        juce::GridItem(arpRate->component).withArea(2, 5),
-        juce::GridItem(presetsPanel.get()).withArea(3, 4, 3, 6)
-    };
-    
-    grid.performLayout (getLocalBounds().reduced(0, getHeight() / 10));
+    juce::Grid grid;
+    using Track = juce::Grid::TrackInfo;
 
-    // Make the rate slider text box larger.
-    auto& rateSlider = arpSyncRate->component;
-    rateSlider.setTextBoxStyle(rateSlider.getTextBoxPosition(),
-                               false,
-                               rateSlider.getWidth() * 10 / 9,
-                               rateSlider.getTextBoxHeight());
+    grid.templateColumns    = { Track (1_fr) };
+    grid.templateRows       = { Track (1_fr), Track (1_fr), Track (1_fr), Track (1_fr),
+                                Track (1_fr), Track (1_fr), Track (1_fr), Track (1_fr),
+                                Track (1_fr), Track (1_fr), Track (1_fr) };
+
+    grid.alignContent    = juce::Grid::AlignContent::center;
+    grid.justifyContent  = juce::Grid::JustifyContent::center;
+    grid.alignItems      = juce::Grid::AlignItems::center;
+    grid.justifyItems    = juce::Grid::JustifyItems::center;
+
+    grid.items = {
+        juce::GridItem(lblInputChannel),
+        juce::GridItem(inputChannel->component),
+        juce::GridItem(lblOutputChannel),
+        juce::GridItem(outputChannel->component),
+        juce::GridItem(lblOctaveTranspose),
+        juce::GridItem(octaveTranspose->component),
+        juce::GridItem(arpActivated->component),
+        juce::GridItem(arpSynced->component),
+        juce::GridItem(lblArpRate),
+        juce::GridItem(arpSynced->component.getToggleState() ? arpSyncRate->component : arpRate->component)
+    };
+
+    grid.performLayout (getLocalBounds());
+//
+//    // Make the rate slider text box larger.
+//    auto& rateSlider = arpSyncRate->component;
+//    rateSlider.setTextBoxStyle(rateSlider.getTextBoxPosition(),
+//                               false,
+//                               rateSlider.getWidth() * 10 / 9,
+//                               rateSlider.getTextBoxHeight());
+}
+
 }

@@ -39,7 +39,8 @@ target_sources(${BaseTargetName} PRIVATE
 		Params/MidiParams.cpp
 		Params/NoteParam.cpp
 		Params/NoteParams.cpp
-		GUI/HeaderPanel.cpp
+		GUI/MainPanel.cpp
+        GUI/SidePanel.cpp
 		GUI/IntervalsPanel.cpp
 		GUI/KeysPanel.cpp
 		GUI/NoteKey.cpp

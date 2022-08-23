@@ -1,11 +1,14 @@
-#include "Panels.h"
+#include "PresetsPanel.h"
+
+namespace Gui
+{
 
 /**
  * @brief A callback struct used by the AlertWindow to validate the user input.
  */
 struct PresetNameDialogChosen
 {
-    void operator() (int result) const noexcept
+    void operator()(int result) const noexcept
     {
         panel.validatePresetSave(result);
     }
@@ -14,7 +17,8 @@ struct PresetNameDialogChosen
 };
 
 PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
-: presetManager(pm)
+        : juce::Component("Presets Panel"),
+          presetManager(pm)
 {
     addAndMakeVisible(presetListComboBox);
     presetListComboBox.setTextWhenNothingSelected("Default");
@@ -33,7 +37,7 @@ PresetsPanel::~PresetsPanel()
     presetListComboBox.removeListener(this);
 }
 
-void PresetsPanel::initButton(juce::Button &ioButton, const juce::String &inText)
+void PresetsPanel::initButton(juce::Button& ioButton, const juce::String& inText)
 {
     addAndMakeVisible(ioButton);
     ioButton.setButtonText(inText);
@@ -41,18 +45,18 @@ void PresetsPanel::initButton(juce::Button &ioButton, const juce::String &inText
     ioButton.addListener(this);
 }
 
-void PresetsPanel::buttonClicked(juce::Button *button)
+void PresetsPanel::buttonClicked(juce::Button* button)
 {
     if (button == &presetSaveButton) {
-        presetNameChooser = std::make_unique<AlertWindow> ("Save this preset",
+        presetNameChooser = std::make_unique<AlertWindow>("Save this preset",
                                                           "Choose the name for your preset.",
                                                           MessageBoxIconType::NoIcon);
 
-        presetNameChooser->addTextEditor ("preset", presetManager.getCurrentPreset(), "Preset name :");
-        presetNameChooser->addButton ("OK",     1, KeyPress (KeyPress::returnKey, 0, 0));
-        presetNameChooser->addButton ("Cancel", 0, KeyPress (KeyPress::escapeKey, 0, 0));
+        presetNameChooser->addTextEditor("preset", presetManager.getCurrentPreset(), "Preset name :");
+        presetNameChooser->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
+        presetNameChooser->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
 
-        presetNameChooser->enterModalState (true, ModalCallbackFunction::create (PresetNameDialogChosen { *this }));
+        presetNameChooser->enterModalState(true, ModalCallbackFunction::create(PresetNameDialogChosen{*this}));
         return;
     }
 
@@ -62,7 +66,7 @@ void PresetsPanel::buttonClicked(juce::Button *button)
     }
 }
 
-void PresetsPanel::comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged)
+void PresetsPanel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == &presetListComboBox) {
         presetManager.loadPreset(presetListComboBox.getItemText(presetListComboBox.getSelectedItemIndex()));
@@ -80,14 +84,14 @@ void PresetsPanel::updatePresetsList()
 
 void PresetsPanel::validatePresetSave(int result)
 {
-    presetNameChooser->exitModalState (result);
-    presetNameChooser->setVisible (false);
+    presetNameChooser->exitModalState(result);
+    presetNameChooser->setVisible(false);
 
     if (result == 0) {
         return;
     }
 
-    auto preset_name = presetNameChooser->getTextEditorContents ("preset");
+    auto preset_name = presetNameChooser->getTextEditorContents("preset");
     //TODO: Some input validation.
     if (presetManager.savePreset(preset_name)) {
         updatePresetsList();
@@ -102,4 +106,6 @@ void PresetsPanel::resized()
     presetListComboBox.setBounds(0, y, button_width * 3, height);
     presetSaveButton.setBounds(button_width * 3, y, button_width, height);
     presetResetButton.setBounds(button_width * 4, y, button_width, height);
+}
+
 }
