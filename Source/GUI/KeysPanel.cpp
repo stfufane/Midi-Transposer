@@ -14,7 +14,7 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
         addAndMakeVisible(noteKeys.back().get());
 
         auto* noteParam = noteParams.notes[i].get();
-        noteMappingToggles.emplace_back(new NoteMappingToggle(i, *noteParam, &powerImage));
+        noteMappingToggles.emplace_back(new NoteMappingToggle(*noteParam, &powerImage));
         addAndMakeVisible(noteMappingToggles.back().get());
     }
 }
@@ -31,6 +31,12 @@ void KeysPanel::resized()
         noteKeys[i]->setBounds(key_x, 0, key_width, height);
         noteMappingToggles[i]->setBounds(key_x, 0, key_width, key_width);
     }
+}
+
+void KeysPanel::paint(juce::Graphics& g)
+{
+    // For debug purposes.
+    // g.fillAll(juce::Colours::bisque);
 }
 
 }

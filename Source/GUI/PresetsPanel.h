@@ -19,6 +19,7 @@ public:
     void initButton(juce::Button& ioButton, const juce::String& inText);
 
     void resized() override;
+    void paint(juce::Graphics &g) override;
     void buttonClicked(juce::Button* button) override;
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 

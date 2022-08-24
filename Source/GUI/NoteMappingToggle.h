@@ -13,10 +13,9 @@ namespace Gui
 struct NoteMappingToggle : public juce::Component
 {
     NoteMappingToggle() = delete;
-    explicit NoteMappingToggle(int index, NoteParam& noteParam, juce::Image* image);
+    explicit NoteMappingToggle(NoteParam& noteParam, juce::Image* image);
     void resized() override;
 
-    int noteIndex;
     juce::Image* powerImage = nullptr;
     std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
 

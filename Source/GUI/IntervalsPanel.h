@@ -16,6 +16,7 @@ struct IntervalsPanel : public juce::Component
     explicit IntervalsPanel(NoteParam& noteParam);
 
     void resized() override;
+    void paint(juce::Graphics &g) override;
 
     juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
 

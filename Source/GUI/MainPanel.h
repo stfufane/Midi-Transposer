@@ -6,6 +6,7 @@
 #include "KeysPanel.h"
 #include "IntervalsPanel.h"
 #include "PresetsPanel.h"
+#include "SettingsPanel.h"
 
 namespace Gui
 {
@@ -33,6 +34,11 @@ struct MainPanel : public juce::Component
      * @brief Contains the name of the current preset + buttons to load/save/reset presets
      */
     PresetsPanel presetsPanel;
+
+    /**
+     * @brief Contains the midi settings and the arpeggiator settings.
+     */
+    SettingsPanel settingsPanel;
 
     /**
      * @brief Fills the empty space when not editing a key. Contains some instruction.

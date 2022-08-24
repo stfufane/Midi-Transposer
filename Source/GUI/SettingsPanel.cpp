@@ -1,9 +1,9 @@
-#include "SidePanel.h"
+#include "SettingsPanel.h"
 
 namespace Gui
 {
 
-SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
+SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
     : juce::Component("Side Panel")
 {
     auto& midiParams = p.getMidiProcessor().getMidiParams();
@@ -36,6 +36,9 @@ SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
     arpActivated = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
         *arpParams.activated, *this,
         [](juce::ToggleButton& button) {
+            button.setColour(juce::ToggleButton::ColourIds::textColourId, juce::Colours::black);
+            button.setColour(juce::ToggleButton::ColourIds::tickColourId, juce::Colours::black);
+            button.setColour(juce::ToggleButton::ColourIds::tickDisabledColourId, juce::Colours::darkgrey);
             button.setButtonText("Arpeggiator");
         }
     );
@@ -46,7 +49,6 @@ SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
             slider.setRange(0., 1.0, 0.01);
             slider.textFromValueFunction = nullptr;
             slider.setNumDecimalPlacesToDisplay(2);
-            slider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
         }
     );
 
@@ -62,6 +64,9 @@ SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
         *arpParams.synced, *this,
         [this](juce::ToggleButton& button) {
             button.setButtonText("Tempo Sync");
+            button.setColour(juce::ToggleButton::ColourIds::textColourId, juce::Colours::black);
+            button.setColour(juce::ToggleButton::ColourIds::tickColourId, juce::Colours::black);
+            button.setColour(juce::ToggleButton::ColourIds::tickDisabledColourId, juce::Colours::darkgrey);
             button.onStateChange = [this]() {
                 resized();
             };
@@ -74,14 +79,14 @@ SidePanel::SidePanel(MidiBassPedalChordsAudioProcessor& p)
     initLabel(lblArpRate);
 }
 
-void SidePanel::initLabel(juce::Label& ioLabel)
+void SettingsPanel::initLabel(juce::Label& ioLabel)
 {
     ioLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
     ioLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(ioLabel);
 }
 
-void SidePanel::resized()
+void SettingsPanel::resized()
 {
     arpRate->component.setVisible(!arpSynced->component.getToggleState());
     arpSyncRate->component.setVisible(arpSynced->component.getToggleState());
@@ -89,10 +94,9 @@ void SidePanel::resized()
     juce::Grid grid;
     using Track = juce::Grid::TrackInfo;
 
-    grid.templateColumns    = { Track (1_fr) };
-    grid.templateRows       = { Track (1_fr), Track (1_fr), Track (1_fr), Track (1_fr),
-                                Track (1_fr), Track (1_fr), Track (1_fr), Track (1_fr),
-                                Track (1_fr), Track (1_fr), Track (1_fr) };
+    grid.templateRows    = { Track (1_fr), Track(1_fr) };
+    grid.templateColumns       = { Track (1_fr), Track (1_fr), Track (1_fr),
+                                   Track (1_fr), Track (1_fr), };
 
     grid.alignContent    = juce::Grid::AlignContent::center;
     grid.justifyContent  = juce::Grid::JustifyContent::center;
@@ -100,26 +104,21 @@ void SidePanel::resized()
     grid.justifyItems    = juce::Grid::JustifyItems::center;
 
     grid.items = {
-        juce::GridItem(lblInputChannel),
-        juce::GridItem(inputChannel->component),
-        juce::GridItem(lblOutputChannel),
-        juce::GridItem(outputChannel->component),
-        juce::GridItem(lblOctaveTranspose),
-        juce::GridItem(octaveTranspose->component),
-        juce::GridItem(arpActivated->component),
-        juce::GridItem(arpSynced->component),
-        juce::GridItem(lblArpRate),
-        juce::GridItem(arpSynced->component.getToggleState() ? arpSyncRate->component : arpRate->component)
+            juce::GridItem(inputChannel->component),
+            juce::GridItem(outputChannel->component),
+            juce::GridItem(octaveTranspose->component),
+            juce::GridItem(arpActivated->component),
+            juce::GridItem(lblArpRate),
+            juce::GridItem(lblInputChannel),
+            juce::GridItem(lblOutputChannel),
+            juce::GridItem(lblOctaveTranspose),
+            juce::GridItem(arpSynced->component),
+            juce::GridItem(arpSynced->component.getToggleState() ? arpSyncRate->component : arpRate->component)
     };
 
     grid.performLayout (getLocalBounds());
-//
-//    // Make the rate slider text box larger.
-//    auto& rateSlider = arpSyncRate->component;
-//    rateSlider.setTextBoxStyle(rateSlider.getTextBoxPosition(),
-//                               false,
-//                               rateSlider.getWidth() * 10 / 9,
-//                               rateSlider.getTextBoxHeight());
+
+    arpSyncRate->component.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, arpSyncRate->component.getWidth(), arpSyncRate->component.getTextBoxHeight());
 }
 
 }

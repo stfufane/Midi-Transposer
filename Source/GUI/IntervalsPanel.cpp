@@ -66,4 +66,10 @@ void IntervalsPanel::resized()
     slider.setBounds(juce::Rectangle<int>(sliderX, sliderY, sliderWidth, sliderHeight));
 }
 
+    void IntervalsPanel::paint(juce::Graphics& g)
+    {
+        // For debug purposes
+        // g.fillAll(juce::Colours::cornflowerblue);
+    }
+
 }

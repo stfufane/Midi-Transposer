@@ -1,5 +1,5 @@
-#ifndef MIDIBASSPEDALCHORDS_SIDEPANEL_H
-#define MIDIBASSPEDALCHORDS_SIDEPANEL_H
+#ifndef MIDIBASSPEDALCHORDS_SETTINGSPANEL_H
+#define MIDIBASSPEDALCHORDS_SETTINGSPANEL_H
 
 #include <JuceHeader.h>
 #include "../PluginProcessor.h"
@@ -11,10 +11,10 @@ namespace Gui
 /**
  * @brief The header with MIDI params and Arpeggiator params + preset manager
  */
-struct SidePanel : public juce::Component
+struct SettingsPanel : public juce::Component
 {
-    SidePanel() = delete;
-    explicit SidePanel(MidiBassPedalChordsAudioProcessor& p);
+    SettingsPanel() = delete;
+    explicit SettingsPanel(MidiBassPedalChordsAudioProcessor& p);
 
     void resized() override;
 
@@ -35,8 +35,8 @@ struct SidePanel : public juce::Component
     std::unique_ptr< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> > arpSyncRate;
     std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > arpRate;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SidePanel)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsPanel)
 };
 
 }
-#endif //MIDIBASSPEDALCHORDS_SIDEPANEL_H
+#endif //MIDIBASSPEDALCHORDS_SETTINGSPANEL_H

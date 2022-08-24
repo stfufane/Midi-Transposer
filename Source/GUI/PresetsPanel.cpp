@@ -100,12 +100,19 @@ void PresetsPanel::validatePresetSave(int result)
 
 void PresetsPanel::resized()
 {
-    auto button_width = getWidth() / 5;
+    const auto button_width = getWidth() / 6;
     const auto height = getHeight() / 2;
     const auto y = getHeight() / 4;
-    presetListComboBox.setBounds(0, y, button_width * 3, height);
-    presetSaveButton.setBounds(button_width * 3, y, button_width, height);
-    presetResetButton.setBounds(button_width * 4, y, button_width, height);
+
+    presetListComboBox.setBounds(button_width, y, button_width * 2, height);
+    presetSaveButton.setBounds(juce::Rectangle<int>(button_width * 3, y, button_width, height).reduced(button_width / 4, 0));
+    presetResetButton.setBounds(juce::Rectangle<int>(button_width * 4, y, button_width, height).reduced(button_width / 4, 0));
+}
+
+void PresetsPanel::paint(juce::Graphics &g)
+{
+    // For debug purposes
+    // g.fillAll(juce::Colours::darkgreen);
 }
 
 }

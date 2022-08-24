@@ -6,7 +6,8 @@ namespace Gui
 MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         : juce::Component("Main Panel"),
           keysPanel(p.getMidiProcessor().getNoteParams()),
-          presetsPanel(p.getPresetManager())
+          presetsPanel(p.getPresetManager()),
+          settingsPanel(p)
 {
     auto& uiSettings = p.getUISettings();
     auto& noteParams = p.getMidiProcessor().getNoteParams();
@@ -39,8 +40,9 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
     dummyPanel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(presetsPanel);
-    addAndMakeVisible(keysPanel);
+    addAndMakeVisible(settingsPanel);
     addAndMakeVisible(dummyPanel);
+    addAndMakeVisible(keysPanel);
 }
 
 void MainPanel::resized()
@@ -49,7 +51,7 @@ void MainPanel::resized()
     using Track = juce::Grid::TrackInfo;
 
     grid.templateColumns    = { Track(1_fr) };
-    grid.templateRows       = { Track(1_fr), Track(3_fr), Track(2_fr) };
+    grid.templateRows       = { Track(1_fr), Track(2_fr), Track(3_fr), Track(3_fr) };
 
     // Define if there's an interval panel to display or not.
     juce::Component* middleItem = nullptr;
@@ -59,7 +61,7 @@ void MainPanel::resized()
         middleItem = &dummyPanel;
     }
 
-    grid.items = { juce::GridItem(presetsPanel), juce::GridItem(*middleItem), juce::GridItem(keysPanel) };
+    grid.items = { juce::GridItem(presetsPanel), juce::GridItem(settingsPanel), juce::GridItem(*middleItem), juce::GridItem(keysPanel) };
 
     grid.performLayout (getLocalBounds());
 }

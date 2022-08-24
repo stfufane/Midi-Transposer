@@ -3,7 +3,6 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), 
-      sidePanel(p),
       mainPanel(p)
 {
     setResizable(true, true);
@@ -21,7 +20,6 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     getConstrainer()->setFixedAspectRatio(kWindowRatio);
 
     addAndMakeVisible(mainPanel);
-    addAndMakeVisible(sidePanel);
 }
 
 //==============================================================================
@@ -35,14 +33,6 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     auto* p = dynamic_cast<MidiBassPedalChordsAudioProcessor*>(&processor);
     p->saveEditorSize(getWidth(), getHeight());
 
-    using Track = juce::Grid::TrackInfo;
-    juce::Grid grid;
- 
-    grid.templateColumns    = { Track(7_fr), Track(2_fr) };
-    grid.templateRows       = { Track(1_fr) };
-
-    grid.items = { juce::GridItem(mainPanel), juce::GridItem(sidePanel) };
-
-    grid.performLayout (getLocalBounds());
+    mainPanel.setSize(getWidth(), getHeight());
 }
 

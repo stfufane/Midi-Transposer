@@ -36,9 +36,10 @@ struct HorizontalSlider : public juce::Slider
 {
     HorizontalSlider()
             : juce::Slider(juce::Slider::SliderStyle::LinearHorizontal,
-                           juce::Slider::TextEntryBoxPosition::TextBoxRight)
+                           juce::Slider::TextEntryBoxPosition::TextBoxBelow)
     {
         setTextBoxIsEditable(false);
+        setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colours::black);
     };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HorizontalSlider)
@@ -46,10 +47,7 @@ struct HorizontalSlider : public juce::Slider
 
 struct SyncRateSlider : public HorizontalSlider
 {
-    SyncRateSlider() : HorizontalSlider()
-    {
-        setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, getTextBoxWidth(), getTextBoxHeight());
-    };
+    SyncRateSlider() : HorizontalSlider() {};
 
     juce::String getTextFromValue(double value) override
     {
@@ -61,8 +59,7 @@ struct SyncRateSlider : public HorizontalSlider
 
 struct SemitoneSlider : public HorizontalSlider
 {
-    SemitoneSlider() : HorizontalSlider()
-    {};
+    SemitoneSlider() : HorizontalSlider() {};
 
     juce::String getTextFromValue(double value) override
     {

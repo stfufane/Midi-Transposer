@@ -16,6 +16,7 @@ struct KeysPanel : public juce::Component
     KeysPanel() = delete;
     explicit KeysPanel(NoteParams& noteParams);
     void resized() override;
+    void paint(juce::Graphics &g) override;
 
     std::vector<std::unique_ptr<NoteKey>> noteKeys;
     std::vector<std::unique_ptr<NoteMappingToggle>> noteMappingToggles;
