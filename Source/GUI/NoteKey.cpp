@@ -9,14 +9,21 @@ NoteKey::NoteKey(int index, juce::Image* image)
 
 void NoteKey::paint(juce::Graphics& g)
 {
+    // The image is in 3 parts
+    // First part is the inactive note, second part is the edited note and third part is the hovered note.
     if (isEdited) {
         g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
-                    keyImage->getWidth() / 2, 0, keyImage->getWidth() / 2, keyImage->getHeight());
+                    keyImage->getWidth() / 3, 0, keyImage->getWidth() / 3, keyImage->getHeight());
+        return;
     }
     if (isOver) {
         g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
-                    0, 0, keyImage->getWidth() / 2, keyImage->getHeight());
+                    keyImage->getWidth() * 2 / 3, 0, keyImage->getWidth() / 3, keyImage->getHeight());
+        return;
     }
+    // Draw the default note.
+    g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
+                0, 0, keyImage->getWidth() / 3, keyImage->getHeight());
 }
 
 void NoteKey::mouseDown(const juce::MouseEvent&)
