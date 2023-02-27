@@ -10,12 +10,14 @@ namespace Gui
 /**
  * @brief This is the power on/off button on top of each note.
  */
-struct NoteMappingToggle : public juce::Component
+class NoteMappingToggle : public juce::Component
 {
+public:
     NoteMappingToggle() = delete;
     explicit NoteMappingToggle(NoteParam& noteParam, juce::Image* image);
     void resized() override;
 
+private:
     juce::Image* powerImage = nullptr;
     std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
 

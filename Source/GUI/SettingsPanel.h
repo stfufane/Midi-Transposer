@@ -11,13 +11,15 @@ namespace Gui
 /**
  * @brief The header with MIDI params and Arpeggiator params + preset manager
  */
-struct SettingsPanel : public juce::Component
+class SettingsPanel : public juce::Component
 {
+public:
     SettingsPanel() = delete;
     explicit SettingsPanel(MidiBassPedalChordsAudioProcessor& p);
 
     void resized() override;
 
+private:
     void initLabel(juce::Label& ioLabel);
 
     juce::Label lblInputChannel    { "lblInputChannel",    "Input Channel" };
@@ -33,7 +35,7 @@ struct SettingsPanel : public juce::Component
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpActivated;
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpSynced;
     std::unique_ptr< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> > arpSyncRate;
-    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > arpRate;
+    std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > arpRate;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsPanel)
 };

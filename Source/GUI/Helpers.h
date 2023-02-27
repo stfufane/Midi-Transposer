@@ -32,22 +32,61 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachedComponent)
 };
 
+struct TooltipPanel : public juce::Component
+{
+    TooltipPanel() = delete;
+    explicit TooltipPanel(const juce::String& inName) : juce::Component(inName) { }
+
+    void paint(juce::Graphics &g) override
+    {
+        const auto bounds = getBounds();
+
+        g.setColour (juce::Colours::red);// (findColour (TooltipWindow::backgroundColourId));
+        g.fillRect(getBounds().toFloat());
+
+        g.setColour (findColour (TooltipWindow::outlineColourId));
+        g.drawRect(getBounds().toFloat().reduced (0.5f, 0.5f), 1.0f);
+    }
+};
+
+struct VerticalSliderBar : public juce::Slider
+{
+    VerticalSliderBar()
+            : juce::Slider(juce::Slider::SliderStyle::LinearBarVertical,
+                           juce::Slider::TextEntryBoxPosition::NoTextBox)
+    {
+        setPopupDisplayEnabled(true, true, nullptr);
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VerticalSliderBar)
+};
+
 struct HorizontalSlider : public juce::Slider
 {
     HorizontalSlider()
-            : juce::Slider(juce::Slider::SliderStyle::LinearHorizontal,
-                           juce::Slider::TextEntryBoxPosition::TextBoxBelow)
+        : juce::Slider(juce::Slider::SliderStyle::LinearHorizontal,
+                       juce::Slider::TextEntryBoxPosition::NoTextBox)
     {
-        setTextBoxIsEditable(false);
-        setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colours::black);
-    };
+        setPopupDisplayEnabled(true, true, nullptr);
+    }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HorizontalSlider)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HorizontalSlider)
 };
 
-struct SyncRateSlider : public HorizontalSlider
+struct RotarySlider : public juce::Slider
 {
-    SyncRateSlider() : HorizontalSlider() {};
+    RotarySlider() : juce::Slider(juce::Slider::SliderStyle::RotaryVerticalDrag,
+                                  juce::Slider::TextEntryBoxPosition::NoTextBox)
+    {
+        setPopupDisplayEnabled(true, true, nullptr);
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotarySlider)
+};
+
+struct SyncRateSlider : public RotarySlider
+{
+    SyncRateSlider() = default;
 
     juce::String getTextFromValue(double value) override
     {
@@ -57,9 +96,9 @@ struct SyncRateSlider : public HorizontalSlider
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SyncRateSlider)
 };
 
-struct SemitoneSlider : public HorizontalSlider
+struct SemitoneSlider : public VerticalSliderBar
 {
-    SemitoneSlider() : HorizontalSlider() {};
+    SemitoneSlider() = default;
 
     juce::String getTextFromValue(double value) override
     {
@@ -71,8 +110,7 @@ struct SemitoneSlider : public HorizontalSlider
 
 struct OctaveSlider : public HorizontalSlider
 {
-    OctaveSlider() : HorizontalSlider()
-    {};
+    OctaveSlider() = default;
 
     juce::String getTextFromValue(double value) override
     {
@@ -89,8 +127,7 @@ struct OctaveSlider : public HorizontalSlider
 class IndexedToggleButton : public juce::ToggleButton
 {
 public:
-    IndexedToggleButton() : juce::ToggleButton()
-    {}
+    IndexedToggleButton() = default;
 
     void paintButton(juce::Graphics& g, bool, bool) override
     {
@@ -104,8 +141,8 @@ public:
         if (buttonWidth >= buttonHeight) {
             displayWidth = side;
             displayHeight = displayWidth / ratio;
-            top_x = centered ? (bounds.getWidth() - displayWidth) / 2.0f : 0;
-            top_y = centered ? (bounds.getHeight() - displayHeight) / 2.0f : 0;
+            top_x = centered ? (bounds.getWidth() - displayWidth) / 2.0f : 0.f;
+            top_y = centered ? (bounds.getHeight() - displayHeight) / 2.0f : 0.f;
         } else {
             displayHeight = side;
             displayWidth = displayHeight * ratio;

@@ -9,8 +9,9 @@ namespace Gui
 /**
  * @brief The drawing of a key with an event to display its intervals.
  */
-struct NoteKey : public juce::Component
+class NoteKey : public juce::Component
 {
+public:
     NoteKey() = delete;
     explicit NoteKey(int index, juce::Image* image);
 
@@ -19,6 +20,10 @@ struct NoteKey : public juce::Component
     void mouseEnter(const juce::MouseEvent&) override;
     void mouseExit(const juce::MouseEvent&) override;
 
+    void setEdited(const int index) { isEdited = (noteIndex == index); }
+    void setChangeNoteCallback(std::function<void(int)> inCallback) { changeNote = std::move(inCallback); }
+
+private:
     int noteIndex;
     bool isEdited = false;
     bool isOver = false;

@@ -3,6 +3,7 @@
 
 #include <JuceHeader.h>
 #include "Helpers.h"
+#include "BarSliderLookAndFeel.h"
 
 namespace Gui
 {
@@ -10,14 +11,16 @@ namespace Gui
 /**
  * @brief This panel holds the 12 interval buttons for a note + a semitone transposition slider.
  */
-struct IntervalsPanel : public juce::Component
+class IntervalsPanel : public juce::Component
 {
+public:
     IntervalsPanel() = delete;
     explicit IntervalsPanel(NoteParam& noteParam);
 
     void resized() override;
-    void paint(juce::Graphics &g) override;
 
+private:
+    BarSliderLookAndFeel mLookAndFeel;
     juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
 
     std::unique_ptr<AttachedComponent<SemitoneSlider, juce::SliderParameterAttachment>> transpose;

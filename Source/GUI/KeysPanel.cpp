@@ -19,6 +19,13 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
     }
 }
 
+void KeysPanel::setNoteKeyEdited(const int index)
+{
+    for (auto& noteKey: noteKeys) {
+        noteKey->setEdited(index);
+    }
+}
+
 void KeysPanel::resized()
 {
     // Keys are drawn on 2 lines, white keys at the bottom and black keys at the top.
@@ -47,6 +54,5 @@ void KeysPanel::resized()
         noteKeys[i]->setBounds(x, y, keys_side, keys_side);
     }
 }
-
 
 }

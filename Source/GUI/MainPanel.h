@@ -3,6 +3,7 @@
 
 #include <JuceHeader.h>
 #include "../PluginProcessor.h"
+#include "Helpers.h"
 #include "KeysPanel.h"
 #include "IntervalsPanel.h"
 #include "PresetsPanel.h"
@@ -11,13 +12,17 @@
 namespace Gui
 {
 
-struct MainPanel : public juce::Component
+class MainPanel : public juce::Component
 {
+public:
     MainPanel() = delete;
     explicit MainPanel(MidiBassPedalChordsAudioProcessor& p);
 
     void resized() override;
 
+    juce::Component* getTooltipPanel() { return &tooltipPanel; }
+
+private:
     /**
      * @brief Resets the intervals panel with the currently edited note.
      * @param noteParam the note that is edited.
@@ -55,6 +60,10 @@ struct MainPanel : public juce::Component
      */
     std::unique_ptr<IntervalsPanel> intervalsPanel = nullptr;
 
+    /**
+     * @brief Container that will be put at the bottom to display all the tooltips at the same place.
+     */
+    TooltipPanel tooltipPanel { "tooltipPanel" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainPanel)
 };

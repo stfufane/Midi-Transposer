@@ -109,10 +109,4 @@ void PresetsPanel::resized()
     presetResetButton.setBounds(juce::Rectangle<int>(button_width * 4, y, button_width, height).reduced(button_width / 4, 0));
 }
 
-void PresetsPanel::paint(juce::Graphics &g)
-{
-    // For debug purposes
-    // g.fillAll(juce::Colours::darkgreen);
-}
-
 }

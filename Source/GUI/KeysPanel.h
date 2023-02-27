@@ -11,12 +11,16 @@ namespace Gui
 /**
  * @brief The header contains all the note names + their transposition sliders.
  */
-struct KeysPanel : public juce::Component
+class KeysPanel : public juce::Component
 {
+public:
     KeysPanel() = delete;
     explicit KeysPanel(NoteParams& noteParams);
     void resized() override;
 
+    std::vector<std::unique_ptr<NoteKey>>& getNoteKeys() { return noteKeys; }
+    void setNoteKeyEdited(const int index);
+private:
     std::vector<std::unique_ptr<NoteKey>> noteKeys;
     std::vector<std::unique_ptr<NoteMappingToggle>> noteMappingToggles;
     const std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };

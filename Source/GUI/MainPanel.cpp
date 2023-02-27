@@ -19,8 +19,8 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         initIntervalsPanel(*noteParam);
     }
 
-    for (auto& noteKey: keysPanel.noteKeys) {
-        noteKey->changeNote = [this, &uiSettings, &noteParams](int index) {
+    for (auto& noteKey: keysPanel.getNoteKeys()) {
+        noteKey->setChangeNoteCallback([this, &uiSettings, &noteParams](int index) {
             if (uiSettings.lastNoteIndex == index) {
                 intervalsPanel.reset(nullptr);
                 dummyPanel.setVisible(true);
@@ -33,16 +33,16 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
 
             updateNoteEdited(index);
             uiSettings.lastNoteIndex = index;
-        };
+        });
     }
 
-    dummyPanel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
     dummyPanel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(presetsPanel);
     addAndMakeVisible(settingsPanel);
     addAndMakeVisible(dummyPanel);
     addAndMakeVisible(keysPanel);
+    addAndMakeVisible(tooltipPanel);
 }
 
 void MainPanel::resized()
@@ -51,7 +51,7 @@ void MainPanel::resized()
     using Track = juce::Grid::TrackInfo;
 
     grid.templateColumns    = { Track(1_fr) };
-    grid.templateRows       = { Track(1_fr), Track(2_fr), Track(3_fr), Track(3_fr) };
+    grid.templateRows       = { Track(1_fr), Track(2_fr), Track(3_fr), Track(3_fr), Track(1_fr) };
 
     // Define if there's an interval panel to display or not.
     juce::Component* middleItem = nullptr;
@@ -61,7 +61,7 @@ void MainPanel::resized()
         middleItem = &dummyPanel;
     }
 
-    grid.items = { juce::GridItem(presetsPanel), juce::GridItem(settingsPanel), juce::GridItem(*middleItem), juce::GridItem(keysPanel) };
+    grid.items = { juce::GridItem(presetsPanel), juce::GridItem(settingsPanel), juce::GridItem(*middleItem), juce::GridItem(keysPanel), juce::GridItem(tooltipPanel) };
 
     grid.performLayout (getLocalBounds());
 }
@@ -76,9 +76,7 @@ void MainPanel::initIntervalsPanel(NoteParam& noteParam)
 
 void MainPanel::updateNoteEdited(const int index)
 {
-    for (auto& noteKey: keysPanel.noteKeys) {
-        noteKey->isEdited = (noteKey->noteIndex == index);
-    }
+    keysPanel.setNoteKeyEdited(index);
     repaint();
 }
 

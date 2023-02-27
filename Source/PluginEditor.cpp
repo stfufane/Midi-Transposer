@@ -3,7 +3,8 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), 
-      mainPanel(p)
+      mainPanel(p),
+      tooltipWindow(mainPanel.getTooltipPanel(), 50)
 {
     setResizable(true, true);
 
@@ -19,7 +20,15 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     setResizeLimits(kWindowWidth, kWindowHeight, kWindowWidth * kMaxResize, kWindowHeight * kMaxResize);
     getConstrainer()->setFixedAspectRatio(kWindowRatio);
 
+    setLookAndFeel(&mLookAndFeel);
+    tooltipWindow.setLookAndFeel(&mLookAndFeel);
+
     addAndMakeVisible(mainPanel);
+}
+
+MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor()
+{
+    setLookAndFeel(nullptr);
 }
 
 //==============================================================================

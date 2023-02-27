@@ -2,17 +2,20 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "GUI/BaseLookAndFeel.h"
 #include "GUI/MainPanel.h"
 
 class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p);
+    ~MidiBassPedalChordsAudioProcessorEditor() override;
 
     //==============================================================================
     void paint(juce::Graphics&) override;
     void resized() override;
 private:
+    Gui::BaseLookAndFeel mLookAndFeel;
     /**
      * @brief Arranges the different sections of the plugin in one place.
      */

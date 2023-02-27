@@ -39,6 +39,9 @@ target_sources(${BaseTargetName} PRIVATE
 		Params/MidiParams.cpp
 		Params/NoteParam.cpp
 		Params/NoteParams.cpp
+		GUI/BaseLookAndFeel.h
+		GUI/BarSliderLookAndFeel.h
+		GUI/Helpers.h
 		GUI/MainPanel.cpp
         GUI/SettingsPanel.cpp
 		GUI/IntervalsPanel.cpp
