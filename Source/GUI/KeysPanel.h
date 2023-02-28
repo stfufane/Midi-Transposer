@@ -19,7 +19,7 @@ public:
     void resized() override;
 
     std::vector<std::unique_ptr<NoteKey>>& getNoteKeys() { return noteKeys; }
-    void setNoteKeyEdited(const int index);
+    void setNoteKeyEdited(int index);
 private:
     std::vector<std::unique_ptr<NoteKey>> noteKeys;
     std::vector<std::unique_ptr<NoteMappingToggle>> noteMappingToggles;

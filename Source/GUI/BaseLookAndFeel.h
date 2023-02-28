@@ -15,7 +15,7 @@ public:
         setColour(juce::Slider::backgroundColourId, juce::Colours::whitesmoke);
         setColour(juce::Slider::thumbColourId, juce::Colours::deepskyblue);
         setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colours::black);
-        setColour(juce::Slider::trackColourId, juce::Colours::darkblue);
+        setColour(juce::Slider::trackColourId, juce::Colours::darkblue.withAlpha(0.5f));
 
         // Label colors
         setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
@@ -34,44 +34,46 @@ public:
         setColour(juce::ToggleButton::ColourIds::tickDisabledColourId, juce::Colours::darkgrey);
     }
 
-    Rectangle<int> getTooltipBounds (const String& tipText, Point<int> screenPos, Rectangle<int> parentArea)
+    juce::Rectangle<int>
+    getTooltipBounds(const juce::String& tipText, juce::Point<int> screenPos, juce::Rectangle<int> parentArea) override
     {
-        return Rectangle<int> (0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(1);
+        return juce::Rectangle<int>(0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(1);
     }
 
     void drawTooltip(juce::Graphics& g, const juce::String& text, int width, int height) override
     {
-        Rectangle<int> bounds (width, height);
-        g.setColour (findColour (TooltipWindow::backgroundColourId));
+        juce::Rectangle<int> bounds(width, height);
+        g.setColour(findColour(juce::TooltipWindow::backgroundColourId));
         g.fillRect(bounds.toFloat());
-        
+
 //        g.setColour (findColour (TooltipWindow::outlineColourId));
 //        g.drawRect(bounds.toFloat().reduced (0.5f, 0.5f), 1.0f);
 
 //        const float tooltipFontSize = 14.0f;
 //        const int maxToolTipWidth = 400;
 
-        AttributedString s;
-        s.setJustification (Justification::centredLeft);
-        s.append (text, Font (14.0f, Font::plain), findColour(TooltipWindow::textColourId));
+        juce::AttributedString s;
+        s.setJustification(juce::Justification::centredLeft);
+        s.append(text, juce::Font(14.0f, juce::Font::plain), findColour(juce::TooltipWindow::textColourId));
 
-        TextLayout tl;
-        tl.createLayoutWithBalancedLineLengths (s, (float) width);
-        tl.draw (g, { static_cast<float> (width), static_cast<float> (height) });
+        juce::TextLayout tl;
+        tl.createLayoutWithBalancedLineLengths(s, (float) width);
+        tl.draw(g, { static_cast<float> (width), static_cast<float> (height) });
     }
 
-    void drawBubble (Graphics& g, BubbleComponent& bubble, const Point<float>& tip, const Rectangle<float>& body) override
+    void drawBubble(juce::Graphics& g, juce::BubbleComponent& bubble, const juce::Point<float>& tip,
+                    const juce::Rectangle<float>& body) override
     {
-        Path p;
+        juce::Path p;
 //        p.addBubble (body.reduced (0.5f), body.getUnion (Rectangle<float> (tip.x, tip.y, 1.0f, 1.0f)),
 //                     tip, 5.0f, jmin (15.0f, body.getWidth() * 0.2f, body.getHeight() * 0.2f));
         p.addRectangle(body);
 
-        g.setColour (findColour (BubbleComponent::backgroundColourId));
-        g.fillPath (p);
+        g.setColour(findColour(juce::BubbleComponent::backgroundColourId));
+        g.fillPath(p);
 
-        g.setColour (findColour (BubbleComponent::outlineColourId));
-        g.strokePath (p, PathStrokeType (1.0f));
+        g.setColour(findColour(juce::BubbleComponent::outlineColourId));
+        g.strokePath(p, juce::PathStrokeType(1.0f));
     }
 };
 

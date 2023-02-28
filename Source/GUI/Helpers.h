@@ -44,7 +44,7 @@ struct TooltipPanel : public juce::Component
         g.setColour (juce::Colours::red);// (findColour (TooltipWindow::backgroundColourId));
         g.fillRect(getBounds().toFloat());
 
-        g.setColour (findColour (TooltipWindow::outlineColourId));
+        g.setColour (findColour (juce::TooltipWindow::outlineColourId));
         g.drawRect(getBounds().toFloat().reduced (0.5f, 0.5f), 1.0f);
     }
 };
@@ -137,7 +137,7 @@ public:
         auto bounds = getLocalBounds();
 
         float side, displayWidth, displayHeight, top_x, top_y;
-        side = jmin(bounds.getWidth(), bounds.getHeight());
+        side = juce::jmin(bounds.getWidth(), bounds.getHeight());
         if (buttonWidth >= buttonHeight) {
             displayWidth = side;
             displayHeight = displayWidth / ratio;

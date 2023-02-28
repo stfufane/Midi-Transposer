@@ -80,6 +80,9 @@ void SettingsPanel::initLabel(juce::Label& ioLabel)
 
 void SettingsPanel::resized()
 {
+    using juce::operator""_px;
+    using juce::operator""_fr;
+
     arpRate->component.setVisible(!arpSynced->component.getToggleState());
     arpSyncRate->component.setVisible(arpSynced->component.getToggleState());
 

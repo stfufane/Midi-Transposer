@@ -119,7 +119,7 @@ void MidiProcessor::playCurrentNotes(const int samplePosition)
     }
 }
 
-void MidiProcessor::stopCurrentNotes(const uint8 velocity, const int samplePosition)
+void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int samplePosition)
 {
     if (arpeggiatorParams.activated->get()) { return; }
 

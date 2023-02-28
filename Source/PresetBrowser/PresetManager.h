@@ -8,7 +8,7 @@ namespace PresetBrowser {
     class PresetManager {
     public:
         PresetManager() = delete;
-        explicit PresetManager(AudioProcessor& p);
+        explicit PresetManager(juce::AudioProcessor& p);
 
         /**
          * @brief Saves the current state of params in an XML file
@@ -31,14 +31,14 @@ namespace PresetBrowser {
          * @brief Reads the presets directory to get all the presets
          * @return An array of String to populate the combobox
          */
-        juce::StringArray getAllPresets();
+        [[nodiscard]] juce::StringArray getAllPresets() const;
 
-        const juce::File& getPresetPath() const { return presetsPath; }
-        const juce::String& getCurrentPreset() const { return currentPreset; }
+        [[nodiscard]] const juce::File& getPresetPath() const { return presetsPath; }
+        [[nodiscard]] const juce::String& getCurrentPreset() const { return currentPreset; }
         void setCurrentPreset(const juce::String& inPreset) { currentPreset = inPreset; }
 
     private:
-        AudioProcessor& processor;
+        juce::AudioProcessor& processor;
 
         /**
          * @brief The root folder of the presets

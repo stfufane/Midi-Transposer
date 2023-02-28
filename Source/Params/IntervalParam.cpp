@@ -9,9 +9,9 @@ IntervalParam::IntervalParam(juce::String name, juce::String label, int i)
 
 void IntervalParam::addParam(juce::AudioProcessor& p)
 {
-    const auto paramId = noteName + ParamIDs::noteInterval + String(degree + 1);
+    const auto paramId = noteName + ParamIDs::noteInterval + juce::String(degree + 1);
     p.addParameter(interval = new juce::AudioParameterBool(paramId,
                                                            paramId,
                                                            false,
-                                                           AudioParameterBoolAttributes().withLabel("Interval " + juce::String(degree + 1) + " for " + noteLabel)));
+                                                           juce::AudioParameterBoolAttributes().withLabel("Interval " + juce::String(degree + 1) + " for " + noteLabel)));
 }

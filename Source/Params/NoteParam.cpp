@@ -20,15 +20,15 @@ NoteParam::~NoteParam()
     }
 }
 
-void NoteParam::addParams(AudioProcessor& p)
+void NoteParam::addParams(juce::AudioProcessor& p)
 {
     p.addParameter(mapNote = new juce::AudioParameterBool(noteName + ParamIDs::mapNote,
                                                           "Map " + noteLabel, true,
-                                                          AudioParameterBoolAttributes().withLabel ("Map " + noteLabel)));
+                                                          juce::AudioParameterBoolAttributes().withLabel ("Map " + noteLabel)));
     p.addParameter(transpose = new juce::AudioParameterInt(noteName + ParamIDs::noteTranspose,
                                                            noteLabel + " transpose",
                                                            -12, 12, 0,
-                                                           AudioParameterIntAttributes().withLabel ("Transpose semitones")));
+                                                           juce::AudioParameterIntAttributes().withLabel ("Transpose semitones")));
     for (auto& interval: intervals) {
         interval->addParam(p);
         interval->interval->addListener(this);

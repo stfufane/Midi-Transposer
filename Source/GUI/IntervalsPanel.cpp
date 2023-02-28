@@ -30,6 +30,7 @@ void IntervalsPanel::resized()
 {
     juce::Grid grid;
     using Track = juce::Grid::TrackInfo;
+    using juce::operator""_fr;
 
     grid.templateColumns = {Track(1_fr), Track(1_fr), Track(1_fr),
                             Track(1_fr), Track(1_fr), Track(1_fr),
@@ -62,14 +63,8 @@ void IntervalsPanel::resized()
     auto sliderHeight = (height - yMargin * 2.0f) / 2.0f;
 
     // Resize the textbox.
-    auto& slider = transpose.get()->component;
+    auto& slider = transpose->component;
     slider.setBounds(juce::Rectangle<int>(sliderX, sliderY, sliderWidth, sliderHeight));
 }
-
-    void IntervalsPanel::paint(juce::Graphics& g)
-    {
-        // For debug purposes
-        // g.fillAll(juce::Colours::cornflowerblue);
-    }
 
 }

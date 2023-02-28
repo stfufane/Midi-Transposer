@@ -48,15 +48,15 @@ void PresetsPanel::initButton(juce::Button& ioButton, const juce::String& inText
 void PresetsPanel::buttonClicked(juce::Button* button)
 {
     if (button == &presetSaveButton) {
-        presetNameChooser = std::make_unique<AlertWindow>("Save this preset",
+        presetNameChooser = std::make_unique<juce::AlertWindow>("Save this preset",
                                                           "Choose the name for your preset.",
-                                                          MessageBoxIconType::NoIcon);
+                                                                juce::MessageBoxIconType::NoIcon);
 
         presetNameChooser->addTextEditor("preset", presetManager.getCurrentPreset(), "Preset name :");
-        presetNameChooser->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
-        presetNameChooser->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
+        presetNameChooser->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+        presetNameChooser->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
 
-        presetNameChooser->enterModalState(true, ModalCallbackFunction::create(PresetNameDialogChosen{*this}));
+        presetNameChooser->enterModalState(true, juce::ModalCallbackFunction::create(PresetNameDialogChosen{*this}));
         return;
     }
 
@@ -75,11 +75,11 @@ void PresetsPanel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 
 void PresetsPanel::updatePresetsList()
 {
-    presetListComboBox.clear(dontSendNotification);
+    presetListComboBox.clear(juce::dontSendNotification);
     const auto allPresets = presetManager.getAllPresets();
     const auto currentPreset = presetManager.getCurrentPreset();
     presetListComboBox.addItemList(allPresets, 1);
-    presetListComboBox.setSelectedItemIndex(allPresets.indexOf(currentPreset), dontSendNotification);
+    presetListComboBox.setSelectedItemIndex(allPresets.indexOf(currentPreset), juce::dontSendNotification);
 }
 
 void PresetsPanel::validatePresetSave(int result)

@@ -5,10 +5,10 @@ namespace PresetBrowser {
 
     const juce::String PresetManager::kPresetsExtension = "preset";
 
-    PresetManager::PresetManager(AudioProcessor& p) :
+    PresetManager::PresetManager(juce::AudioProcessor& p) :
             processor(p),
-            presetsPath(File::getSpecialLocation(
-                File::SpecialLocationType::commonDocumentsDirectory)
+            presetsPath(juce::File::getSpecialLocation(
+                    juce::File::SpecialLocationType::commonDocumentsDirectory)
                              .getChildFile(ProjectInfo::companyName)
                              .getChildFile(ProjectInfo::projectName))
     {
@@ -21,7 +21,7 @@ namespace PresetBrowser {
         }
     }
 
-    bool PresetManager::savePreset(const String &inPresetName)
+    bool PresetManager::savePreset(const juce::String& inPresetName)
     {
         if (inPresetName.isEmpty()) {
             return false;
@@ -44,7 +44,7 @@ namespace PresetBrowser {
         return true;
     }
 
-    bool PresetManager::loadPreset(const String &inPresetName)
+    bool PresetManager::loadPreset(const juce::String& inPresetName)
     {
         if (inPresetName.isEmpty()) {
             return false;
@@ -56,7 +56,7 @@ namespace PresetBrowser {
             return false;
         }
 
-        XmlDocument xml_document { preset_file };
+        juce::XmlDocument xml_document { preset_file };
         auto xml = xml_document.getDocumentElementIfTagMatches("preset");
         if (xml != nullptr) {
             auto params = xml->getChildByName("Params");
@@ -79,10 +79,10 @@ namespace PresetBrowser {
         currentPreset = "Default";
     }
 
-    juce::StringArray PresetManager::getAllPresets() {
+    juce::StringArray PresetManager::getAllPresets() const {
         juce::StringArray presets;
         const auto fileArray = presetsPath.findChildFiles(
-                File::TypesOfFileToFind::findFiles, false, "*." + kPresetsExtension);
+                juce::File::TypesOfFileToFind::findFiles, false, "*." + kPresetsExtension);
         for (const auto& file : fileArray) {
             presets.add(file.getFileNameWithoutExtension());
         }

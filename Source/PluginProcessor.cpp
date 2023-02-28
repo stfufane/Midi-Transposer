@@ -58,7 +58,7 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
     juce::XmlElement xml("PluginState");
 
     auto* xml_params = new juce::XmlElement("Params");
-    for (auto& param : getParameters()) {
+    for (const auto& param : getParameters()) {
         xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
     }
     // Store the name of the current preset.

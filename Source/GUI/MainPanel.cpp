@@ -49,6 +49,7 @@ void MainPanel::resized()
 {
     juce::Grid grid;
     using Track = juce::Grid::TrackInfo;
+    using juce::operator""_fr;
 
     grid.templateColumns    = { Track(1_fr) };
     grid.templateRows       = { Track(1_fr), Track(2_fr), Track(3_fr), Track(3_fr), Track(1_fr) };

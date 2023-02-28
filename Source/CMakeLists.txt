@@ -58,6 +58,7 @@ target_compile_definitions(${BaseTargetName}
 	PUBLIC
 	JUCE_WEB_BROWSER=0
 	JUCE_USE_CURL=0
+	DONT_SET_USING_JUCE_NAMESPACE=1
 	JUCE_VST3_CAN_REPLACE_VST2=0)
 
 target_link_libraries(${BaseTargetName} PRIVATE

@@ -63,9 +63,9 @@ private:
     // Process the input midi events
     void mapNote(const juce::MidiMessage& m, int samplePosition);
     void playMappedNotes(const NoteState& noteState, int samplePosition);
-    std::vector<NoteState> getMappedNotes(const NoteState& noteState) const;
+    [[nodiscard]] std::vector<NoteState> getMappedNotes(const NoteState& noteState) const;
     void playCurrentNotes(int samplePosition);
-    void stopCurrentNotes(uint8 velocity, int samplePosition);
+    void stopCurrentNotes(juce::uint8 velocity, int samplePosition);
     void removeHeldNote(int note);
 
     void processArpeggiator(int numSamples, juce::AudioPlayHead* playHead);
