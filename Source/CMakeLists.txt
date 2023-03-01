@@ -40,6 +40,7 @@ target_sources(${BaseTargetName} PRIVATE
 		Params/NoteParam.cpp
 		Params/NoteParams.cpp
 		GUI/BaseLookAndFeel.h
+		GUI/BaseLookAndFeel.cpp
 		GUI/BarSliderLookAndFeel.h
 		GUI/Helpers.h
 		GUI/MainPanel.cpp
@@ -59,10 +60,12 @@ target_compile_definitions(${BaseTargetName}
 	JUCE_WEB_BROWSER=0
 	JUCE_USE_CURL=0
 	DONT_SET_USING_JUCE_NAMESPACE=1
-	JUCE_VST3_CAN_REPLACE_VST2=0)
+	JUCE_VST3_CAN_REPLACE_VST2=0
+	JSON_CONFIG="${WORKSPACE_ROOT}/conf.json")
 
 target_link_libraries(${BaseTargetName} PRIVATE
 	juce::juce_audio_utils
 	juce::juce_recommended_config_flags
 	juce::juce_recommended_lto_flags
-	juce::juce_recommended_warning_flags)
+	juce::juce_recommended_warning_flags
+	nlohmann_json::nlohmann_json)

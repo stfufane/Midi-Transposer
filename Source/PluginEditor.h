@@ -6,6 +6,7 @@
 #include "GUI/MainPanel.h"
 
 class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
+        , public juce::KeyListener
 {
 public:
     explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p);
@@ -14,8 +15,15 @@ public:
     //==============================================================================
     void paint(juce::Graphics&) override;
     void resized() override;
+
+    /**
+     * @brief Reload the GUI when pressing F5
+     */
+    bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
+
 private:
     Gui::BaseLookAndFeel mLookAndFeel;
+
     /**
      * @brief Arranges the different sections of the plugin in one place.
      */

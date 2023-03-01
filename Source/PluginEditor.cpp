@@ -17,13 +17,16 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     } else {
         setSize(kWindowWidth, kWindowHeight);
     }
-    setResizeLimits(kWindowWidth, kWindowHeight, kWindowWidth * kMaxResize, kWindowHeight * kMaxResize);
+    setResizeLimits(kWindowWidth, kWindowHeight,
+                    kWindowWidth * kMaxResize, kWindowHeight * kMaxResize);
     getConstrainer()->setFixedAspectRatio(kWindowRatio);
 
     setLookAndFeel(&mLookAndFeel);
     tooltipWindow.setLookAndFeel(&mLookAndFeel);
 
     addAndMakeVisible(mainPanel);
+
+    addKeyListener(this);
 }
 
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor()
@@ -45,3 +48,13 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     mainPanel.setSize(getWidth(), getHeight());
 }
 
+bool MidiBassPedalChordsAudioProcessorEditor::keyPressed(const juce::KeyPress& key,
+                                                         juce::Component* originatingComponent)
+{
+    if (key == juce::KeyPress::F5Key && key.isCurrentlyDown()) {
+        std::cout << "Reloading GUI \n";
+        mLookAndFeel.resetConfiguration();
+        repaint();
+    }
+    return true;
+}
