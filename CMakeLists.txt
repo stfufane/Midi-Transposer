@@ -32,14 +32,17 @@ set(WORKSPACE_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-#set any of these to "ON" if you want to build one of the juce examples
-#or extras (Projucer/AudioPluginHost, etc):
+# Set any of these to "ON" if you want to build one of the juce examples
+# or extras (Projucer/AudioPluginHost, etc):
 option(JUCE_BUILD_EXTRAS "Build JUCE Extras" ON)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 
-# Include the last JUCE version from the Git repository so it's a subdirectory of the project
+# Include JUCE from the Git repository so it's a subdirectory of the project
 update_from_git(juce "https://github.com/juce-framework/juce" "7.0.5" TRUE)
+
+# Add external libraries
 update_from_git(json "https://github.com/nlohmann/json" "v3.11.2" FALSE)
+update_from_git(gin "https://github.com/FigBug/Gin" "8f73311" FALSE)
 
 #Adds all the module sources so they appear correctly in the IDE
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
@@ -51,8 +54,11 @@ if(MSVC)
    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-#adding juce as a subdirectory:
+# Add juce as a subdirectory:
 add_subdirectory(${juce_SOURCE_DIR})
 
-#adding source folder
+# Load gin module
+juce_add_module(${gin_SOURCE_DIR}/modules/gin)
+
+# Add source folder
 add_subdirectory(Source)

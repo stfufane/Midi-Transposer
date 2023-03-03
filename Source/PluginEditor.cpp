@@ -24,9 +24,10 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     setLookAndFeel(&mLookAndFeel);
     tooltipWindow.setLookAndFeel(&mLookAndFeel);
 
-    addAndMakeVisible(mainPanel);
+    mFileSystemWatcher.addFolder(juce::File(JSON_CONFIG).getParentDirectory());
+    mFileSystemWatcher.addListener(this);
 
-    addKeyListener(this);
+    addAndMakeVisible(mainPanel);
 }
 
 MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor()
@@ -48,13 +49,13 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     mainPanel.setSize(getWidth(), getHeight());
 }
 
-bool MidiBassPedalChordsAudioProcessorEditor::keyPressed(const juce::KeyPress& key,
-                                                         juce::Component* originatingComponent)
+void MidiBassPedalChordsAudioProcessorEditor::fileChanged(const juce::File inFile, gin::FileSystemWatcher::FileSystemEvent inEvent)
 {
-    if (key == juce::KeyPress::F5Key && key.isCurrentlyDown()) {
-        std::cout << "Reloading GUI \n";
-        mLookAndFeel.resetConfiguration();
-        repaint();
+    if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated) {
+        return;
     }
-    return true;
+    
+    std::cout << "File " << inFile.getFileName() << " has been modified.\n";
+    mLookAndFeel.resetConfiguration();
+    repaint();
 }
