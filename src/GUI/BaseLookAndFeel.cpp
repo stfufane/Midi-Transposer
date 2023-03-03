@@ -1,5 +1,7 @@
 #include "BaseLookAndFeel.h"
 
+#include <fstream>
+
 namespace Gui
 {
 
@@ -18,17 +20,18 @@ void BaseLookAndFeel::resetConfiguration()
 
 void BaseLookAndFeel::readConfiguration() {
     // Read json config
+    std::string json_path = std::string(CONFIG_FOLDER) + "/colors.json";
     try {
-        std::ifstream f(JSON_CONFIG);
+        std::ifstream f(json_path);
         conf_json = nlohmann::json::parse(f);
     } catch (std::exception& e) {
-        std::cout << "Failed to read the json file " << e.what();
+        std::cout << "Failed to read/parse the json file " << json_path << ", error : " << e.what();
         assert(!conf_json.empty());
     }
 }
 
-juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& tipText,
-                                      juce::Point<int> screenPos,
+juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& /* tipText */,
+                                      juce::Point<int> /* screenPos */,
                                       juce::Rectangle<int> parentArea)
 {
     return juce::Rectangle<int>(0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(1);
@@ -37,7 +40,7 @@ juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& tipTe
 void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, int width, int height)
 {
     juce::Rectangle<int> bounds(width, height);
-    g.setColour(findColour(juce::TooltipWindow::backgroundColourId));
+    g.setColour(juce::LookAndFeel::findColour(juce::TooltipWindow::backgroundColourId));
     g.fillRect(bounds.toFloat());
 
     //        g.setColour (findColour (TooltipWindow::outlineColourId));
@@ -55,7 +58,7 @@ void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, i
     tl.draw(g, { static_cast<float> (width), static_cast<float> (height) });
 }
 
-void BaseLookAndFeel::drawBubble(juce::Graphics& g, juce::BubbleComponent& bubble, const juce::Point<float>& tip,
+void BaseLookAndFeel::drawBubble(juce::Graphics& g, juce::BubbleComponent& /* bubble */, const juce::Point<float>& /* tip */,
                     const juce::Rectangle<float>& body)
 {
     juce::Path p;

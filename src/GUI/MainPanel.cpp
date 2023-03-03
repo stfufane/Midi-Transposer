@@ -5,9 +5,9 @@ namespace Gui
 
 MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         : juce::Component("Main Panel"),
-          keysPanel(p.getMidiProcessor().getNoteParams()),
           presetsPanel(p.getPresetManager()),
-          settingsPanel(p)
+          settingsPanel(p),
+          keysPanel(p.getMidiProcessor().getNoteParams())
 {
     auto& uiSettings = p.getUISettings();
     auto& noteParams = p.getMidiProcessor().getNoteParams();
@@ -15,24 +15,24 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
     const auto index = uiSettings.lastNoteIndex;
     updateNoteEdited(index);
     if (index > -1) {
-        auto noteParam = noteParams.notes[index].get();
+        auto noteParam = noteParams.notes[static_cast<size_t>(index)].get();
         initIntervalsPanel(*noteParam);
     }
 
     for (auto& noteKey: keysPanel.getNoteKeys()) {
-        noteKey->setChangeNoteCallback([this, &uiSettings, &noteParams](int index) {
-            if (uiSettings.lastNoteIndex == index) {
+        noteKey->setChangeNoteCallback([this, &uiSettings, &noteParams](int idx) {
+            if (uiSettings.lastNoteIndex == idx) {
                 intervalsPanel.reset(nullptr);
                 dummyPanel.setVisible(true);
                 resized();
-                index = -1;
+                idx = -1;
             } else {
-                auto noteParam = noteParams.notes[index].get();
+                auto noteParam = noteParams.notes[static_cast<size_t>(idx)].get();
                 initIntervalsPanel(*noteParam);
             }
 
-            updateNoteEdited(index);
-            uiSettings.lastNoteIndex = index;
+            updateNoteEdited(idx);
+            uiSettings.lastNoteIndex = idx;
         });
     }
 

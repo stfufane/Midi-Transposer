@@ -18,13 +18,13 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
         setSize(kWindowWidth, kWindowHeight);
     }
     setResizeLimits(kWindowWidth, kWindowHeight,
-                    kWindowWidth * kMaxResize, kWindowHeight * kMaxResize);
+                    static_cast<int>(kWindowWidth * kMaxResize), static_cast<int>(kWindowHeight * kMaxResize));
     getConstrainer()->setFixedAspectRatio(kWindowRatio);
 
     setLookAndFeel(&mLookAndFeel);
     tooltipWindow.setLookAndFeel(&mLookAndFeel);
 
-    mFileSystemWatcher.addFolder(juce::File(JSON_CONFIG).getParentDirectory());
+    mFileSystemWatcher.addFolder(juce::File(CONFIG_FOLDER));
     mFileSystemWatcher.addListener(this);
 
     addAndMakeVisible(mainPanel);

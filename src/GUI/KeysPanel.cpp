@@ -9,7 +9,7 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
     noteKeys.reserve(kNbNotes);
     noteMappingToggles.reserve(kNbNotes);
 
-    for (int i = 0; i < kNbNotes; i++) {
+    for (size_t i = 0; i < kNbNotes; i++) {
         noteKeys.emplace_back(new NoteKey(i, whiteNotes[i] ? &whiteKey : &blackKey));
         addAndMakeVisible(noteKeys.back().get());
 
@@ -36,7 +36,7 @@ void KeysPanel::resized()
     auto white_keys_side_margin = (static_cast<float>(getLocalBounds().getWidth()) - (7.f * keys_side + 6.f * keys_margin)) / 2.f;
     auto black_keys_side_margin = white_keys_side_margin + line_height / 2.f;
     auto white_key = 0, black_key = 0;
-    for (auto i = 0; i < noteKeys.size(); i++) {
+    for (size_t i = 0; i < noteKeys.size(); i++) {
         float x, y;
         if (whiteNotes[i]) {
             x = white_keys_side_margin + static_cast<float>(white_key) * (keys_side + keys_margin);

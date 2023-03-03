@@ -148,7 +148,7 @@ std::vector<MidiProcessor::NoteState> MidiProcessor::getMappedNotes(const NoteSt
     }
 
     // Then add all the notes from the mapping vector at the transposed height.
-    for (const auto noteMapping: notesMapping[baseNote]) {
+    for (const auto noteMapping: notesMapping[static_cast<size_t>(baseNote)]) {
         mappedNotes.push_back({noteState.note + noteMapping + (octaveTranspose * 12), noteState.channel, noteState.velocity});
     }
 
@@ -188,7 +188,7 @@ void MidiProcessor::processArpeggiator(const int numSamples, juce::AudioPlayHead
 int MidiProcessor::getArpeggiatorNoteDuration(const juce::AudioPlayHead::PositionInfo& positionInfo)
 {
     if (arpeggiatorParams.synced->get() && positionInfo.getBpm().hasValue() && positionInfo.getBpm() != 0.) {
-        arp.division = Notes::divisions[arpeggiatorParams.syncRate->get()].division;
+        arp.division = Notes::divisions[static_cast<size_t>(arpeggiatorParams.syncRate->get())].division;
         auto bpm = positionInfo.getBpm().orFallback(60.);
         auto samplesPerBeat = arp.sampleRate / (bpm / 60.);
         return static_cast<int> (std::ceil(samplesPerBeat * arp.division));
@@ -235,7 +235,7 @@ void MidiProcessor::arpeggiateSync(const int numSamples, const juce::AudioPlayHe
 
     while (offset < numSamples) {
         // Reset the position calculation if the division has changed.
-        auto lastDivision = Notes::divisions[arpeggiatorParams.syncRate->get()].division;
+        auto lastDivision = Notes::divisions[static_cast<size_t>(arpeggiatorParams.syncRate->get())].division;
         if (arp.division != lastDivision) {
             // Update the current division from parameter
             arp.division = lastDivision;
@@ -273,7 +273,7 @@ void MidiProcessor::playArpeggiatorNote(const int offset)
     }
 
     if (!currentOutputNotesOn.empty()) {
-        arp.currentNote = currentOutputNotesOn[arp.currentIndex];
+        arp.currentNote = currentOutputNotesOn[static_cast<size_t>(arp.currentIndex)];
         processedMidi.addEvent(
                 juce::MidiMessage::noteOn(arp.currentNote.channel, arp.currentNote.note, arp.currentNote.velocity),
                 offset);
@@ -329,7 +329,7 @@ void MidiProcessor::updateNoteMapping(const NoteParam& inNoteParam)
     }
 
     // Finally, replace the old mapping.
-    notesMapping[inNoteParam.noteIndex].swap(new_mapping);
+    notesMapping[static_cast<size_t>(inNoteParam.noteIndex)].swap(new_mapping);
 
     // Notify arpeggiator that there's been an update on this note.
     arp.noteUpdated = inNoteParam.noteIndex;

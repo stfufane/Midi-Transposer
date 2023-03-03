@@ -39,8 +39,6 @@ struct TooltipPanel : public juce::Component
 
     void paint(juce::Graphics &g) override
     {
-        const auto bounds = getBounds();
-
         g.setColour (juce::Colours::red);// (findColour (TooltipWindow::backgroundColourId));
         g.fillRect(getBounds().toFloat());
 
@@ -90,7 +88,7 @@ struct SyncRateSlider : public RotarySlider
 
     juce::String getTextFromValue(double value) override
     {
-        return Notes::divisions[(int) value].label;
+        return Notes::divisions[static_cast<size_t>(value)].label;
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SyncRateSlider)
@@ -136,18 +134,18 @@ public:
         auto y_index = getToggleState() ? 1 : 0;
         auto bounds = getLocalBounds();
 
-        float side, displayWidth, displayHeight, top_x, top_y;
+        int side, displayWidth, displayHeight, top_x, top_y;
         side = juce::jmin(bounds.getWidth(), bounds.getHeight());
         if (buttonWidth >= buttonHeight) {
             displayWidth = side;
-            displayHeight = displayWidth / ratio;
-            top_x = centered ? (bounds.getWidth() - displayWidth) / 2.0f : 0.f;
-            top_y = centered ? (bounds.getHeight() - displayHeight) / 2.0f : 0.f;
+            displayHeight = static_cast<int>(static_cast<float>(displayWidth) / ratio);
+            top_x = centered ? (bounds.getWidth() - displayWidth) / 2 : 0;
+            top_y = centered ? (bounds.getHeight() - displayHeight) / 2 : 0;
         } else {
             displayHeight = side;
-            displayWidth = displayHeight * ratio;
-            top_x = centered ? (bounds.getWidth() - displayWidth) / 2.0f : 0;
-            top_y = centered ? (bounds.getHeight() - displayHeight) / 2.0f : 0;
+            displayWidth = static_cast<int>(static_cast<float>(displayHeight) * ratio);
+            top_x = centered ? (bounds.getWidth() - displayWidth) / 2 : 0;
+            top_y = centered ? (bounds.getHeight() - displayHeight) / 2 : 0;
         }
 
         g.drawImage(*buttonsImage, top_x, top_y, displayWidth, displayHeight,
@@ -166,8 +164,8 @@ public:
 
 private:
     int index { 0 };
-    float buttonWidth { 0.0f };
-    float buttonHeight { 0.0f };
+    int buttonWidth { 0 };
+    int buttonHeight { 0 };
     float ratio { 1.0f };
     bool centered { true };
     juce::Image* buttonsImage = nullptr;

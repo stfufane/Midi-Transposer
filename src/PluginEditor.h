@@ -16,7 +16,7 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    void fileChanged(const juce::File, gin::FileSystemWatcher::FileSystemEvent) override;
+    void fileChanged(juce::File, gin::FileSystemWatcher::FileSystemEvent) override;
 
 private:
     Gui::BaseLookAndFeel mLookAndFeel;

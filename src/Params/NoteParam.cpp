@@ -6,7 +6,7 @@
 NoteParam::NoteParam(const int index)
     : noteIndex(index), noteName(Notes::names[index]), noteLabel(Notes::labels[index])
 {
-    intervals.reserve(Notes::names.size());
+    intervals.reserve(static_cast<size_t>(Notes::names.size()));
     for (int i = 0; i < Notes::count; i++) {
         intervals.emplace_back(new IntervalParam(noteName, noteLabel, i));
     }
