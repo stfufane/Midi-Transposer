@@ -307,7 +307,7 @@ void MidiProcessor::initParameters()
 }
 
 // This method is called by the lambda associated to every noteParam when one of the note parameters is updated.
-void MidiProcessor::updateNoteMapping(const NoteParam& inNoteParam)
+void MidiProcessor::updateNoteMapping(const Params::NoteParam& inNoteParam)
 {
     std::vector<int> new_mapping;
     // There's a toggle button on each note saying if it should be mapped or not.

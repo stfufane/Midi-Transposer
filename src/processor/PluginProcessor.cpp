@@ -59,7 +59,7 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
 
     auto* xml_params = new juce::XmlElement("params");
     for (const auto& param : getParameters()) {
-        xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
+        xml_params->setAttribute(Params::ParamHelper::getParamID(param), param->getValue());
     }
     // Store the name of the current preset.
     uiSettings.presetName = presetManager.getCurrentPreset();
@@ -79,7 +79,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
         if (params != nullptr) {
             for (auto& param: getParameters()) {
                 param->setValueNotifyingHost(
-                        static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param),
+                        static_cast<float>(params->getDoubleAttribute(Params::ParamHelper::getParamID(param),
                                                                       param->getValue())));
             }
         }

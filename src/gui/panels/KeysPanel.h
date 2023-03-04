@@ -15,14 +15,14 @@ class KeysPanel : public juce::Component
 {
 public:
     KeysPanel() = delete;
-    explicit KeysPanel(NoteParams& noteParams);
+    explicit KeysPanel(Params::NoteParams& noteParams);
     void resized() override;
 
-    std::vector<std::unique_ptr<NoteKey>>& getNoteKeys() { return noteKeys; }
+    std::vector<std::unique_ptr<Gui::NoteKey>>& getNoteKeys() { return noteKeys; }
     void setNoteKeyEdited(int index);
 private:
-    std::vector<std::unique_ptr<NoteKey>> noteKeys;
-    std::vector<std::unique_ptr<NoteMappingToggle>> noteMappingToggles;
+    std::vector<std::unique_ptr<Gui::NoteKey>> noteKeys;
+    std::vector<std::unique_ptr<Gui::NoteMappingToggle>> noteMappingToggles;
     const std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
 
     juce::Image whiteKey { juce::ImageCache::getFromMemory(BinaryData::keys_white_png, BinaryData::keys_white_pngSize) };

@@ -1,5 +1,8 @@
 #include "Params.h"
 
+namespace Params
+{
+
 void ArpeggiatorParams::addParams(juce::AudioProcessor& p)
 {
     p.addParameter(activated = new juce::AudioParameterBool(ParamIDs::arpeggiatorActivated,
@@ -18,4 +21,6 @@ void ArpeggiatorParams::addParams(juce::AudioProcessor& p)
                                                              "Arpeggiator Rate",
                                                              juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f,
                                                              juce::AudioParameterFloatAttributes().withLabel("Rate")));
+}
+
 }

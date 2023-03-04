@@ -12,14 +12,14 @@ public:
     void process(juce::MidiBuffer& midiMessages, int numSamples, juce::AudioPlayHead* playHead);
     void addParameters(juce::AudioProcessor& p);
 
-    MidiParams& getMidiParams() { return midiParams; }
-    NoteParams& getNoteParams() { return noteParams; }
-    ArpeggiatorParams& getArpeggiatorParams() { return arpeggiatorParams; }
+    Params::MidiParams& getMidiParams() { return midiParams; }
+    Params::NoteParams& getNoteParams() { return noteParams; }
+    Params::ArpeggiatorParams& getArpeggiatorParams() { return arpeggiatorParams; }
 private:
     // Parameters declared in helper struct. The lambda will be called when a corresponding parameter is changed.
-    MidiParams midiParams;
-    NoteParams noteParams;
-    ArpeggiatorParams arpeggiatorParams;
+    Params::MidiParams midiParams;
+    Params::NoteParams noteParams;
+    Params::ArpeggiatorParams arpeggiatorParams;
 
     juce::MidiBuffer processedMidi;
 
@@ -78,7 +78,7 @@ private:
     // -----------------------------------
     // Manage mapping values
     void initParameters();
-    void updateNoteMapping(const NoteParam& inNoteParam);
+    void updateNoteMapping(const Params::NoteParam& inNoteParam);
     // -----------------------------------
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiProcessor)

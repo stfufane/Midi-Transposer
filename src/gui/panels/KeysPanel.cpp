@@ -3,18 +3,18 @@
 namespace Gui
 {
 
-KeysPanel::KeysPanel(NoteParams& noteParams)
+KeysPanel::KeysPanel(Params::NoteParams& noteParams)
     : juce::Component("Keys Panel")
 {
     noteKeys.reserve(kNbNotes);
     noteMappingToggles.reserve(kNbNotes);
 
     for (size_t i = 0; i < kNbNotes; i++) {
-        noteKeys.emplace_back(new NoteKey(static_cast<int>(i), whiteNotes[i] ? &whiteKey : &blackKey));
+        noteKeys.emplace_back(new Gui::NoteKey(static_cast<int>(i), whiteNotes[i] ? &whiteKey : &blackKey));
         addAndMakeVisible(noteKeys.back().get());
 
         auto* noteParam = noteParams.notes[i].get();
-        noteMappingToggles.emplace_back(new NoteMappingToggle(*noteParam, &powerImage));
+        noteMappingToggles.emplace_back(new Gui::NoteMappingToggle(*noteParam, &powerImage));
         // addAndMakeVisible(noteMappingToggles.back().get()); //TODO: move somewhere else later.
     }
 }

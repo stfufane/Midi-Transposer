@@ -16,7 +16,7 @@ class NoteMappingToggle : public juce::Component
 {
 public:
     NoteMappingToggle() = delete;
-    explicit NoteMappingToggle(NoteParam& noteParam, juce::Image* image);
+    explicit NoteMappingToggle(Params::NoteParam& noteParam, juce::Image* image);
     void resized() override;
 
 private:

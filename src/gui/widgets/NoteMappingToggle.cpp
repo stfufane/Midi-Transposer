@@ -3,7 +3,7 @@
 namespace Gui
 {
 
-NoteMappingToggle::NoteMappingToggle(NoteParam& noteParam, juce::Image* image)
+NoteMappingToggle::NoteMappingToggle(Params::NoteParam& noteParam, juce::Image* image)
         : juce::Component("Note Mapping Toggle " + juce::String(noteParam.noteIndex)), powerImage(image)
 {
     mapChoice = std::make_unique<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>>(

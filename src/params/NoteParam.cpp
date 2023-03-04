@@ -1,10 +1,12 @@
 #include "Params.h"
 
+namespace Params
+{
 /***********************************************
  * NoteParam
- ***********************************************/ 
+ ***********************************************/
 NoteParam::NoteParam(const int index)
-    : noteIndex(index), noteName(Notes::names[index]), noteLabel(Notes::labels[index])
+        : noteIndex(index), noteName(Notes::names[index]), noteLabel(Notes::labels[index])
 {
     intervals.reserve(static_cast<size_t>(Notes::names.size()));
     for (int i = 0; i < Notes::count; i++) {
@@ -24,16 +26,18 @@ void NoteParam::addParams(juce::AudioProcessor& p)
 {
     p.addParameter(mapNote = new juce::AudioParameterBool(noteName + ParamIDs::mapNote,
                                                           "Map " + noteLabel, true,
-                                                          juce::AudioParameterBoolAttributes().withLabel ("Map " + noteLabel)));
+                                                          juce::AudioParameterBoolAttributes().withLabel(
+                                                                  "Map " + noteLabel)));
     p.addParameter(transpose = new juce::AudioParameterInt(noteName + ParamIDs::noteTranspose,
                                                            noteLabel + " transpose",
                                                            -12, 12, 0,
-                                                           juce::AudioParameterIntAttributes().withLabel ("Transpose semitones")));
+                                                           juce::AudioParameterIntAttributes().withLabel(
+                                                                   "Transpose semitones")));
     for (auto& interval: intervals) {
         interval->addParam(p);
         interval->interval->addListener(this);
     }
-    
+
     mapNote->addListener(this);
     transpose->addListener(this);
 }
@@ -43,4 +47,6 @@ void NoteParam::parameterValueChanged(int, float)
     if (update != nullptr) {
         update();
     }
+}
+
 }

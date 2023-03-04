@@ -46,7 +46,8 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         *arpParams.activated, *this,
         [](juce::ToggleButton& button) {
             button.setButtonText("Arpeggiator");
-        }
+        },
+        "Arp Activation Toggle"
     );
 
     arpRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
@@ -79,7 +80,8 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
             button.onStateChange = [this]() {
                 resized();
             };
-        }
+        },
+        "Arp Sync Toggle"
     );
 
     initLabel(lblInputChannel);
@@ -94,7 +96,7 @@ void SettingsPanel::initLabel(juce::Label& ioLabel)
     addAndMakeVisible(ioLabel);
 }
 
-void SettingsPanel::paint(juce::Graphics& g)
+void SettingsPanel::paint(juce::Graphics&)
 {
     // TODO some custom stuff.
 }

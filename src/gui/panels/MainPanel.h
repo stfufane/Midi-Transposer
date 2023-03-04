@@ -26,7 +26,7 @@ private:
      * @brief Resets the intervals panel with the currently edited note.
      * @param noteParam the note that is edited.
      */
-    void initIntervalsPanel(NoteParam& noteParam);
+    void initIntervalsPanel(Params::NoteParam& noteParam);
 
     /**
      * @brief Notifies all the note keys to tell which one is edited and update its color.

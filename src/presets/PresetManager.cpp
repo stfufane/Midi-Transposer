@@ -30,7 +30,7 @@ namespace PresetBrowser {
 
         auto* xml_params = new juce::XmlElement("params");
         for (auto& param : processor.getParameters()) {
-            xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
+            xml_params->setAttribute(Params::ParamHelper::getParamID(param), param->getValue());
         }
 
         xml.addChildElement(xml_params);
@@ -62,7 +62,7 @@ namespace PresetBrowser {
             auto params = xml->getChildByName("params");
             if (params != nullptr) {
                 for (auto& param : processor.getParameters()) {
-                    param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue())));
+                    param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(Params::ParamHelper::getParamID(param), param->getValue())));
                 }
                 currentPreset = inPresetName;
                 return true;

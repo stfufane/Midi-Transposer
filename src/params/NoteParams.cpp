@@ -1,5 +1,7 @@
 #include "Params.h"
 
+namespace Params
+{
 /***********************************************
  * NoteParams
  ***********************************************/
@@ -13,7 +15,9 @@ NoteParams::NoteParams()
 
 void NoteParams::addParams(juce::AudioProcessor& p)
 {
-    for (auto& note : notes) {
+    for (auto& note: notes) {
         note->addParams(p);
     }
+}
+
 }

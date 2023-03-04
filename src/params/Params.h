@@ -42,6 +42,9 @@ namespace Notes
     };
 }
 
+namespace Params
+{
+
 struct ParamHelper
 {
     static juce::String getParamID(juce::AudioProcessorParameter* param)
@@ -62,8 +65,8 @@ struct MidiParams
 
     void addParams(juce::AudioProcessor& p);
 
-    juce::AudioParameterInt* inputChannel    = nullptr;
-    juce::AudioParameterInt* outputChannel   = nullptr;
+    juce::AudioParameterInt* inputChannel = nullptr;
+    juce::AudioParameterInt* outputChannel = nullptr;
     juce::AudioParameterInt* octaveTranspose = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParams)
@@ -78,10 +81,10 @@ struct ArpeggiatorParams
 
     void addParams(juce::AudioProcessor& p);
 
-    juce::AudioParameterBool*  activated = nullptr;
-    juce::AudioParameterBool*  synced    = nullptr;
-    juce::AudioParameterInt*   syncRate  = nullptr;
-    juce::AudioParameterFloat* rate      = nullptr;
+    juce::AudioParameterBool* activated = nullptr;
+    juce::AudioParameterBool* synced = nullptr;
+    juce::AudioParameterInt* syncRate = nullptr;
+    juce::AudioParameterFloat* rate = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArpeggiatorParams)
 };
@@ -92,8 +95,9 @@ struct ArpeggiatorParams
 struct IntervalParam
 {
     IntervalParam() = delete;
+
     explicit IntervalParam(juce::String name, juce::String label, int i);
-    
+
     void addParam(juce::AudioProcessor& p);
 
     juce::AudioParameterBool* interval = nullptr;
@@ -111,18 +115,23 @@ The update function is called on parameter changed to update the mappingNotes ve
 struct NoteParam : juce::AudioProcessorParameter::Listener
 {
     NoteParam() = delete;
+
     explicit NoteParam(int i);
+
     ~NoteParam() override;
 
     void addParams(juce::AudioProcessor& p);
+
     void parameterValueChanged(int, float) override;
-    void parameterGestureChanged(int, bool) override {}
+
+    void parameterGestureChanged(int, bool) override
+    {}
 
     int noteIndex;
     juce::String noteName;
     juce::String noteLabel;
 
-    juce::AudioParameterBool* mapNote  = nullptr;
+    juce::AudioParameterBool* mapNote = nullptr;
     juce::AudioParameterInt* transpose = nullptr;
     std::vector<std::unique_ptr<IntervalParam>> intervals;
 
@@ -134,12 +143,15 @@ struct NoteParam : juce::AudioProcessorParameter::Listener
 /*
     This structure contains all 12 note/chord couples.
 */
-struct NoteParams 
+struct NoteParams
 {
     NoteParams();
+
     void addParams(juce::AudioProcessor& p);
 
     std::vector<std::unique_ptr<NoteParam>> notes;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteParams)
 };
+
+}

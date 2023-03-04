@@ -67,7 +67,7 @@ void MainPanel::resized()
     grid.performLayout (getLocalBounds());
 }
 
-void MainPanel::initIntervalsPanel(NoteParam& noteParam)
+void MainPanel::initIntervalsPanel(Params::NoteParam& noteParam)
 {
     intervalsPanel = std::make_unique<Gui::IntervalsPanel>(noteParam);
     dummyPanel.setVisible(false);
