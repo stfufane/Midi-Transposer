@@ -1,18 +1,20 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include "JuceHeader.h"
 
+namespace Gui
+{
 /**
  * @brief A representation of the last UI settings to restore it when loading the editor
  */
 struct UISettings
 {
     UISettings() = default;
+
     // Get it from the plugin state
     explicit UISettings(juce::XmlElement* xml)
     {
-        if (xml != nullptr)
-        {
+        if (xml != nullptr) {
             width = xml->getIntAttribute("width");
             height = xml->getIntAttribute("height");
             lastNoteIndex = xml->getIntAttribute("lastNoteIndex");
@@ -21,7 +23,7 @@ struct UISettings
     }
 
     // Build the XML representation to save in plugin state.
-    juce::XmlElement* getXml() const
+    [[nodiscard]] juce::XmlElement* getXml() const
     {
         auto* xml = new juce::XmlElement("UISettings");
         xml->setAttribute("width", width);
@@ -36,3 +38,5 @@ struct UISettings
     int lastNoteIndex = 0;
     juce::String presetName { "Default" };
 };
+
+}

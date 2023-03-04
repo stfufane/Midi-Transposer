@@ -1,38 +1,27 @@
-# Function to build the binary data from a folder of images
-function(add_images_from_directory target imagesSubFolder)
-    set (ImagesDir ${CMAKE_CURRENT_LIST_DIR}/${imagesSubFolder})
-    file(GLOB_RECURSE images
-            "${ImagesDir}/*.jpg"
-            "${ImagesDir}/*.png"
-            "${ImagesDir}/*.jpeg")
-
-    if(NOT images STREQUAL "")
-        set (ImagesTarget "${target}-Images")
-        juce_add_binary_data(${ImagesTarget} SOURCES ${images})
-        target_link_libraries(${target} PRIVATE ${ImagesTarget})
-    endif()
-endfunction()
-
+# List the sources files to compile
 target_sources(${BaseTargetName} PRIVATE
-		PluginProcessor.cpp
-		PluginEditor.cpp
-		MidiProcessor.cpp
-		PresetBrowser/PresetManager.cpp
-		Params/ArpeggiatorParams.cpp
-		Params/IntervalParam.cpp
-		Params/MidiParams.cpp
-		Params/NoteParam.cpp
-		Params/NoteParams.cpp
-		GUI/BaseLookAndFeel.h
-		GUI/BaseLookAndFeel.cpp
-		GUI/BarSliderLookAndFeel.h
-		GUI/Helpers.h
-		GUI/MainPanel.cpp
-        GUI/SettingsPanel.cpp
-		GUI/IntervalsPanel.cpp
-		GUI/KeysPanel.cpp
-		GUI/NoteKey.cpp
-		GUI/NoteMappingToggle.cpp
-		GUI/PresetsPanel.cpp)
-		
+		processor/MidiProcessor.cpp
+		processor/PluginProcessor.cpp
+		params/ArpeggiatorParams.cpp
+		params/IntervalParam.cpp
+		params/MidiParams.cpp
+		params/NoteParam.cpp
+		params/NoteParams.cpp
+		presets/PresetManager.cpp
+		gui/PluginEditor.cpp
+		gui/lookandfeel/BaseLookAndFeel.cpp
+		gui/widgets/CustomSlider.cpp
+		gui/widgets/IndexedToggleButton.cpp
+		gui/widgets/NoteKey.cpp
+		gui/widgets/NoteMappingToggle.cpp
+		gui/panels/MainPanel.cpp
+		gui/panels/SettingsPanel.cpp
+		gui/panels/IntervalsPanel.cpp
+		gui/panels/KeysPanel.cpp
+		gui/panels/PresetsPanel.cpp)
+
+# Build the binary data from the images folder
 add_images_from_directory(${BaseTargetName} ../data/img)
+
+# Set the base for includes to avoid having to use relative paths
+target_include_directories(${BaseTargetName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

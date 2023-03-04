@@ -1,8 +1,8 @@
 #ifndef MIDIBASSPEDALCHORDS_PRESETSPANEL_H
 #define MIDIBASSPEDALCHORDS_PRESETSPANEL_H
 
-#include <JuceHeader.h>
-#include "../PresetBrowser/PresetManager.h"
+#include "JuceHeader.h"
+#include "presets/PresetManager.h"
 
 namespace Gui
 {

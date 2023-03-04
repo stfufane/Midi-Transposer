@@ -10,7 +10,7 @@ KeysPanel::KeysPanel(NoteParams& noteParams)
     noteMappingToggles.reserve(kNbNotes);
 
     for (size_t i = 0; i < kNbNotes; i++) {
-        noteKeys.emplace_back(new NoteKey(i, whiteNotes[i] ? &whiteKey : &blackKey));
+        noteKeys.emplace_back(new NoteKey(static_cast<int>(i), whiteNotes[i] ? &whiteKey : &blackKey));
         addAndMakeVisible(noteKeys.back().get());
 
         auto* noteParam = noteParams.notes[i].get();
@@ -51,7 +51,8 @@ void KeysPanel::resized()
             y = 0;
             black_key++;
         }
-        noteKeys[i]->setBounds(x, y, keys_side, keys_side);
+        noteKeys[i]->setBounds(static_cast<int>(x), static_cast<int>(y),
+                               static_cast<int>(keys_side), static_cast<int>(keys_side));
     }
 }
 

@@ -1,9 +1,11 @@
 #ifndef MIDIBASSPEDALCHORDS_INTERVALSPANEL_H
 #define MIDIBASSPEDALCHORDS_INTERVALSPANEL_H
 
-#include <JuceHeader.h>
-#include "Helpers.h"
-#include "BarSliderLookAndFeel.h"
+#include "JuceHeader.h"
+#include "gui/widgets/Helpers.h"
+#include "gui/widgets/CustomSlider.h"
+#include "gui/widgets/IndexedToggleButton.h"
+#include "gui/lookandfeel/BarSliderLookAndFeel.h"
 
 namespace Gui
 {
@@ -17,14 +19,16 @@ public:
     IntervalsPanel() = delete;
     explicit IntervalsPanel(NoteParam& noteParam);
 
+    ~IntervalsPanel() override;
+
     void resized() override;
 
 private:
-    BarSliderLookAndFeel mLookAndFeel;
+    LnF::BarSliderLookAndFeel mLookAndFeel;
     juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
 
-    std::unique_ptr<AttachedComponent<SemitoneSlider, juce::SliderParameterAttachment>> transpose;
-    std::vector<std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>>> intervalsChoices;
+    std::unique_ptr<AttachedComponent<CustomSlider, juce::SliderParameterAttachment>> transpose;
+    std::vector<std::unique_ptr<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>>> intervalsChoices;
 
     static constexpr int kNbIntervals { 12 };
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <JuceHeader.h>
-#include "PluginProcessor.h"
-#include "GUI/BaseLookAndFeel.h"
-#include "GUI/MainPanel.h"
+#include "JuceHeader.h"
+#include "processor/PluginProcessor.h"
+#include "gui/lookandfeel/BaseLookAndFeel.h"
+#include "gui/panels/MainPanel.h"
 #include "gin/utilities/gin_filesystemwatcher.h"
 
 class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor, gin::FileSystemWatcher::Listener
@@ -19,7 +19,7 @@ public:
     void fileChanged(juce::File, gin::FileSystemWatcher::FileSystemEvent) override;
 
 private:
-    Gui::BaseLookAndFeel mLookAndFeel;
+    Gui::LnF::BaseLookAndFeel mLookAndFeel;
 
     gin::FileSystemWatcher mFileSystemWatcher;
 

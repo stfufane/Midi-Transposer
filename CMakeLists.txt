@@ -5,30 +5,7 @@ project(${BaseTargetName}
 LANGUAGES CXX
 VERSION 0.0.2)
 
-# Macro to include a github project
-include(FetchContent QUIET)
-macro (update_from_git name repo branch populate)
-    message("Updating ${name} from git...")
-    FetchContent_Declare(${name}
-            GIT_REPOSITORY ${repo}
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
-            GIT_TAG ${branch})
-
-    # Somehow juce does not want to work with MakeAvailable :(
-    if (${populate})
-        FetchContent_GetProperties(${name})
-
-        if (NOT ${name}_POPULATED)
-            FetchContent_Populate(${name})
-        endif ()
-    else()
-        FetchContent_MakeAvailable(${name})
-    endif()
-    message("${name} update finished")
-endmacro()
-
-set(WORKSPACE_ROOT ${CMAKE_CURRENT_LIST_DIR})
+include(Utils.cmake)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
@@ -87,7 +64,7 @@ target_compile_definitions(${BaseTargetName}
         JUCE_USE_CURL=0
         DONT_SET_USING_JUCE_NAMESPACE=1
         JUCE_VST3_CAN_REPLACE_VST2=0
-        CONFIG_FOLDER="${WORKSPACE_ROOT}/data/config")
+        CONFIG_FOLDER="${CMAKE_CURRENT_LIST_DIR}/data/config")
 
 target_link_libraries(${BaseTargetName} PRIVATE
         juce::juce_audio_utils

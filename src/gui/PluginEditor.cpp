@@ -51,7 +51,7 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
 
 void MidiBassPedalChordsAudioProcessorEditor::fileChanged(const juce::File inFile, gin::FileSystemWatcher::FileSystemEvent inEvent)
 {
-    if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated) {
+    if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated || inFile.getFileName() != "colors.json") {
         return;
     }
     

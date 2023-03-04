@@ -1,11 +1,11 @@
 #ifndef MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
 #define MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
 
-#include <JuceHeader.h>
+#include "JuceHeader.h"
 
 #include "nlohmann/json.hpp"
 
-namespace Gui
+namespace Gui::LnF
 {
 
 class BaseLookAndFeel : public juce::LookAndFeel_V4
@@ -24,13 +24,17 @@ public:
     void drawBubble(juce::Graphics& g, juce::BubbleComponent& bubble, const juce::Point<float>& tip,
                     const juce::Rectangle<float>& body) override;
 
+    void drawLinearSlider(juce::Graphics &, int x, int y, int width, int height,
+                          float sliderPos, float minSliderPos, float maxSliderPos,
+                          juce::Slider::SliderStyle, juce::Slider &) override;
+
 private:
     void readConfiguration();
 
     void initColors();
 
     /**
-     * @brief Load the basic GUI config from a json file to allow dynamic repaint
+     * @brief Load the basic gui config from a json file to allow dynamic repaint
      */
     nlohmann::json conf_json;
 };

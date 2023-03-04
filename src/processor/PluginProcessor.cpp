@@ -1,5 +1,5 @@
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "gui/PluginEditor.h"
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessor::MidiBassPedalChordsAudioProcessor()
@@ -57,7 +57,7 @@ void MidiBassPedalChordsAudioProcessor::getStateInformation (juce::MemoryBlock& 
 {
     juce::XmlElement xml("PluginState");
 
-    auto* xml_params = new juce::XmlElement("Params");
+    auto* xml_params = new juce::XmlElement("params");
     for (const auto& param : getParameters()) {
         xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
     }
@@ -75,7 +75,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
     auto xml = getXmlFromBinary(data, sizeInBytes);
 
     if (xml != nullptr) {
-        auto params = xml->getChildByName("Params");
+        auto params = xml->getChildByName("params");
         if (params != nullptr) {
             for (auto& param: getParameters()) {
                 param->setValueNotifyingHost(
@@ -84,7 +84,7 @@ void MidiBassPedalChordsAudioProcessor::setStateInformation (const void* data, i
             }
         }
 
-        uiSettings = UISettings(xml->getChildByName("UISettings"));
+        uiSettings = Gui::UISettings(xml->getChildByName("UISettings"));
         presetManager.setCurrentPreset(uiSettings.presetName);
     }
 }

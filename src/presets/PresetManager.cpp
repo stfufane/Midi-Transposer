@@ -1,5 +1,5 @@
 #include "PresetManager.h"
-#include "../Params/Params.h"
+#include "params/Params.h"
 
 namespace PresetBrowser {
 
@@ -28,7 +28,7 @@ namespace PresetBrowser {
         }
         juce::XmlElement xml("preset");
 
-        auto* xml_params = new juce::XmlElement("Params");
+        auto* xml_params = new juce::XmlElement("params");
         for (auto& param : processor.getParameters()) {
             xml_params->setAttribute(ParamHelper::getParamID(param), param->getValue());
         }
@@ -59,7 +59,7 @@ namespace PresetBrowser {
         juce::XmlDocument xml_document { preset_file };
         auto xml = xml_document.getDocumentElementIfTagMatches("preset");
         if (xml != nullptr) {
-            auto params = xml->getChildByName("Params");
+            auto params = xml->getChildByName("params");
             if (params != nullptr) {
                 for (auto& param : processor.getParameters()) {
                     param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(ParamHelper::getParamID(param), param->getValue())));

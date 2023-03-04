@@ -1,8 +1,10 @@
 #ifndef MIDIBASSPEDALCHORDS_NOTEMAPPINGTOGGLE_H
 #define MIDIBASSPEDALCHORDS_NOTEMAPPINGTOGGLE_H
 
-#include <JuceHeader.h>
-#include "Helpers.h"
+#include "JuceHeader.h"
+#include "gui/widgets/Helpers.h"
+#include "gui/widgets/IndexedToggleButton.h"
+#include "params/Params.h"
 
 namespace Gui
 {
@@ -19,7 +21,7 @@ public:
 
 private:
     juce::Image* powerImage = nullptr;
-    std::unique_ptr<AttachedComponent<IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
+    std::unique_ptr<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteMappingToggle)
 };

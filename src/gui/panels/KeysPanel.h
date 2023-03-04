@@ -1,10 +1,10 @@
 #ifndef MIDIBASSPEDALCHORDS_KEYSPANEL_H
 #define MIDIBASSPEDALCHORDS_KEYSPANEL_H
 
-#include <JuceHeader.h>
-#include "../Params/Params.h"
-#include "NoteKey.h"
-#include "NoteMappingToggle.h"
+#include "JuceHeader.h"
+#include "params/Params.h"
+#include "gui/widgets/NoteKey.h"
+#include "gui/widgets/NoteMappingToggle.h"
 
 namespace Gui
 {

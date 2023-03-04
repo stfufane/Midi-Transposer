@@ -9,28 +9,37 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
     auto& midiParams = p.getMidiProcessor().getMidiParams();
     auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
 
-    inputChannel = std::make_unique< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> >(
+    inputChannel = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *midiParams.inputChannel, *this,
-        [](HorizontalSlider& slider) {
+        [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({0, 16, 1});
             slider.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
-        }
+            slider.setPopupDisplayEnabled(true, true, nullptr);
+        },
+        "Midi Input Slider", juce::Slider::SliderStyle::LinearHorizontal
     );
 
-    outputChannel = std::make_unique< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> >(
+    outputChannel = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *midiParams.outputChannel, *this,
-        [](HorizontalSlider& slider) {
+        [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({0, 16, 1});
             slider.setTooltip("The transposed events will be routed to this channel.");
-        }
+            slider.setPopupDisplayEnabled(true, true, nullptr);
+        },
+        "Midi Output Slider", juce::Slider::SliderStyle::LinearHorizontal
     );
 
-    octaveTranspose = std::make_unique< AttachedComponent<OctaveSlider, juce::SliderParameterAttachment> >(
+    octaveTranspose = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *midiParams.octaveTranspose, *this,
-        [](OctaveSlider& slider) {
+        [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({-1, 4, 1});
             slider.setTooltip("This will play the root note at its original position and transpose the chord.");
-        }
+            slider.setPopupDisplayEnabled(true, true, nullptr);
+            slider.setCustomTextLambda([](double value) -> juce::String {
+                return juce::String(value) + " octave" + (std::abs(value) > 1 ? "s" : "");
+            });
+        },
+        "Octave Slider", juce::Slider::SliderStyle::LinearHorizontal
     );
 
     arpActivated = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
@@ -40,20 +49,27 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         }
     );
 
-    arpRate = std::make_unique< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> >(
+    arpRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *arpParams.rate, *this,
-        [](RotarySlider& slider) {
+        [](Gui::CustomSlider& slider) {
             slider.setRange(0., 1.0, 0.01);
             slider.setNumDecimalPlacesToDisplay(2);
-        }
+            slider.setPopupDisplayEnabled(true, true, nullptr);
+        },
+        "Arp Rate Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
-    arpSyncRate = std::make_unique< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> >(
+    arpSyncRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *arpParams.syncRate, *this,
-        [](SyncRateSlider& slider) {
+        [](Gui::CustomSlider& slider) {
             double nbDivisions = (double) Notes::divisions.size() - 1;
             slider.setNormalisableRange({ 0, nbDivisions, 1 });
-        }
+            slider.setPopupDisplayEnabled(true, true, nullptr);
+            slider.setCustomTextLambda([](double value) -> juce::String {
+                return Notes::divisions[static_cast<size_t>(value)].label;
+            });
+        },
+        "Arp Sync Rate Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
     arpSynced = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
@@ -78,13 +94,18 @@ void SettingsPanel::initLabel(juce::Label& ioLabel)
     addAndMakeVisible(ioLabel);
 }
 
+void SettingsPanel::paint(juce::Graphics& g)
+{
+    // TODO some custom stuff.
+}
+
 void SettingsPanel::resized()
 {
     using juce::operator""_px;
     using juce::operator""_fr;
 
-    arpRate->component.setVisible(!arpSynced->component.getToggleState());
-    arpSyncRate->component.setVisible(arpSynced->component.getToggleState());
+    arpRate->getComponent().setVisible(!arpSynced->getComponent().getToggleState());
+    arpSyncRate->getComponent().setVisible(arpSynced->getComponent().getToggleState());
 
     juce::Grid grid;
     using Track = juce::Grid::TrackInfo;
@@ -102,16 +123,16 @@ void SettingsPanel::resized()
     grid.rowGap = 10_px;
 
     grid.items = {
-            juce::GridItem(inputChannel->component),
-            juce::GridItem(outputChannel->component),
-            juce::GridItem(octaveTranspose->component),
-            juce::GridItem(arpActivated->component),
+            juce::GridItem(inputChannel->getComponent()),
+            juce::GridItem(outputChannel->getComponent()),
+            juce::GridItem(octaveTranspose->getComponent()),
+            juce::GridItem(arpActivated->getComponent()),
             juce::GridItem(lblArpRate),
             juce::GridItem(lblInputChannel),
             juce::GridItem(lblOutputChannel),
             juce::GridItem(lblOctaveTranspose),
-            juce::GridItem(arpSynced->component),
-            juce::GridItem(arpSynced->component.getToggleState() ? arpSyncRate->component : arpRate->component)
+            juce::GridItem(arpSynced->getComponent()),
+            juce::GridItem(arpSynced->getComponent().getToggleState() ? arpSyncRate->getComponent() : arpRate->getComponent())
     };
 
     grid.performLayout (getLocalBounds());

@@ -1,9 +1,10 @@
 #ifndef MIDIBASSPEDALCHORDS_SETTINGSPANEL_H
 #define MIDIBASSPEDALCHORDS_SETTINGSPANEL_H
 
-#include <JuceHeader.h>
-#include "../PluginProcessor.h"
-#include "Helpers.h"
+#include "JuceHeader.h"
+#include "processor/PluginProcessor.h"
+#include "gui/widgets/Helpers.h"
+#include "gui/widgets/CustomSlider.h"
 
 namespace Gui
 {
@@ -19,6 +20,8 @@ public:
 
     void resized() override;
 
+    void paint(juce::Graphics& g) override;
+
 private:
     void initLabel(juce::Label& ioLabel);
 
@@ -26,16 +29,16 @@ private:
     juce::Label lblOutputChannel   { "lblOutputChannel",   "Output Channel" };
     juce::Label lblOctaveTranspose { "lblOctaveTranspose", "Transposition" };
 
-    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > inputChannel;
-    std::unique_ptr< AttachedComponent<HorizontalSlider, juce::SliderParameterAttachment> > outputChannel;
-    std::unique_ptr< AttachedComponent<OctaveSlider, juce::SliderParameterAttachment> > octaveTranspose;
+    std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > inputChannel;
+    std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > outputChannel;
+    std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > octaveTranspose;
 
     juce::Label lblArpRate { "lblArpRate", "Rate" };
 
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpActivated;
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpSynced;
-    std::unique_ptr< AttachedComponent<SyncRateSlider, juce::SliderParameterAttachment> > arpSyncRate;
-    std::unique_ptr< AttachedComponent<RotarySlider, juce::SliderParameterAttachment> > arpRate;
+    std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > arpSyncRate;
+    std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > arpRate;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsPanel)
 };

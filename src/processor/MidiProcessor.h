@@ -1,7 +1,7 @@
 #pragma once
 
 #include "JuceHeader.h"
-#include "Params/Params.h"
+#include "params/Params.h"
 
 class MidiProcessor
 {

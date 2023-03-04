@@ -1,9 +1,9 @@
 #pragma once
 
-#include <JuceHeader.h>
-#include "MidiProcessor.h"
-#include "UISettings.h"
-#include "PresetBrowser/PresetManager.h"
+#include "JuceHeader.h"
+#include "processor/MidiProcessor.h"
+#include "gui/UISettings.h"
+#include "presets/PresetManager.h"
 
 /**
  * 
@@ -50,11 +50,11 @@ public:
 
     //==============================================================================
     MidiProcessor& getMidiProcessor() { return midiProcessor; }
-    UISettings& getUISettings() { return uiSettings; }
+    Gui::UISettings& getUISettings() { return uiSettings; }
     PresetBrowser::PresetManager& getPresetManager() { return presetManager; }
     void saveEditorSize(int w, int h);
 private:
-    UISettings uiSettings;
+    Gui::UISettings uiSettings;
     PresetBrowser::PresetManager presetManager;
     MidiProcessor midiProcessor;
     

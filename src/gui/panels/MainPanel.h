@@ -1,13 +1,12 @@
 #ifndef MIDIBASSPEDALCHORDS_MAINPANEL_H
 #define MIDIBASSPEDALCHORDS_MAINPANEL_H
 
-#include <JuceHeader.h>
-#include "../PluginProcessor.h"
-#include "Helpers.h"
-#include "KeysPanel.h"
-#include "IntervalsPanel.h"
-#include "PresetsPanel.h"
-#include "SettingsPanel.h"
+#include "JuceHeader.h"
+#include "processor/PluginProcessor.h"
+#include "gui/panels/KeysPanel.h"
+#include "gui/panels/IntervalsPanel.h"
+#include "gui/panels/PresetsPanel.h"
+#include "gui/panels/SettingsPanel.h"
 
 namespace Gui
 {
@@ -63,7 +62,7 @@ private:
     /**
      * @brief Container that will be put at the bottom to display all the tooltips at the same place.
      */
-    TooltipPanel tooltipPanel { "tooltipPanel" };
+    juce::Component tooltipPanel { "tooltipPanel" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainPanel)
 };

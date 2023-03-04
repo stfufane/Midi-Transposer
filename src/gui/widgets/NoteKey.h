@@ -1,7 +1,7 @@
 #ifndef MIDIBASSPEDALCHORDS_NOTEKEY_H
 #define MIDIBASSPEDALCHORDS_NOTEKEY_H
 
-#include <JuceHeader.h>
+#include "JuceHeader.h"
 
 namespace Gui
 {
