@@ -3,7 +3,7 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), 
-      mainPanel(p),
+      mainPanel(p, this),
       tooltipWindow(mainPanel.getTooltipPanel(), 50)
 {
     setResizable(true, true);
@@ -23,9 +23,6 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
 
     setLookAndFeel(&mLookAndFeel);
     tooltipWindow.setLookAndFeel(&mLookAndFeel);
-
-    mFileSystemWatcher.addFolder(juce::File(CONFIG_FOLDER));
-    mFileSystemWatcher.addListener(this);
 
     addAndMakeVisible(mainPanel);
 }
@@ -47,15 +44,4 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     p->saveEditorSize(getWidth(), getHeight());
 
     mainPanel.setSize(getWidth(), getHeight());
-}
-
-void MidiBassPedalChordsAudioProcessorEditor::fileChanged(const juce::File inFile, gin::FileSystemWatcher::FileSystemEvent inEvent)
-{
-    if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated || inFile.getFileName() != "colors.json") {
-        return;
-    }
-    
-    std::cout << "File " << inFile.getFileName() << " has been modified.\n";
-    mLookAndFeel.resetConfiguration();
-    repaint();
 }

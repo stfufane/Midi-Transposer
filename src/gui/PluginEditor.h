@@ -4,9 +4,8 @@
 #include "processor/PluginProcessor.h"
 #include "gui/lookandfeel/BaseLookAndFeel.h"
 #include "gui/panels/MainPanel.h"
-#include "gin/utilities/gin_filesystemwatcher.h"
 
-class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor, gin::FileSystemWatcher::Listener
+class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p);
@@ -16,12 +15,12 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    void fileChanged(juce::File, gin::FileSystemWatcher::FileSystemEvent) override;
+    [[nodiscard]] Gui::Configuration* getConfiguration() { return &mConfiguration; }
 
 private:
-    Gui::LnF::BaseLookAndFeel mLookAndFeel;
+    Gui::Configuration mConfiguration { this };
 
-    gin::FileSystemWatcher mFileSystemWatcher;
+    Gui::LnF::BaseLookAndFeel mLookAndFeel { &mConfiguration };
 
     /**
      * @brief Arranges the different sections of the plugin in one place.

@@ -1,46 +1,29 @@
 #include "BaseLookAndFeel.h"
 
-#include <fstream>
-
 namespace Gui::LnF
 {
 
-BaseLookAndFeel::BaseLookAndFeel()
+BaseLookAndFeel::BaseLookAndFeel(Gui::Configuration* config)
+    : Gui::Configuration::Listener(config)
 {
-    resetConfiguration();
+    resetColors(config->getColors());
 }
 
-void BaseLookAndFeel::resetConfiguration()
+void BaseLookAndFeel::onColorsChanged(const nlohmann::json& colors)
 {
-    // Fetch information in json data.
-    readConfiguration();
-    // Init colors accordingly
-    initColors();
+    resetColors(colors);
 }
 
-// TODO: multiple config files and more flexibility
-void BaseLookAndFeel::readConfiguration() {
-    // Read json config
-    std::string json_path = std::string(CONFIG_FOLDER) + "/colors.json";
-    try {
-        std::ifstream f(json_path);
-        conf_json = nlohmann::json::parse(f);
-    } catch (std::exception& e) {
-        std::cout << "Failed to read/parse the json file " << json_path << ", error : " << e.what() << "\n\n";
-        assert(!conf_json.empty());
-    }
-}
-
-void BaseLookAndFeel::initColors() {
+void BaseLookAndFeel::resetColors(const nlohmann::json& colors) {
     // Slider colors
     setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(
-            conf_json.value("slider_background", "ffa5a5a5")));
+            colors.value("slider_background", "ffa5a5a5")));
     setColour(juce::Slider::thumbColourId, juce::Colour::fromString(
-            conf_json.value("slider_thumb", "ff00bfff")));
+            colors.value("slider_thumb", "ff00bfff")));
     setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(
-            conf_json.value("slider_text_colour", "ff000000")));
+            colors.value("slider_text_colour", "ff000000")));
     setColour(juce::Slider::trackColourId, juce::Colour::fromString(
-            conf_json.value("slider_track", "0f00008b")));
+            colors.value("slider_track", "0f00008b")));
 
     // Label colors
     setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);

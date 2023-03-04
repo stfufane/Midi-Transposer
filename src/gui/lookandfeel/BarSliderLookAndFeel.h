@@ -9,6 +9,12 @@ namespace Gui::LnF
 
 class BarSliderLookAndFeel : public BaseLookAndFeel
 {
+public:
+    explicit BarSliderLookAndFeel(Gui::Configuration* configuration)
+        : BaseLookAndFeel(configuration)
+    {}
+
+protected:
     void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
                           float sliderPos, float /* minSliderPos */, float /* maxSliderPos */,
                           const juce::Slider::SliderStyle, juce::Slider& slider) override

@@ -15,13 +15,18 @@ class MainPanel : public juce::Component
 {
 public:
     MainPanel() = delete;
-    explicit MainPanel(MidiBassPedalChordsAudioProcessor& p);
+    explicit MainPanel(MidiBassPedalChordsAudioProcessor& p, juce::Component* rootComponent);
 
     void resized() override;
 
     juce::Component* getTooltipPanel() { return &tooltipPanel; }
 
 private:
+    /**
+     * @brief A reference to the parent component to have access to the configuration when creating children
+     */
+    juce::Component* mRootComponent = nullptr;
+
     /**
      * @brief Resets the intervals panel with the currently edited note.
      * @param noteParam the note that is edited.

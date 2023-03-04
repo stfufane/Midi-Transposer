@@ -2,18 +2,15 @@
 #define MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
 
 #include "JuceHeader.h"
-
-#include "nlohmann/json.hpp"
+#include "gui/Configuration.h"
 
 namespace Gui::LnF
 {
 
-class BaseLookAndFeel : public juce::LookAndFeel_V4
+class BaseLookAndFeel : public juce::LookAndFeel_V4, public Gui::Configuration::Listener
 {
 public:
-    BaseLookAndFeel();
-
-    void resetConfiguration();
+    explicit BaseLookAndFeel(Gui::Configuration* config);
 
     juce::Rectangle<int> getTooltipBounds(const juce::String& tipText,
                                           juce::Point<int> screenPos,
@@ -28,15 +25,10 @@ public:
                           float sliderPos, float minSliderPos, float maxSliderPos,
                           juce::Slider::SliderStyle, juce::Slider &) override;
 
+    void onColorsChanged(const nlohmann::json& colors) override;
+
 private:
-    void readConfiguration();
-
-    void initColors();
-
-    /**
-     * @brief Load the basic gui config from a json file to allow dynamic repaint
-     */
-    nlohmann::json conf_json;
+    void resetColors(const nlohmann::json& colors);
 };
 
 }

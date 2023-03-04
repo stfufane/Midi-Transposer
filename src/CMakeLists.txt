@@ -9,6 +9,7 @@ target_sources(${BaseTargetName} PRIVATE
 		params/NoteParams.cpp
 		presets/PresetManager.cpp
 		gui/PluginEditor.cpp
+		gui/Configuration.cpp
 		gui/lookandfeel/BaseLookAndFeel.cpp
 		gui/widgets/CustomSlider.cpp
 		gui/widgets/IndexedToggleButton.cpp
