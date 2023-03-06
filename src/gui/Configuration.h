@@ -8,10 +8,11 @@
 namespace Gui
 {
 
-class Configuration : gin::FileSystemWatcher::Listener
+class Configuration : public gin::FileSystemWatcher::Listener
 {
 public:
     explicit Configuration(juce::Component* rootComponent);
+    ~Configuration() override;
 
     /**
      * @brief Declare several callbacks, one for each kind of config file
@@ -29,15 +30,19 @@ public:
         }
 
         virtual void onColorsChanged(const nlohmann::json&) {}
+        virtual void onPositionsChanged(const nlohmann::json&) {}
 
     private:
         Configuration* mConfig;
     };
 
+    enum class ConfigurationType {
+        eColors,
+        ePositions,
+    };
+
     void addListener(Listener* inListener) { mListeners.insert(inListener); }
     void removeListener(Listener* inListener) { mListeners.erase(inListener); }
-
-    void readConfiguration();
 
     /**
      * @brief Triggered by the filewatcher when a file in the listened folder has been modified
@@ -47,6 +52,13 @@ public:
     [[nodiscard]] const nlohmann::json& getColors() const { return mColors; }
 
 private:
+    static const std::unordered_map<std::string, ConfigurationType> kConfigFiles;
+
+    void readAllConfigurations();
+
+    void readConfiguration(ConfigurationType conf_type, const std::string& filename);
+    void notifyListeners(ConfigurationType conf_type);
+
     gin::FileSystemWatcher mFileSystemWatcher;
 
     /**
@@ -60,6 +72,7 @@ private:
     std::set<Listener*> mListeners;
 
     nlohmann::json mColors;
+    nlohmann::json mPositions;
 };
 
 }

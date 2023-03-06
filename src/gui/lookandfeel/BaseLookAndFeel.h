@@ -7,6 +7,29 @@
 namespace Gui::LnF
 {
 
+/**
+ * @brief String representations of the implemented colors
+ * that can be read from a json file.
+ */
+struct BaseColors {
+    std::string mSliderBackground { "ffff0000" };
+    std::string mSliderThumb { "ffff0000"};
+    std::string mSliderTextColor { "fffff0000"};
+    std::string mSliderTrack { "ffff0000"};
+};
+
+inline void from_json(const nlohmann::json& j, BaseColors& colors)
+{
+    try {
+        j.at("slider_background").get_to(colors.mSliderBackground);
+        j.at("slider_thumb").get_to(colors.mSliderThumb);
+        j.at("slider_text_color").get_to(colors.mSliderTextColor);
+        j.at("slider_track").get_to(colors.mSliderTrack);
+    } catch (std::exception& e) {
+        std::cout << "One or several values were not defined in the json configuration file\n" << e.what() << "\n";
+    }
+}
+
 class BaseLookAndFeel : public juce::LookAndFeel_V4, public Gui::Configuration::Listener
 {
 public:
@@ -28,7 +51,9 @@ public:
     void onColorsChanged(const nlohmann::json& colors) override;
 
 private:
-    void resetColors(const nlohmann::json& colors);
+    BaseColors mColors;
+
+    void resetColors();
 };
 
 }

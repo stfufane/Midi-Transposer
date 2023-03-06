@@ -13,8 +13,8 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p, juce::Component* root
 {
     auto& uiSettings = p.getUISettings();
     auto& noteParams = p.getMidiProcessor().getNoteParams();
-
     const auto index = uiSettings.lastNoteIndex;
+
     updateNoteEdited(index);
     if (index > -1) {
         auto noteParam = noteParams.notes[static_cast<size_t>(index)].get();

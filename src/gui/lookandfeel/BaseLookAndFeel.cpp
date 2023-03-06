@@ -6,24 +6,23 @@ namespace Gui::LnF
 BaseLookAndFeel::BaseLookAndFeel(Gui::Configuration* config)
     : Gui::Configuration::Listener(config)
 {
-    resetColors(config->getColors());
+    mColors = config->getColors();
+    resetColors();
 }
 
 void BaseLookAndFeel::onColorsChanged(const nlohmann::json& colors)
 {
-    resetColors(colors);
+    // Assign the json directly to the struct
+    mColors = colors;
+    resetColors();
 }
 
-void BaseLookAndFeel::resetColors(const nlohmann::json& colors) {
+void BaseLookAndFeel::resetColors() {
     // Slider colors
-    setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(
-            colors.value("slider_background", "ffa5a5a5")));
-    setColour(juce::Slider::thumbColourId, juce::Colour::fromString(
-            colors.value("slider_thumb", "ff00bfff")));
-    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(
-            colors.value("slider_text_colour", "ff000000")));
-    setColour(juce::Slider::trackColourId, juce::Colour::fromString(
-            colors.value("slider_track", "0f00008b")));
+    setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(mColors.mSliderBackground));
+    setColour(juce::Slider::thumbColourId, juce::Colour::fromString(mColors.mSliderThumb));
+    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(mColors.mSliderTextColor));
+    setColour(juce::Slider::trackColourId, juce::Colour::fromString(mColors.mSliderTrack));
 
     // Label colors
     setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
