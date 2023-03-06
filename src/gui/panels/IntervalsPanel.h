@@ -17,7 +17,7 @@ class IntervalsPanel : public juce::Component
 {
 public:
     IntervalsPanel() = delete;
-    explicit IntervalsPanel(Params::NoteParam& noteParam, Gui::Configuration* inConfiguration);
+    explicit IntervalsPanel(Params::NoteParam& noteParam);
 
     ~IntervalsPanel() override;
 

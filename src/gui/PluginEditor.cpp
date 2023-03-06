@@ -3,7 +3,7 @@
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), 
-      mainPanel(p, this),
+      mainPanel(p),
       tooltipWindow(mainPanel.getTooltipPanel(), 50)
 {
     setResizable(true, true);

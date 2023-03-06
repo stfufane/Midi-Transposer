@@ -10,8 +10,8 @@ namespace Gui::LnF
 class BarSliderLookAndFeel : public BaseLookAndFeel
 {
 public:
-    explicit BarSliderLookAndFeel(Gui::Configuration* configuration)
-        : BaseLookAndFeel(configuration)
+    explicit BarSliderLookAndFeel(juce::Component* rootComponent)
+        : BaseLookAndFeel(rootComponent)
     {}
 
 protected:

@@ -3,9 +3,9 @@
 namespace Gui
 {
 
-IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam, Gui::Configuration* configuration)
+IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam)
     : juce::Component("Intervals Panel " + noteParam.noteName ),
-      mLookAndFeel(configuration)
+      mLookAndFeel(this)
 {
     setLookAndFeel(&mLookAndFeel);
 

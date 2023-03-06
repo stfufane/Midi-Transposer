@@ -4,9 +4,8 @@
 namespace Gui
 {
 
-MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p, juce::Component* rootComponent)
+MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         : juce::Component("Main Panel"),
-          mRootComponent(rootComponent),
           presetsPanel(p.getPresetManager()),
           settingsPanel(p),
           keysPanel(p.getMidiProcessor().getNoteParams())
@@ -71,12 +70,10 @@ void MainPanel::resized()
 
 void MainPanel::initIntervalsPanel(Params::NoteParam& noteParam)
 {
-    if (auto* root_component = dynamic_cast<MidiBassPedalChordsAudioProcessorEditor*>(mRootComponent); root_component) {
-        intervalsPanel = std::make_unique<Gui::IntervalsPanel>(noteParam, root_component->getConfiguration());
-        dummyPanel.setVisible(false);
-        addAndMakeVisible(intervalsPanel.get());
-        resized();
-    }
+    intervalsPanel = std::make_unique<Gui::IntervalsPanel>(noteParam);
+    dummyPanel.setVisible(false);
+    addAndMakeVisible(intervalsPanel.get());
+    resized();
 }
 
 void MainPanel::updateNoteEdited(const int index)

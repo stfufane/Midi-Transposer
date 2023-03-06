@@ -15,12 +15,8 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    [[nodiscard]] Gui::Configuration* getConfiguration() { return &mConfiguration; }
-
 private:
-    Gui::Configuration mConfiguration { this };
-
-    Gui::LnF::BaseLookAndFeel mLookAndFeel { &mConfiguration };
+    Gui::LnF::BaseLookAndFeel mLookAndFeel { this };
 
     /**
      * @brief Arranges the different sections of the plugin in one place.

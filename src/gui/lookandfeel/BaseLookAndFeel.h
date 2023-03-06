@@ -33,7 +33,8 @@ inline void from_json(const nlohmann::json& j, BaseColors& colors)
 class BaseLookAndFeel : public juce::LookAndFeel_V4, public Gui::Configuration::Listener
 {
 public:
-    explicit BaseLookAndFeel(Gui::Configuration* config);
+    explicit BaseLookAndFeel(juce::Component* rootComponent);
+    ~BaseLookAndFeel() override;
 
     juce::Rectangle<int> getTooltipBounds(const juce::String& tipText,
                                           juce::Point<int> screenPos,
@@ -51,6 +52,8 @@ public:
     void onColorsChanged(const nlohmann::json& colors) override;
 
 private:
+    Gui::Configuration mConfiguration;
+
     BaseColors mColors;
 
     void resetColors();

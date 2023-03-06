@@ -11,6 +11,7 @@ namespace Gui
 class Configuration : public gin::FileSystemWatcher::Listener
 {
 public:
+    Configuration() = delete;
     explicit Configuration(juce::Component* rootComponent);
     ~Configuration() override;
 
@@ -19,21 +20,8 @@ public:
      */
     class Listener {
     public:
-        // Auto add listener to the config
-        explicit Listener(Configuration* config) : mConfig(config) {
-            mConfig->addListener(this);
-        }
-
-        // Auto remove at destruction
-        virtual ~Listener() {
-            mConfig->removeListener(this);
-        }
-
         virtual void onColorsChanged(const nlohmann::json&) {}
         virtual void onPositionsChanged(const nlohmann::json&) {}
-
-    private:
-        Configuration* mConfig;
     };
 
     enum class ConfigurationType {

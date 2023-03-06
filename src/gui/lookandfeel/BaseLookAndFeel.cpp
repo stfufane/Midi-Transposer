@@ -3,11 +3,17 @@
 namespace Gui::LnF
 {
 
-BaseLookAndFeel::BaseLookAndFeel(Gui::Configuration* config)
-    : Gui::Configuration::Listener(config)
+BaseLookAndFeel::BaseLookAndFeel(juce::Component* rootComponent)
+    : mConfiguration(rootComponent)
 {
-    mColors = config->getColors();
+    mConfiguration.addListener(this);
+    mColors = mConfiguration.getColors();
     resetColors();
+}
+
+BaseLookAndFeel::~BaseLookAndFeel()
+{
+    mConfiguration.removeListener(this);
 }
 
 void BaseLookAndFeel::onColorsChanged(const nlohmann::json& colors)
