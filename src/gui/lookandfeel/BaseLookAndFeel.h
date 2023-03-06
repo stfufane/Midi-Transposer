@@ -2,7 +2,7 @@
 #define MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
 
 #include "JuceHeader.h"
-#include "gui/Configuration.h"
+#include "gui/Configuration.hpp"
 
 namespace Gui::LnF
 {
@@ -30,7 +30,8 @@ inline void from_json(const nlohmann::json& j, BaseColors& colors)
     }
 }
 
-class BaseLookAndFeel : public juce::LookAndFeel_V4, public Gui::Configuration::Listener
+class BaseLookAndFeel : public juce::LookAndFeel_V4,
+        public Gui::Configuration<ConfigurationType::eColors>::Listener
 {
 public:
     explicit BaseLookAndFeel(juce::Component* rootComponent);
@@ -49,10 +50,10 @@ public:
                           float sliderPos, float minSliderPos, float maxSliderPos,
                           juce::Slider::SliderStyle, juce::Slider &) override;
 
-    void onColorsChanged(const nlohmann::json& colors) override;
+    void onConfigChanged(const nlohmann::json& json, ConfigurationType conf_type) override;
 
 private:
-    Gui::Configuration mConfiguration;
+    Gui::Configuration<ConfigurationType::eColors> mConfiguration;
 
     BaseColors mColors;
 

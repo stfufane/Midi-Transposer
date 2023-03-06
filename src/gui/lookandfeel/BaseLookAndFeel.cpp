@@ -7,7 +7,7 @@ BaseLookAndFeel::BaseLookAndFeel(juce::Component* rootComponent)
     : mConfiguration(rootComponent)
 {
     mConfiguration.addListener(this);
-    mColors = mConfiguration.getColors();
+    mColors = mConfiguration.getJson();
     resetColors();
 }
 
@@ -16,10 +16,10 @@ BaseLookAndFeel::~BaseLookAndFeel()
     mConfiguration.removeListener(this);
 }
 
-void BaseLookAndFeel::onColorsChanged(const nlohmann::json& colors)
+void BaseLookAndFeel::onConfigChanged(const nlohmann::json& json, ConfigurationType)
 {
     // Assign the json directly to the struct
-    mColors = colors;
+    mColors = json;
     resetColors();
 }
 
