@@ -3,29 +3,17 @@
 
 #include "JuceHeader.h"
 #include <fstream>
-#include <map>
 #include "nlohmann/json.hpp"
 #include "gin/utilities/gin_filesystemwatcher.h"
 
 namespace Gui
 {
-
-enum class ConfigurationType {
-    eColors,
-    ePositions,
-};
-
-const std::map<ConfigurationType, std::string> kConfigFiles =
-{
-    { ConfigurationType::eColors, "colors.json" },
-    { ConfigurationType::ePositions, "positions.json" }
-};
-
 /**
  * @brief A helper class to listen to changes on a certain configuration file and trigger actions when it's modified
- * @tparam conf_type The type of file to watch
+ * @tparam Data a struct type that can be serialized from json.
+ * It also has to implement a getFileName static method that returns a std::string
  */
-template<ConfigurationType conf_type>
+template<class Data>
 class Configuration : public gin::FileSystemWatcher::Listener
 {
 public:
@@ -50,50 +38,52 @@ public:
     /**
      * @brief Declare a simple listener type for classes that use the dynamic config
      */
+    template<typename T>
     class Listener {
     public:
         /**
          * @brief Send the updated json and the type of config that has been updated.
          */
-        virtual void onConfigChanged(const nlohmann::json&, ConfigurationType) {}
+        virtual void onConfigChanged(const T&) {}
     };
 
-    void addListener(Listener* inListener) { mListeners.insert(inListener); }
-    void removeListener(Listener* inListener) { mListeners.erase(inListener); }
+    void addListener(Listener<Data>* inListener) { mListeners.insert(inListener); }
+    void removeListener(Listener<Data>* inListener) { mListeners.erase(inListener); }
 
     /**
-     * @brief Triggered by the filewatcher when a file in the listened folder has been modified
+     * @brief Triggered by the file-watcher when a file in the listened folder has been modified
      */
     void fileChanged(const juce::File inFile, gin::FileSystemWatcher::FileSystemEvent inEvent) override
     {
+        // Only interested in modified files
         if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated) {
             return;
         }
 
         // Check if the right file is modified
-        if (inFile.getFileName().toStdString() != kConfigFiles.at(conf_type)) {
+        if (inFile.getFileName().toStdString() != Data::getFileName()) {
             return;
         }
 
         if (reloadConfiguration()) {
             notifyListeners();
-        }
-
-        if (mRootComponent) {
-            mRootComponent->repaint();
+            if (mRootComponent) {
+                mRootComponent->repaint();
+            }
         }
     }
 
-    [[nodiscard]] const nlohmann::json& getJson() const { return mJson; }
+    [[nodiscard]] const Data& getData() const { return mData; }
 
 private:
     bool reloadConfiguration()
     {
         // Read json config
-        std::string json_path = std::string(CONFIG_FOLDER) + "/" + kConfigFiles.at(conf_type);
+        std::string json_path = std::string(CONFIG_FOLDER) + "/" + Data::getFileName();
         try {
             std::ifstream f(json_path);
             mJson = nlohmann::json::parse(f);
+            mData = mJson;
             return true;
         } catch (std::exception& e) {
             std::cout << "Failed to read/parse the json file " << json_path << ", error : " << e.what() << "\n\n";
@@ -104,7 +94,7 @@ private:
     void notifyListeners()
     {
         for (auto* listener: mListeners) {
-            listener->onConfigChanged(mJson, conf_type);
+            listener->onConfigChanged(mData);
         }
     }
 
@@ -114,19 +104,24 @@ private:
     gin::FileSystemWatcher mFileSystemWatcher;
 
     /**
-     * @brief Reference to the editor, necessary to trigger repaint after a config change.
+     * @brief Reference to the component holding the configuration, necessary to trigger repaint after a config change.
      */
     juce::Component* mRootComponent = nullptr;
 
     /**
      * @brief Keep track of the listeners to notify when changes have been made
      */
-    std::set<Listener*> mListeners;
+    std::set<Listener<Data>*> mListeners;
 
     /**
      * @brief The data representation of the configuration json file
      */
     nlohmann::json mJson;
+
+    /**
+     * @brief The type of data that will be retrieved from json
+     */
+    Data mData;
 };
 
 }

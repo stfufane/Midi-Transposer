@@ -16,6 +16,8 @@ struct BaseColors {
     std::string mSliderThumb { "ffff0000"};
     std::string mSliderTextColor { "fffff0000"};
     std::string mSliderTrack { "ffff0000"};
+
+    static std::string getFileName() { return "colors.json"; }
 };
 
 inline void from_json(const nlohmann::json& j, BaseColors& colors)
@@ -31,7 +33,7 @@ inline void from_json(const nlohmann::json& j, BaseColors& colors)
 }
 
 class BaseLookAndFeel : public juce::LookAndFeel_V4,
-        public Gui::Configuration<ConfigurationType::eColors>::Listener
+        public Gui::Configuration<BaseColors>::Listener<BaseColors>
 {
 public:
     explicit BaseLookAndFeel(juce::Component* rootComponent);
@@ -50,12 +52,10 @@ public:
                           float sliderPos, float minSliderPos, float maxSliderPos,
                           juce::Slider::SliderStyle, juce::Slider &) override;
 
-    void onConfigChanged(const nlohmann::json& json, ConfigurationType conf_type) override;
+    void onConfigChanged(const BaseColors& colors) override;
 
 private:
-    Gui::Configuration<ConfigurationType::eColors> mConfiguration;
-
-    BaseColors mColors;
+    Gui::Configuration<BaseColors> mConfiguration;
 
     void resetColors();
 };

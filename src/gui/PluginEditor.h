@@ -9,14 +9,19 @@ class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEdito
 {
 public:
     explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p);
+
     ~MidiBassPedalChordsAudioProcessorEditor() override;
 
     //==============================================================================
     void paint(juce::Graphics&) override;
+
     void resized() override;
 
 private:
-    Gui::LnF::BaseLookAndFeel mLookAndFeel { this };
+    /**
+     * @brief The main LookAndFeel that will be applied to all the children components
+     */
+    Gui::LnF::BaseLookAndFeel mLookAndFeel;
 
     /**
      * @brief Arranges the different sections of the plugin in one place.

@@ -30,7 +30,7 @@ protected:
             juce::Rectangle<float> (static_cast<float> (x), (float) y + 0.5f,  sliderPos - (float) x, (float) height - 1.0f)
           : juce::Rectangle<float> (static_cast<float>(width - height) / 2.f, sliderPos, static_cast<float>(height), (float) y + ((float) height - sliderPos)));
 
-        g.setColour(slider.findColour(juce::Slider::ColourIds::textBoxTextColourId));
+        g.setColour(findColour(juce::Slider::ColourIds::textBoxTextColourId));
         g.drawText(slider_value, juce::Rectangle<float>(0.f, static_cast<float>(height) / 4.f,
                                                         static_cast<float>(width), static_cast<float>(height) / 2.f),
                    juce::Justification::centred);

@@ -1,3 +1,5 @@
 {
-  "test": "coucou"
+  "input_coords": {
+    "x": 10, "y": 40, "w": 150, "h": 50
+  }
 }

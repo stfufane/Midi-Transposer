@@ -7,7 +7,6 @@ BaseLookAndFeel::BaseLookAndFeel(juce::Component* rootComponent)
     : mConfiguration(rootComponent)
 {
     mConfiguration.addListener(this);
-    mColors = mConfiguration.getJson();
     resetColors();
 }
 
@@ -16,19 +15,18 @@ BaseLookAndFeel::~BaseLookAndFeel()
     mConfiguration.removeListener(this);
 }
 
-void BaseLookAndFeel::onConfigChanged(const nlohmann::json& json, ConfigurationType)
+void BaseLookAndFeel::onConfigChanged(const BaseColors&)
 {
-    // Assign the json directly to the struct
-    mColors = json;
     resetColors();
 }
 
 void BaseLookAndFeel::resetColors() {
+    const auto& colors = mConfiguration.getData();
     // Slider colors
-    setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(mColors.mSliderBackground));
-    setColour(juce::Slider::thumbColourId, juce::Colour::fromString(mColors.mSliderThumb));
-    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(mColors.mSliderTextColor));
-    setColour(juce::Slider::trackColourId, juce::Colour::fromString(mColors.mSliderTrack));
+    setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(colors.mSliderBackground));
+    setColour(juce::Slider::thumbColourId, juce::Colour::fromString(colors.mSliderThumb));
+    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(colors.mSliderTextColor));
+    setColour(juce::Slider::trackColourId, juce::Colour::fromString(colors.mSliderTrack));
 
     // Label colors
     setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);

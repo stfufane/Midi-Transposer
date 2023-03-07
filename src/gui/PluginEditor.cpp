@@ -2,9 +2,10 @@
 
 //==============================================================================
 MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), 
-      mainPanel(p),
-      tooltipWindow(mainPanel.getTooltipPanel(), 50)
+        : juce::AudioProcessorEditor(&p),
+          mLookAndFeel(this),
+          mainPanel(p),
+          tooltipWindow(mainPanel.getTooltipPanel(), 50)
 {
     setResizable(true, true);
 
@@ -43,5 +44,6 @@ void MidiBassPedalChordsAudioProcessorEditor::resized()
     auto* p = dynamic_cast<MidiBassPedalChordsAudioProcessor*>(&processor);
     p->saveEditorSize(getWidth(), getHeight());
 
-    mainPanel.setSize(getWidth(), getHeight());
+    mainPanel.setSize(kWindowWidth, kWindowHeight);
+    mainPanel.setTransform(juce::AffineTransform::scale(static_cast<float>(getWidth()) / static_cast<float>(kWindowWidth)));
 }

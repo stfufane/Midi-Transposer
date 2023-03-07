@@ -5,24 +5,42 @@
 #include "processor/PluginProcessor.h"
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
+#include "gui/Configuration.hpp"
 
 namespace Gui
 {
 
+struct CompPositions {
+    juce::Rectangle<int> mInputCoords { 0, 0, 100, 100 };
+
+    static std::string getFileName() { return "positions.json"; }
+};
+
+inline void from_json(const nlohmann::json& j, CompPositions& pos)
+{
+    auto input_coords = j.at("input_coords");
+    pos.mInputCoords = { input_coords.at("x"), input_coords.at("y"), input_coords.at("w"), input_coords.at("h") };
+}
+
 /**
  * @brief The header with MIDI params and Arpeggiator params + preset manager
  */
-class SettingsPanel : public juce::Component
+class SettingsPanel : public juce::Component, public Configuration<CompPositions>::Listener<CompPositions>
 {
 public:
     SettingsPanel() = delete;
     explicit SettingsPanel(MidiBassPedalChordsAudioProcessor& p);
+    ~SettingsPanel() override;
 
     void resized() override;
 
     void paint(juce::Graphics& g) override;
 
 private:
+    void onConfigChanged(const CompPositions& positions) override;
+
+    Configuration<CompPositions> mConfiguration;
+
     void initLabel(juce::Label& ioLabel);
 
     juce::Label lblInputChannel    { "lblInputChannel",    "Input Channel" };

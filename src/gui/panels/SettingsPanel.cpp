@@ -4,8 +4,11 @@ namespace Gui
 {
 
 SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
-    : juce::Component("Side Panel")
+    : juce::Component("Side Panel"),
+      mConfiguration(this)
 {
+    mConfiguration.addListener(this);
+
     auto& midiParams = p.getMidiProcessor().getMidiParams();
     auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
 
@@ -83,11 +86,20 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         },
         "Arp Sync Toggle"
     );
-
     initLabel(lblInputChannel);
     initLabel(lblOutputChannel);
     initLabel(lblOctaveTranspose);
     initLabel(lblArpRate);
+}
+
+SettingsPanel::~SettingsPanel()
+{
+    mConfiguration.removeListener(this);
+}
+
+void SettingsPanel::onConfigChanged(const CompPositions&)
+{
+    resized();
 }
 
 void SettingsPanel::initLabel(juce::Label& ioLabel)
@@ -105,6 +117,9 @@ void SettingsPanel::resized()
 {
     using juce::operator""_px;
     using juce::operator""_fr;
+
+//    const auto& positions = mConfiguration.getData();
+//    inputChannel->getComponent().setBounds(positions.mInputCoords);
 
     arpRate->getComponent().setVisible(!arpSynced->getComponent().getToggleState());
     arpSyncRate->getComponent().setVisible(arpSynced->getComponent().getToggleState());
