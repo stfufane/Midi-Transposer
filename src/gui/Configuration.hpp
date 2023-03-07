@@ -19,11 +19,12 @@ class Configuration : public gin::FileSystemWatcher::Listener
 public:
     Configuration() = delete;
 
-    explicit Configuration(juce::Component* rootComponent) : mRootComponent(rootComponent)
+    explicit Configuration(std::string watchedFolder, juce::Component* rootComponent) :
+        mWatchedFolder(std::move(watchedFolder)), mRootComponent(rootComponent)
     {
 #if _DEBUG
         // Do not start watching folders in release mode
-        mFileSystemWatcher.addFolder(juce::File(CONFIG_FOLDER));
+        mFileSystemWatcher.addFolder(juce::File(mWatchedFolder));
 #endif
         mFileSystemWatcher.addListener(this);
 
@@ -42,7 +43,7 @@ public:
     class Listener {
     public:
         /**
-         * @brief Send the updated json and the type of config that has been updated.
+         * @brief Send the updated data
          */
         virtual void onConfigChanged(const T&) {}
     };
@@ -79,11 +80,11 @@ private:
     bool reloadConfiguration()
     {
         // Read json config
-        std::string json_path = std::string(CONFIG_FOLDER) + "/" + Data::getFileName();
+        std::string json_path = mWatchedFolder + "/" + Data::getFileName();
         try {
             std::ifstream f(json_path);
-            mJson = nlohmann::json::parse(f);
-            mData = mJson;
+            auto j = nlohmann::json::parse(f);
+            mData = j;
             return true;
         } catch (std::exception& e) {
             std::cout << "Failed to read/parse the json file " << json_path << ", error : " << e.what() << "\n\n";
@@ -104,6 +105,11 @@ private:
     gin::FileSystemWatcher mFileSystemWatcher;
 
     /**
+     * @brief The folder that contains the file to watch.
+     */
+    std::string mWatchedFolder;
+
+    /**
      * @brief Reference to the component holding the configuration, necessary to trigger repaint after a config change.
      */
     juce::Component* mRootComponent = nullptr;
@@ -112,11 +118,6 @@ private:
      * @brief Keep track of the listeners to notify when changes have been made
      */
     std::set<Listener<Data>*> mListeners;
-
-    /**
-     * @brief The data representation of the configuration json file
-     */
-    nlohmann::json mJson;
 
     /**
      * @brief The type of data that will be retrieved from json

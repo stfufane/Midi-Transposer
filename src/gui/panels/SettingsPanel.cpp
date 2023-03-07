@@ -5,7 +5,7 @@ namespace Gui
 
 SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
     : juce::Component("Side Panel"),
-      mConfiguration(this)
+      mConfiguration(CONFIG_FOLDER, this)
 {
     mConfiguration.addListener(this);
 

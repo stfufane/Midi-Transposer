@@ -4,7 +4,7 @@ namespace Gui::LnF
 {
 
 BaseLookAndFeel::BaseLookAndFeel(juce::Component* rootComponent)
-    : mConfiguration(rootComponent)
+    : mConfiguration(CONFIG_FOLDER, rootComponent)
 {
     mConfiguration.addListener(this);
     resetColors();
