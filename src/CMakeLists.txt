@@ -21,8 +21,8 @@ target_sources(${BaseTargetName} PRIVATE
 		gui/panels/KeysPanel.cpp
 		gui/panels/PresetsPanel.cpp)
 
-# Build the binary data from the images folder
-add_images_from_directory(${BaseTargetName} ../data/img)
+# Build the binary data from the images and fonts folder
+add_binary_data_from_directory(${BaseTargetName} ../data/img ../data/fonts)
 
 # Set the base for includes to avoid having to use relative paths
 target_include_directories(${BaseTargetName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

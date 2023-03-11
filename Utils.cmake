@@ -22,16 +22,18 @@ macro (update_from_git name repo branch populate)
 endmacro()
 
 # Function to build the binary data from a folder of images
-function(add_images_from_directory target imagesSubFolder)
+function(add_binary_data_from_directory target imagesSubFolder fontsSubFolder)
     set (ImagesDir ${CMAKE_CURRENT_LIST_DIR}/${imagesSubFolder})
     file(GLOB_RECURSE images
             "${ImagesDir}/*.jpg"
             "${ImagesDir}/*.png"
             "${ImagesDir}/*.jpeg")
 
-    if(NOT images STREQUAL "")
-        set (ImagesTarget "${target}-Images")
-        juce_add_binary_data(${ImagesTarget} SOURCES ${images})
-        target_link_libraries(${target} PRIVATE ${ImagesTarget})
-    endif()
+    set (FontsDir ${CMAKE_CURRENT_LIST_DIR}/${fontsSubFolder})
+    file (GLOB_RECURSE fonts
+            "${FontsDir}/*.ttf")
+
+    set (DataTarget "${target}-Data")
+    juce_add_binary_data(${DataTarget} SOURCES ${images} ${fonts})
+    target_link_libraries(${target} PRIVATE ${DataTarget})
 endfunction()

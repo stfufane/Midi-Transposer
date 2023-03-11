@@ -32,6 +32,13 @@ inline void from_json(const nlohmann::json& j, BaseColors& colors)
     }
 }
 
+inline juce::Font getDefaultFont(float inPointHeight = 16.f)
+{
+    return juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::iosevkaregular_ttf,
+                                                   BinaryData::iosevkaregular_ttfSize))
+                                                   .withPointHeight(inPointHeight);
+}
+
 class BaseLookAndFeel : public juce::LookAndFeel_V4,
         public Gui::Configuration<BaseColors>::Listener<BaseColors>
 {
