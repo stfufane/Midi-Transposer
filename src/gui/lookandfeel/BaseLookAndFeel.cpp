@@ -45,7 +45,6 @@ void BaseLookAndFeel::resetColors() {
     setColour(juce::ToggleButton::ColourIds::tickDisabledColourId, juce::Colours::darkgrey);
 }
 
-
 juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& /* tipText */,
                                       juce::Point<int> /* screenPos */,
                                       juce::Rectangle<int> parentArea)
@@ -60,15 +59,12 @@ void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, i
     g.setColour(juce::LookAndFeel::findColour(juce::TooltipWindow::backgroundColourId));
     g.fillRect(bounds.toFloat());
 
-    g.setColour (findColour (juce::TooltipWindow::ColourIds::outlineColourId));
-    g.drawRect(bounds.toFloat().reduced (0.5f, 0.5f), 1.0f);
-
     juce::AttributedString s;
     s.setJustification(juce::Justification::centredLeft);
-    s.append(text, juce::Font(14.0f, juce::Font::plain), findColour(juce::TooltipWindow::textColourId));
+    s.append(text, getDefaultFont(15.f), findColour(juce::TooltipWindow::textColourId));
 
     juce::TextLayout tl;
-    tl.createLayoutWithBalancedLineLengths(s, (float) width);
+    tl.createLayout(s, (float) width);
     tl.draw(g, { static_cast<float> (width), static_cast<float> (height) });
 }
 
@@ -127,6 +123,48 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
 
     g.setColour (slider.findColour (juce::Slider::thumbColourId));
     g.fillRect(juce::Rectangle<float> (static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre (maxPoint));
+}
+
+void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height,
+                       float sliderPos, float rotaryStartAngle,
+                       float rotaryEndAngle, juce::Slider& slider)
+{
+    auto outline = slider.findColour (juce::Slider::backgroundColourId);
+    auto fill    = slider.findColour (juce::Slider::trackColourId);
+
+    auto bounds = juce::Rectangle<int> ((width - height) / 2, y, // TODO: calculate properly
+                                        juce::jmin(width, height), juce::jmin(width, height)).toFloat().reduced (5);
+
+    auto radius = juce::jmin (bounds.getWidth(), bounds.getHeight()) / 2.0f;
+    auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+    auto lineW = 2.0f;
+    auto arcRadius = radius - lineW * 0.5f + 2.0f;
+
+    g.setColour (outline);
+    g.fillEllipse(bounds.reduced(3.0f));
+
+    if (slider.isEnabled())
+    {
+        juce::Path valueArc;
+        valueArc.addCentredArc (bounds.getCentreX(),
+                                bounds.getCentreY(),
+                                arcRadius,
+                                arcRadius,
+                                0.0f,
+                                rotaryStartAngle,
+                                toAngle,
+                                true);
+
+        g.setColour (fill);
+        g.strokePath (valueArc, juce::PathStrokeType (lineW, juce::PathStrokeType::mitered, juce::PathStrokeType::square));
+    }
+
+    auto thumbWidth = lineW * 2.f;
+    juce::Point<float> thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - juce::MathConstants<float>::halfPi),
+                             bounds.getCentreY() + arcRadius * std::sin (toAngle - juce::MathConstants<float>::halfPi));
+
+    g.setColour (slider.findColour (juce::Slider::thumbColourId));
+    g.fillRect(juce::Rectangle<float> (static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre (thumbPoint));
 }
 
 }

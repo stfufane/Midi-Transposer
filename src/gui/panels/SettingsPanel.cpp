@@ -1,4 +1,5 @@
 #include "SettingsPanel.h"
+#include "gui/lookandfeel/BaseLookAndFeel.h"
 
 namespace Gui
 {
@@ -17,9 +18,13 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({0, 16, 1});
             slider.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
-            slider.setPopupDisplayEnabled(true, true, nullptr);
+            slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
+                auto text = juce::String(slider.getValue());
+                g.setFont(LnF::getDefaultFont());
+                g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
+            });
         },
-        "Midi Input Slider", juce::Slider::SliderStyle::LinearHorizontal
+        "Midi Input Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
     outputChannel = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
@@ -27,9 +32,13 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({0, 16, 1});
             slider.setTooltip("The transposed events will be routed to this channel.");
-            slider.setPopupDisplayEnabled(true, true, nullptr);
+            slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
+                auto text = juce::String(slider.getValue());
+                g.setFont(LnF::getDefaultFont());
+                g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
+            });
         },
-        "Midi Output Slider", juce::Slider::SliderStyle::LinearHorizontal
+        "Midi Output Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
     octaveTranspose = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
@@ -37,12 +46,14 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         [](Gui::CustomSlider& slider) {
             slider.setNormalisableRange({-1, 4, 1});
             slider.setTooltip("This will play the root note at its original position and transpose the chord.");
-            slider.setPopupDisplayEnabled(true, true, nullptr);
-            slider.setCustomTextLambda([](double value) -> juce::String {
-                return juce::String(value) + " octave" + (std::abs(value) > 1 ? "s" : "");
+            slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
+                const auto value = slider.getValue();
+                auto text = (value > 0 ? "+" : "") + juce::String(value);
+                g.setFont(LnF::getDefaultFont());
+                g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
             });
         },
-        "Octave Slider", juce::Slider::SliderStyle::LinearHorizontal
+        "Octave Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
     arpActivated = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
@@ -57,8 +68,11 @@ SettingsPanel::SettingsPanel(MidiBassPedalChordsAudioProcessor& p)
         *arpParams.rate, *this,
         [](Gui::CustomSlider& slider) {
             slider.setRange(0., 1.0, 0.01);
-            slider.setNumDecimalPlacesToDisplay(2);
+            slider.setNumDecimalPlacesToDisplay(0);
             slider.setPopupDisplayEnabled(true, true, nullptr);
+            slider.setCustomTextLambda([](double value) -> juce::String {
+                return juce::String(250. * (.1 + (1. - value))) + " ms";
+            });
         },
         "Arp Rate Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );

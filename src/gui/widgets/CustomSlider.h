@@ -14,13 +14,19 @@ public:
                  juce::Slider::SliderStyle style = juce::Slider::SliderStyle::Rotary,
                  juce::Slider::TextEntryBoxPosition position = juce::Slider::TextEntryBoxPosition::NoTextBox);
 
-    void setCustomTextLambda(const std::function<juce::String(double value)>& inLambda);
+    void setCustomTextLambda(std::function<juce::String(double value)> inLambda);
+
+    void setCustomPaintLambda(std::function<void(juce::Graphics& g)> inLambda);
+
+    void paint(juce::Graphics& g) override;
 
 protected:
     juce::String getTextFromValue(double value) override;
 
 private:
     std::function<juce::String(double value)> mCustomTextLambda = nullptr;
+
+    std::function<void(juce::Graphics& g)> mCustomPaintLambda = nullptr;
 };
 
 } // Gui

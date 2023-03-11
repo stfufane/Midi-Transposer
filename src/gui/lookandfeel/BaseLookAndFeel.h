@@ -55,9 +55,13 @@ public:
     void drawBubble(juce::Graphics& g, juce::BubbleComponent& bubble, const juce::Point<float>& tip,
                     const juce::Rectangle<float>& body) override;
 
-    void drawLinearSlider(juce::Graphics &, int x, int y, int width, int height,
+    void drawLinearSlider(juce::Graphics&, int x, int y, int width, int height,
                           float sliderPos, float minSliderPos, float maxSliderPos,
-                          juce::Slider::SliderStyle, juce::Slider &) override;
+                          juce::Slider::SliderStyle, juce::Slider&) override;
+
+    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
+                           float sliderPos, float rotaryStartAngle,
+                           float rotaryEndAngle, juce::Slider&) override;
 
     void onConfigChanged(const BaseColors& colors) override;
 
