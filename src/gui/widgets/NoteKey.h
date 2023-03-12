@@ -13,7 +13,7 @@ class NoteKey : public juce::Component
 {
 public:
     NoteKey() = delete;
-    explicit NoteKey(int index, juce::Image* image);
+    explicit NoteKey(int index);
 
     void paint(juce::Graphics& g) override;
     void mouseDown(const juce::MouseEvent&) override;
@@ -27,7 +27,6 @@ private:
     int noteIndex;
     bool isEdited = false;
     bool isOver = false;
-    juce::Image* keyImage = nullptr;
     std::function<void(int index)> changeNote = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteKey)

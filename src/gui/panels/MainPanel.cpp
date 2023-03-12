@@ -40,6 +40,10 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         });
     }
 
+    // Invert label color so it's black on white.
+    dummyPanel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
+    dummyPanel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::whitesmoke);
+    dummyPanel.setFont(LnF::getDefaultFont(28.f));
     dummyPanel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(presetsPanel);
@@ -60,22 +64,83 @@ void MainPanel::onConfigChanged(const CompCoordinates&)
     resized();
 }
 
+void MainPanel::paint(juce::Graphics& g)
+{
+    // Draw all the frames for the different panels.
+    const auto& coordinates = getCoordinates();
+
+    // Midi frame
+    g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
+    g.drawRoundedRectangle(coordinates.mMidiPanel.reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    const auto midi_header_coordinates = juce::Rectangle<float>(0.f, 0.f,
+                                                           static_cast<float>(coordinates.mMidiPanel.getWidth()),
+                                                           coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
+    g.fillRoundedRectangle(midi_header_coordinates, coordinates.mFrameCorner / 2.f);
+
+    // Arp frame
+    g.drawRoundedRectangle(coordinates.mArpPanel.reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    const auto arp_header_x = coordinates.mArpPanel.getX();
+    const auto arp_header_coordinates = juce::Rectangle<float>(arp_header_x, 0.f,
+                                                           static_cast<float>(coordinates.mArpPanel.getWidth()),
+                                                           coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
+    g.fillRoundedRectangle(arp_header_coordinates, coordinates.mFrameCorner / 2.f);
+
+    // Presets frame
+    const auto presets_panel_x = coordinates.mPresetsPanel.getX();
+    const auto presets_panel_width = static_cast<float>(coordinates.mPresetsPanel.getWidth());
+    const auto presets_panel_height = static_cast<float>(coordinates.mPresetsPanel.getHeight());
+    g.drawRoundedRectangle(juce::Rectangle<float>(presets_panel_x, 0.f,
+                                          presets_panel_width,
+                                          presets_panel_height * coordinates.mPresetsRatio).reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    g.drawRoundedRectangle(juce::Rectangle<float>(presets_panel_x, presets_panel_height * coordinates.mPresetsRatio,
+                                                  presets_panel_width,
+                                                  presets_panel_height * (1.f - coordinates.mPresetsRatio)).reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    const auto preset_header_coordinates = juce::Rectangle<float>(presets_panel_x, 0.f,
+                                                                  presets_panel_width,
+                                                           coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
+    g.fillRoundedRectangle(preset_header_coordinates, coordinates.mFrameCorner / 2.f);
+
+    // Tooltips frame
+    g.drawRoundedRectangle(coordinates.mTooltipsPanel.reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    // Keys frame
+    g.drawRoundedRectangle(coordinates.mKeysPanel.reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+    // Intervals frame
+    g.drawRoundedRectangle(coordinates.mIntervalsPanel.reduced(coordinates.mMargin),
+                           coordinates.mFrameCorner, 1.f);
+
+    // Header texts
+    g.setColour(findColour(juce::Label::ColourIds::textColourId));
+    g.setFont(LnF::getDefaultFont(coordinates.mHeaderFontSize));
+    g.drawText("MIDI", midi_header_coordinates, juce::Justification::centred);
+    g.drawText("ARP", arp_header_coordinates, juce::Justification::centred);
+    g.drawText("PRESETS", preset_header_coordinates, juce::Justification::centred);
+}
+
 void MainPanel::resized()
 {
+    const auto& coordinates = getCoordinates();
+
     // Define if there's an interval panel to display or not.
     juce::Component* middleItem = nullptr;
     if (intervalsPanel != nullptr) {
         middleItem = intervalsPanel.get();
+        middleItem->setBounds(coordinates.mIntervalsPanel.toNearestInt());
     } else {
         middleItem = &dummyPanel;
+        middleItem->setBounds(coordinates.mIntervalsPanel.toNearestInt().reduced(static_cast<int>(coordinates.mMargin) * 2));
     }
 
-    midiPanel.setBounds(mConfiguration.getData().mMidiPanel);
-    arpPanel.setBounds(mConfiguration.getData().mArpPanel);
-    presetsPanel.setBounds(mConfiguration.getData().mPresetsPanel);
-    keysPanel.setBounds(mConfiguration.getData().mKeysPanel);
-    middleItem->setBounds(mConfiguration.getData().mIntervalsPanel);
-    tooltipPanel.setBounds(mConfiguration.getData().mTooltipsPanel);
+    midiPanel.setBounds(coordinates.mMidiPanel.toNearestInt());
+    arpPanel.setBounds(coordinates.mArpPanel.toNearestInt());
+    presetsPanel.setBounds(coordinates.mPresetsPanel.toNearestInt());
+    keysPanel.setBounds(coordinates.mKeysPanel.toNearestInt());
+    tooltipPanel.setBounds(coordinates.mTooltipsPanel.toNearestInt().reduced(static_cast<int>(coordinates.mMargin)));
 
     // Force resized on children because it's not triggered when using a transform to scale components.
     for (auto* child: getChildren()) {

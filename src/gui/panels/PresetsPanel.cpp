@@ -1,4 +1,5 @@
 #include "PresetsPanel.h"
+#include "gui/panels/MainPanel.h"
 
 namespace Gui
 {
@@ -26,14 +27,16 @@ PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
     presetListComboBox.addListener(this);
     updatePresetsList();
 
-    initButton(presetSaveButton, "Save");
-    initButton(presetResetButton, "Reset");
+    initButton(presetSaveButton, "Sav");
+    initButton(presetResetButton, "New");
+    initButton(presetDeleteButton, "Del");
 }
 
 PresetsPanel::~PresetsPanel()
 {
     presetSaveButton.removeListener(this);
     presetResetButton.removeListener(this);
+    presetDeleteButton.removeListener(this);
     presetListComboBox.removeListener(this);
 }
 
@@ -100,13 +103,38 @@ void PresetsPanel::validatePresetSave(int result)
 
 void PresetsPanel::resized()
 {
-    const auto button_width = getWidth() / 6;
-    const auto height = getHeight() / 2;
-    const auto y = getHeight() / 4;
+    using juce::operator""_px;
+    using juce::operator""_fr;
 
-    presetListComboBox.setBounds(button_width, y, button_width * 2, height);
-    presetSaveButton.setBounds(juce::Rectangle<int>(button_width * 3, y, button_width, height).reduced(button_width / 4, 0));
-    presetResetButton.setBounds(juce::Rectangle<int>(button_width * 4, y, button_width, height).reduced(button_width / 4, 0));
+    juce::Grid grid;
+    using Track = juce::Grid::TrackInfo;
+
+    grid.templateRows    = { Track (1_fr) };
+    grid.templateColumns = { Track (1_fr), Track (1_fr), Track (1_fr) };
+
+    grid.alignContent    = juce::Grid::AlignContent::center;
+    grid.justifyContent  = juce::Grid::JustifyContent::center;
+    grid.alignItems      = juce::Grid::AlignItems::center;
+    grid.justifyItems    = juce::Grid::JustifyItems::center;
+
+    grid.columnGap = 3_px;
+
+    grid.items = {
+        juce::GridItem(presetResetButton),
+        juce::GridItem(presetSaveButton),
+        juce::GridItem(presetDeleteButton)
+    };
+
+    if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
+        const auto& coordinates = main_panel->getCoordinates();
+        grid.performLayout(juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight),
+                                                getWidth(), static_cast<int>(coordinates.mButtonHeight))
+                                   .reduced(static_cast<int>(coordinates.mMargin) * 2, 0));
+        auto combo_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight) + static_cast<int>(coordinates.mButtonHeight),
+                                         getWidth(), static_cast<int>(static_cast<int>(coordinates.mButtonHeight)))
+                                         .reduced(static_cast<int>(coordinates.mMargin) * 2, static_cast<int>(coordinates.mMargin));
+        presetListComboBox.setBounds(combo_bounds);
+    }
 }
 
 }

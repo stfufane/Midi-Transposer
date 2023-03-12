@@ -16,6 +16,7 @@ class KeysPanel : public juce::Component
 public:
     KeysPanel() = delete;
     explicit KeysPanel(Params::NoteParams& noteParams);
+
     void resized() override;
 
     std::vector<std::unique_ptr<Gui::NoteKey>>& getNoteKeys() { return noteKeys; }
@@ -23,10 +24,7 @@ public:
 private:
     std::vector<std::unique_ptr<Gui::NoteKey>> noteKeys;
     std::vector<std::unique_ptr<Gui::NoteMappingToggle>> noteMappingToggles;
-    const std::array<bool, 12> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
 
-    juce::Image whiteKey { juce::ImageCache::getFromMemory(BinaryData::keys_white_png, BinaryData::keys_white_pngSize) };
-    juce::Image blackKey { juce::ImageCache::getFromMemory(BinaryData::keys_black_png, BinaryData::keys_black_pngSize) };
     juce::Image powerImage { juce::ImageCache::getFromMemory(BinaryData::power_button_png, BinaryData::power_button_pngSize) };
 
     static constexpr auto kNbNotes = 12;

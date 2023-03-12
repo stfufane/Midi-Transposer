@@ -14,19 +14,25 @@ namespace Gui
 
 struct CompCoordinates {
     // Coordinates of the different panels.
-    juce::Rectangle<int> mMidiPanel;
-    juce::Rectangle<int> mArpPanel;
-    juce::Rectangle<int> mPresetsPanel;
-    juce::Rectangle<int> mKeysPanel;
-    juce::Rectangle<int> mIntervalsPanel;
-    juce::Rectangle<int> mTooltipsPanel;
+    juce::Rectangle<float> mMidiPanel;
+    juce::Rectangle<float> mArpPanel;
+    juce::Rectangle<float> mPresetsPanel;
+    juce::Rectangle<float> mKeysPanel;
+    juce::Rectangle<float> mIntervalsPanel;
+    juce::Rectangle<float> mTooltipsPanel;
 
     // Some globals to draw different components.
-    float mMargin;
-    float mFrameCorner;
-    float mHeaderHeight;
-    float mHeaderFontSize;
-    float mKnobHeight;
+    float mMargin { 1.f };
+    float mFrameCorner { 1.f };
+    float mHeaderHeight { 1.f };
+    float mHeaderFontSize { 1.f };
+    float mKnobHeight { 1.f };
+    float mButtonHeight { 1.f };
+    float mPresetsRatio { 1.f };
+    float mKeyFontSize { 1.f };
+    float mKeyCorner { 1.f };
+    float mKeyRatio { 1.f };
+    float mKeyOver { 1.f };
 
     static std::string getFileName() { return "positions.json"; }
 };
@@ -57,6 +63,12 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     j.at("header_height").get_to(pos.mHeaderHeight);
     j.at("header_font_size").get_to(pos.mHeaderFontSize);
     j.at("knob_height").get_to(pos.mKnobHeight);
+    j.at("button_height").get_to(pos.mButtonHeight);
+    j.at("presets_ratio").get_to(pos.mPresetsRatio);
+    j.at("key_font_size").get_to(pos.mKeyFontSize);
+    j.at("key_corner").get_to(pos.mKeyCorner);
+    j.at("key_ratio").get_to(pos.mKeyRatio);
+    j.at("key_over").get_to(pos.mKeyOver);
 }
 
 class MainPanel : public juce::Component, public Configuration<CompCoordinates>::Listener<CompCoordinates>
@@ -67,6 +79,7 @@ public:
     ~MainPanel() override;
 
     void resized() override;
+    void paint(juce::Graphics& g) override;
 
     juce::Component* getTooltipPanel() { return &tooltipPanel; }
 

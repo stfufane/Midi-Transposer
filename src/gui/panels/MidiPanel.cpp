@@ -1,6 +1,6 @@
 #include "MidiPanel.h"
 #include "gui/lookandfeel/BaseLookAndFeel.h"
-#include "MainPanel.h"
+#include "gui/panels/MainPanel.h"
 
 namespace Gui
 {
@@ -17,7 +17,7 @@ MidiPanel::MidiPanel(MidiBassPedalChordsAudioProcessor& p)
             slider.setTooltip("Only the events coming from this channel will be transposed. The rest will pass through.");
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
                 auto text = juce::String(slider.getValue());
-                g.setFont(LnF::getDefaultFont());
+                g.setFont(LnF::getDefaultFont(26.f));
                 g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
             });
         },
@@ -31,7 +31,7 @@ MidiPanel::MidiPanel(MidiBassPedalChordsAudioProcessor& p)
             slider.setTooltip("The transposed events will be routed to this channel.");
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
                 auto text = juce::String(slider.getValue());
-                g.setFont(LnF::getDefaultFont());
+                g.setFont(LnF::getDefaultFont(26.f));
                 g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
             });
         },
@@ -46,31 +46,12 @@ MidiPanel::MidiPanel(MidiBassPedalChordsAudioProcessor& p)
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
                 const auto value = slider.getValue();
                 auto text = (value > 0 ? "+" : "") + juce::String(value);
-                g.setFont(LnF::getDefaultFont());
+                g.setFont(LnF::getDefaultFont(26.f));
                 g.drawText(text, slider.getLocalBounds(), juce::Justification::centred);
             });
         },
         "Octave Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
-}
-
-void MidiPanel::paint(juce::Graphics& g)
-{
-    const auto width = static_cast<float>(getWidth());
-    const auto height = static_cast<float>(getHeight());
-
-    if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
-        const auto& coordinates = main_panel->getCoordinates();
-        g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
-        g.drawRoundedRectangle(juce::Rectangle<float>(0.f, 0.f, width, height).reduced(coordinates.mMargin),
-                               coordinates.mFrameCorner, 1.f);
-        const auto header_coordinates = juce::Rectangle<float>(0.f, 0.f,
-                                             width, coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
-        g.fillRoundedRectangle(header_coordinates, coordinates.mFrameCorner / 2.f);
-        g.setColour(findColour(juce::Label::ColourIds::textColourId));
-        g.setFont(LnF::getDefaultFont(coordinates.mHeaderFontSize));
-        g.drawText("MIDI", header_coordinates, juce::Justification::centred);
-    }
 }
 
 void MidiPanel::resized()
@@ -93,9 +74,9 @@ void MidiPanel::resized()
     grid.rowGap = 2_px;
 
     grid.items = {
-            juce::GridItem(inputChannel->getComponent()),
-            juce::GridItem(outputChannel->getComponent()),
-            juce::GridItem(octaveTranspose->getComponent())
+        juce::GridItem(inputChannel->getComponent()),
+        juce::GridItem(outputChannel->getComponent()),
+        juce::GridItem(octaveTranspose->getComponent())
     };
 
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {

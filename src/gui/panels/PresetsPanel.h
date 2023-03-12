@@ -19,6 +19,7 @@ public:
     void initButton(juce::Button& ioButton, const juce::String& inText);
 
     void resized() override;
+
     void buttonClicked(juce::Button* button) override;
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
@@ -30,6 +31,7 @@ private:
 
     juce::TextButton presetSaveButton { "btnSavePreset" };
     juce::TextButton presetResetButton { "btnResetPreset" };
+    juce::TextButton presetDeleteButton { "btnDeletePreset" };
 
     juce::ComboBox presetListComboBox { "cmbPresetList" };
 

@@ -1,29 +1,45 @@
 #include "NoteKey.h"
+#include "params/Params.h"
+#include "gui/lookandfeel/BaseLookAndFeel.h"
+#include "gui/panels/MainPanel.h"
 
 namespace Gui
 {
 
-NoteKey::NoteKey(int index, juce::Image* image)
-        : juce::Component("Note Key " + juce::String(index)), noteIndex(index), keyImage(image)
+NoteKey::NoteKey(int index)
+        : juce::Component("Note Key " + juce::String(index)), noteIndex(index)
 {}
 
 void NoteKey::paint(juce::Graphics& g)
 {
-    // The image is in 3 parts
-    // First part is the inactive note, second part is the edited note and third part is the hovered note.
-    if (isEdited) {
-        g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
-                    keyImage->getWidth() / 3, 0, keyImage->getWidth() / 3, keyImage->getHeight());
-        return;
+    if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
+        const auto& coordinates = main_panel->getCoordinates();
+        const auto key_bounds = juce::Rectangle<float>(0.f, 0.f,
+                                                       static_cast<float>(getWidth()),
+                                                       static_cast<float>(getHeight())).reduced(3.f);
+        auto draw_key = [&](int background_color, int text_color) {
+            if (isEdited) {
+                background_color = juce::Slider::backgroundColourId;
+                text_color = juce::Slider::ColourIds::textBoxTextColourId;
+            }
+            if (isOver) {
+                g.addTransform(juce::AffineTransform::scale(coordinates.mKeyOver));
+            }
+
+            g.setColour(findColour(background_color));
+            g.fillRoundedRectangle(key_bounds, coordinates.mKeyCorner);
+            g.setColour(findColour(text_color));
+            g.drawRoundedRectangle(key_bounds, coordinates.mKeyCorner, 1.f);
+            g.setFont(LnF::getDefaultFont(coordinates.mKeyFontSize));
+            g.drawText(Notes::labels[noteIndex], key_bounds, juce::Justification::centred);
+        };
+        // TODO: different colors for isEdited and isOver
+        if (Notes::whiteNotes[noteIndex]) {
+            draw_key(juce::Label::ColourIds::textColourId, juce::Label::ColourIds::backgroundColourId);
+        } else {
+            draw_key(juce::Label::ColourIds::backgroundColourId, juce::Label::ColourIds::textColourId);
+        }
     }
-    if (isOver) {
-        g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
-                    keyImage->getWidth() * 2 / 3, 0, keyImage->getWidth() / 3, keyImage->getHeight());
-        return;
-    }
-    // Draw the default note.
-    g.drawImage(*keyImage, 0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight(),
-                0, 0, keyImage->getWidth() / 3, keyImage->getHeight());
 }
 
 void NoteKey::mouseDown(const juce::MouseEvent&)
@@ -36,11 +52,13 @@ void NoteKey::mouseDown(const juce::MouseEvent&)
 void NoteKey::mouseEnter(const juce::MouseEvent&)
 {
     isOver = true;
+    setMouseCursor(juce::MouseCursor::PointingHandCursor);
     repaint();
 }
 
 void NoteKey::mouseExit(const juce::MouseEvent&)
 {
+    setMouseCursor(juce::MouseCursor::NormalCursor);
     isOver = false;
     repaint();
 }

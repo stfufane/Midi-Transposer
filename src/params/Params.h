@@ -20,8 +20,10 @@ namespace Notes
 {
     static const int count { 12 };
     static const juce::StringArray names      { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
-    static const juce::StringArray labels     { "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B" };
+    static const juce::StringArray labels     { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
     static const juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
+
+    static const std::array<bool, count> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
 
     struct Division
     {

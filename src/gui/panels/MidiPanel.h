@@ -20,8 +20,6 @@ public:
 
     void resized() override;
 
-    void paint(juce::Graphics& g) override;
-
 private:
     std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > inputChannel;
     std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > outputChannel;

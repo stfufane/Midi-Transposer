@@ -35,9 +35,8 @@ void BaseLookAndFeel::resetColors() {
     // Tooltip colors
     setColour(juce::TooltipWindow::backgroundColourId, juce::Colours::whitesmoke);
     setColour(juce::TooltipWindow::textColourId, juce::Colours::black);
-    setColour(juce::TooltipWindow::outlineColourId, juce::Colours::darkblue);
 
-    setColour(juce::BubbleComponent::outlineColourId, juce::Colours::darkblue);
+    setColour(juce::BubbleComponent::outlineColourId, juce::Colour::fromString(colors.mLabelBackground));
     setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::whitesmoke);
 
     // ToggleButton colors
@@ -51,22 +50,20 @@ juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& /* ti
                                       juce::Rectangle<int> parentArea)
 {
     // Return the global bounds of the tooltips, at the bottom of the plugin area.
-    return juce::Rectangle<int>(0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(1);
+    return juce::Rectangle<int>(0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(3, 1);
 }
 
 void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, int width, int height)
 {
     juce::Rectangle<int> bounds(width, height);
-    g.setColour(juce::LookAndFeel::findColour(juce::TooltipWindow::backgroundColourId));
+    // Fill the background
+    g.setColour(findColour(juce::TooltipWindow::backgroundColourId));
     g.fillRect(bounds.toFloat());
 
-    juce::AttributedString s;
-    s.setJustification(juce::Justification::centredLeft);
-    s.append(text, getDefaultFont(15.f), findColour(juce::TooltipWindow::textColourId));
-
-    juce::TextLayout tl;
-    tl.createLayout(s, (float) width);
-    tl.draw(g, { static_cast<float> (width), static_cast<float> (height) });
+    // Draw the text
+    g.setColour(findColour(juce::Label::backgroundColourId));
+    g.setFont(getDefaultFont());
+    g.drawText(text, bounds, juce::Justification::centredLeft);
 }
 
 void BaseLookAndFeel::drawBubble(juce::Graphics& g, juce::BubbleComponent& /* bubble */, const juce::Point<float>& /* tip */,

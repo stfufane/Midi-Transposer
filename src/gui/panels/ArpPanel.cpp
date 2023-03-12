@@ -1,5 +1,5 @@
 #include "ArpPanel.h"
-#include "MainPanel.h"
+#include "gui/panels/MainPanel.h"
 
 namespace Gui
 {
@@ -67,26 +67,6 @@ void ArpPanel::resized()
                 .reduced(static_cast<int>(coordinates.mMargin));
         arpRate->getComponent().setBounds(knob_bounds);
         arpSyncRate->getComponent().setBounds(knob_bounds);
-    }
-}
-
-void ArpPanel::paint(juce::Graphics& g)
-{
-    const auto width = static_cast<float>(getWidth());
-    const auto height = static_cast<float>(getHeight());
-
-    if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
-        const auto& coordinates = main_panel->getCoordinates();
-
-        g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
-        g.drawRoundedRectangle(juce::Rectangle<float>(0.f, 0.f, width, height).reduced(coordinates.mMargin),
-                               coordinates.mFrameCorner, 1.f);
-        const auto header_coordinates = juce::Rectangle<float>(0.f, 0.f,
-                                                               width, coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
-        g.fillRoundedRectangle(header_coordinates, coordinates.mFrameCorner / 2.f);
-        g.setColour(findColour(juce::Label::ColourIds::textColourId));
-        g.setFont(LnF::getDefaultFont(coordinates.mHeaderFontSize));
-        g.drawText("ARP", header_coordinates, juce::Justification::centred);
     }
 }
 

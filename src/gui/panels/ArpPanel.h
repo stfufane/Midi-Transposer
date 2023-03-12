@@ -16,8 +16,6 @@ public:
     explicit ArpPanel(MidiBassPedalChordsAudioProcessor& p);
 
     void resized() override;
-
-    void paint(juce::Graphics& g) override;
 private:
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpActivated;
     std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpSynced;
