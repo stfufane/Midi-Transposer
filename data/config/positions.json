@@ -2,8 +2,17 @@
   "midi_panel": {
     "x": 0, "y": 0, "w": 342, "h": 192
   },
+  "midi_labels": {
+    "x": 20, "y": 150, "w": 200, "h": 32
+  },
+  "midi_oct": {
+    "x": 228, "y": 150, "w": 100, "h": 32
+  },
   "arp_panel": {
     "x": 342, "y": 0, "w": 174, "h": 192
+  },
+  "arp_label": {
+    "x": 360, "y": 150, "w": 138, "h": 32
   },
   "presets_panel": {
     "x": 516, "y": 0, "w": 225, "h": 192
@@ -21,11 +30,15 @@
   "frame_corner": 6.0,
   "header_height": 48.0,
   "header_font_size": 32.0,
+  "label_font_size": 28.0,
+  "midi_in_x": 46.0,
+  "midi_out_x": 152.0,
+  "midi_oct_x": 256.0,
   "knob_height": 100.0,
   "button_height": 40.0,
   "presets_ratio": 0.69,
   "key_font_size": 28.0,
-  "key_corner": 18.0,
+  "key_corner": 16.0,
   "key_ratio": 1.9,
   "key_over": 1.03
 }

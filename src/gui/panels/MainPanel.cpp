@@ -77,6 +77,8 @@ void MainPanel::paint(juce::Graphics& g)
                                                            static_cast<float>(coordinates.mMidiPanel.getWidth()),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(midi_header_coordinates, coordinates.mFrameCorner / 2.f);
+    g.fillRoundedRectangle(coordinates.mMidiLabels, coordinates.mKeyCorner);
+    g.fillRoundedRectangle(coordinates.mMidiOct, coordinates.mKeyCorner);
 
     // Arp frame
     g.drawRoundedRectangle(coordinates.mArpPanel.reduced(coordinates.mMargin),
@@ -86,6 +88,7 @@ void MainPanel::paint(juce::Graphics& g)
                                                            static_cast<float>(coordinates.mArpPanel.getWidth()),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(arp_header_coordinates, coordinates.mFrameCorner / 2.f);
+    g.fillRoundedRectangle(coordinates.mArpLabel, coordinates.mKeyCorner);
 
     // Presets frame
     const auto presets_panel_x = coordinates.mPresetsPanel.getX();
@@ -120,6 +123,11 @@ void MainPanel::paint(juce::Graphics& g)
     g.drawText("MIDI", midi_header_coordinates, juce::Justification::centred);
     g.drawText("ARP", arp_header_coordinates, juce::Justification::centred);
     g.drawText("PRESETS", preset_header_coordinates, juce::Justification::centred);
+    // Label texts
+    g.setFont(coordinates.mLabelFontSize);
+    g.drawText("IN", coordinates.mMidiLabels.withX(coordinates.mMidiInX), juce::Justification::left);
+    g.drawText("OUT", coordinates.mMidiLabels.withX(coordinates.mMidiOutX), juce::Justification::left);
+    g.drawText(juce::CharPointer_UTF8("OCT±"), coordinates.mMidiOct.withX(coordinates.mMidiOctX), juce::Justification::left);
 }
 
 void MainPanel::resized()
