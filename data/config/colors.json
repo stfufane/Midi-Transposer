@@ -1,6 +1,8 @@
 {
-  "slider_background": "ff88ddaa",
-  "slider_thumb": "ff125426",
+  "slider_background": "ff97fbc8",
+  "slider_thumb": "ff017739",
   "slider_track": "ff20a037",
-  "slider_text_color": "ff121255"
+  "slider_text": "ff121255",
+  "label_background": "ff2d2d2d",
+  "label_text": "ffefefef"
 }

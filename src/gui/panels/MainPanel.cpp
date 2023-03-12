@@ -1,15 +1,18 @@
 #include "MainPanel.h"
-#include "gui/PluginEditor.h"
 
 namespace Gui
 {
 
 MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         : juce::Component("Main Panel"),
+          mConfiguration(CONFIG_FOLDER, this),
           presetsPanel(p.getPresetManager()),
-          settingsPanel(p),
+          midiPanel(p),
+          arpPanel(p),
           keysPanel(p.getMidiProcessor().getNoteParams())
 {
+    mConfiguration.addListener(this);
+
     auto& uiSettings = p.getUISettings();
     auto& noteParams = p.getMidiProcessor().getNoteParams();
     const auto index = uiSettings.lastNoteIndex;
@@ -40,21 +43,25 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
     dummyPanel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(presetsPanel);
-    addAndMakeVisible(settingsPanel);
+    addAndMakeVisible(midiPanel);
+    addAndMakeVisible(arpPanel);
     addAndMakeVisible(dummyPanel);
     addAndMakeVisible(keysPanel);
     addAndMakeVisible(tooltipPanel);
 }
 
+MainPanel::~MainPanel()
+{
+    mConfiguration.removeListener(this);
+}
+
+void MainPanel::onConfigChanged(const CompCoordinates&)
+{
+    resized();
+}
+
 void MainPanel::resized()
 {
-    juce::Grid grid;
-    using Track = juce::Grid::TrackInfo;
-    using juce::operator""_fr;
-
-    grid.templateColumns    = { Track(1_fr) };
-    grid.templateRows       = { Track(1_fr), Track(2_fr), Track(3_fr), Track(3_fr), Track(1_fr) };
-
     // Define if there's an interval panel to display or not.
     juce::Component* middleItem = nullptr;
     if (intervalsPanel != nullptr) {
@@ -63,9 +70,17 @@ void MainPanel::resized()
         middleItem = &dummyPanel;
     }
 
-    grid.items = { juce::GridItem(presetsPanel), juce::GridItem(settingsPanel), juce::GridItem(*middleItem), juce::GridItem(keysPanel), juce::GridItem(tooltipPanel) };
+    midiPanel.setBounds(mConfiguration.getData().mMidiPanel);
+    arpPanel.setBounds(mConfiguration.getData().mArpPanel);
+    presetsPanel.setBounds(mConfiguration.getData().mPresetsPanel);
+    keysPanel.setBounds(mConfiguration.getData().mKeysPanel);
+    middleItem->setBounds(mConfiguration.getData().mIntervalsPanel);
+    tooltipPanel.setBounds(mConfiguration.getData().mTooltipsPanel);
 
-    grid.performLayout (getLocalBounds());
+    // Force resized on children because it's not triggered when using a transform to scale components.
+    for (auto* child: getChildren()) {
+        child->resized();
+    }
 }
 
 void MainPanel::initIntervalsPanel(Params::NoteParam& noteParam)

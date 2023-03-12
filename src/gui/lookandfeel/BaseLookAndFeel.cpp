@@ -25,11 +25,12 @@ void BaseLookAndFeel::resetColors() {
     // Slider colors
     setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(colors.mSliderBackground));
     setColour(juce::Slider::thumbColourId, juce::Colour::fromString(colors.mSliderThumb));
-    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(colors.mSliderTextColor));
+    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(colors.mSliderText));
     setColour(juce::Slider::trackColourId, juce::Colour::fromString(colors.mSliderTrack));
 
     // Label colors
-    setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
+    setColour(juce::Label::ColourIds::textColourId, juce::Colour::fromString(colors.mLabelText));
+    setColour(juce::Label::ColourIds::backgroundColourId, juce::Colour::fromString(colors.mLabelBackground));
 
     // Tooltip colors
     setColour(juce::TooltipWindow::backgroundColourId, juce::Colours::whitesmoke);

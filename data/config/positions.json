@@ -1,5 +1,25 @@
 {
-  "input_coords": {
-    "x": 10, "y": 40, "w": 150, "h": 50
-  }
+  "midi_panel": {
+    "x": 0, "y": 0, "w": 342, "h": 192
+  },
+  "arp_panel": {
+    "x": 342, "y": 0, "w": 174, "h": 192
+  },
+  "presets_panel": {
+    "x": 516, "y": 0, "w": 225, "h": 192
+  },
+  "keys_panel": {
+    "x": 0, "y": 192, "w": 741, "h": 93
+  },
+  "intervals_panel": {
+    "x": 0, "y": 285, "w": 741, "h": 135
+  },
+  "tooltips_panel": {
+    "x": 0, "y": 420, "w": 741, "h": 42
+  },
+  "margin": 3.0,
+  "frame_corner": 6.0,
+  "header_height": 48.0,
+  "header_font_size": 32.0,
+  "knob_height": 100.0
 }

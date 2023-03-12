@@ -16,7 +16,8 @@ target_sources(${BaseTargetName} PRIVATE
 		gui/widgets/NoteKey.cpp
 		gui/widgets/NoteMappingToggle.cpp
 		gui/panels/MainPanel.cpp
-		gui/panels/SettingsPanel.cpp
+		gui/panels/MidiPanel.cpp
+		gui/panels/ArpPanel.cpp
 		gui/panels/IntervalsPanel.cpp
 		gui/panels/KeysPanel.cpp
 		gui/panels/PresetsPanel.cpp)
