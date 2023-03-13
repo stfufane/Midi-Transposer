@@ -20,7 +20,6 @@ public:
 
     void paint(juce::Graphics& g) override;
 
-protected:
     juce::String getTextFromValue(double value) override;
 
 private:

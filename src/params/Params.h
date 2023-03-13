@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <string_view>
 
 namespace ParamIDs
 {
@@ -18,29 +19,28 @@ namespace ParamIDs
 
 namespace Notes
 {
-    static const int count { 12 };
-    static const juce::StringArray names      { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
-    static const juce::StringArray labels     { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    static const juce::StringArray intervals  { "m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", "M6", "m7", "M7", "P8" };
+    static constexpr int count { 12 };
+    static constexpr std::array<std::string_view, count> names  { "C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B" };
+    static constexpr std::array<std::string_view, count> labels { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-    static const std::array<bool, count> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
+    static constexpr std::array<bool, count> whiteNotes { true, false, true, false, true, true, false, true, false, true, false, true };
 
     struct Division
     {
-        juce::String label;
+        std::string label;
         double division;
     };
 
     static const std::vector<Notes::Division> divisions {
-        { "Whole note", 4.0 },
-        { "Half note", 2.0 },
-        { "Dotted quarter note", 1.5 },
-        { "Quarter note", 1.0 },
-        { "Dotted 8th note", 0.75 },
-        { "Quarter note triplet", 2.0 / 3.0 },
-        { "8th note", 0.5 },
-        { "8th note triplet", 1.0 / 3.0 },
-        { "16th note", 0.25 }
+        { "1/1", 4.0 },
+        { "1/2", 2.0 },
+        { "1/4.d", 1.5 },
+        { "1/4", 1.0 },
+        { "1/8d", 0.75 },
+        { "1/4.t", 2.0 / 3.0 },
+        { "1/8", 0.5 },
+        { "1/8.t", 1.0 / 3.0 },
+        { "1/16", 0.25 }
     };
 }
 
@@ -98,14 +98,14 @@ struct IntervalParam
 {
     IntervalParam() = delete;
 
-    explicit IntervalParam(juce::String name, juce::String label, int i);
+    explicit IntervalParam(std::string name, std::string label, int i);
 
     void addParam(juce::AudioProcessor& p);
 
-    juce::AudioParameterBool* interval = nullptr;
+    juce::AudioParameterInt* interval = nullptr;
     int degree;
-    juce::String noteName;
-    juce::String noteLabel;
+    std::string noteName;
+    std::string noteLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IntervalParam)
 };
@@ -130,8 +130,8 @@ struct NoteParam : juce::AudioProcessorParameter::Listener
     {}
 
     int noteIndex;
-    juce::String noteName;
-    juce::String noteLabel;
+    std::string noteName;
+    std::string noteLabel;
 
     juce::AudioParameterBool* mapNote = nullptr;
     juce::AudioParameterInt* transpose = nullptr;

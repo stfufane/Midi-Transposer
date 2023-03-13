@@ -1,7 +1,7 @@
 #include "MidiProcessor.h"
 
 MidiProcessor::MidiProcessor()
-        : notesMapping(12, std::vector<int>(1, 0)) {}
+        : notesMapping(12, std::set<int>({ 0 })) {}
 
 /*================================================================ */
 // PROCESS
@@ -193,7 +193,7 @@ int MidiProcessor::getArpeggiatorNoteDuration(const juce::AudioPlayHead::Positio
         auto samplesPerBeat = arp.sampleRate / (bpm / 60.);
         return static_cast<int> (std::ceil(samplesPerBeat * arp.division));
     }
-    return static_cast<int> (std::ceil(arp.sampleRate * .25 * (.1 + (1. - (arpeggiatorParams.rate->get())))));
+    return static_cast<int> (std::ceil(arp.sampleRate * .1 * (.1 + (5. - 5. * arpeggiatorParams.rate->get()))));
 }
 
 // This is a simple arpeggiator function that does not care about transport timing because it's not in a playing context.
@@ -309,23 +309,20 @@ void MidiProcessor::initParameters()
 // This method is called by the lambda associated to every noteParam when one of the note parameters is updated.
 void MidiProcessor::updateNoteMapping(const Params::NoteParam& inNoteParam)
 {
-    std::vector<int> new_mapping;
-    // There's a toggle button on each note saying if it should be mapped or not.
-    // If not we just use the default value, which is the base note without transposition.
+    std::set<int> new_mapping;
+    // There's a slider on each note defining a new interval to add.
     const auto map_note = inNoteParam.mapNote->get();
     if (map_note) {
         auto transpose = inNoteParam.transpose->get();
         // Add the transposed value first, it's the root note.
-        new_mapping.push_back(transpose);
+        new_mapping.insert(transpose);
 
         // Then add the selected intervals.
-        for (size_t i = 0; i < inNoteParam.intervals.size(); i++) {
-            if (inNoteParam.intervals[i]->interval->get()) {
-                new_mapping.push_back(transpose + (static_cast<int>(i) + 1));
-            }
+        for (const auto& interval_param : inNoteParam.intervals) {
+            new_mapping.insert(transpose + interval_param->interval->get());
         }
     } else {
-        new_mapping.push_back(0);
+        new_mapping.insert(0);
     }
 
     // Finally, replace the old mapping.

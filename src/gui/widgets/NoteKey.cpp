@@ -31,10 +31,9 @@ void NoteKey::paint(juce::Graphics& g)
             g.setColour(findColour(text_color));
             g.drawRoundedRectangle(key_bounds, coordinates.mKeyCorner, 1.f);
             g.setFont(LnF::getDefaultFont(coordinates.mKeyFontSize));
-            g.drawText(Notes::labels[noteIndex], key_bounds, juce::Justification::centred);
+            g.drawText(std::string(Notes::labels[noteIndex]), key_bounds, juce::Justification::centred);
         };
-        // TODO: different colors for isEdited and isOver
-        if (Notes::whiteNotes[noteIndex]) {
+        if (Notes::whiteNotes[static_cast<size_t>(noteIndex)]) {
             draw_key(juce::Label::ColourIds::textColourId, juce::Label::ColourIds::backgroundColourId);
         } else {
             draw_key(juce::Label::ColourIds::backgroundColourId, juce::Label::ColourIds::textColourId);

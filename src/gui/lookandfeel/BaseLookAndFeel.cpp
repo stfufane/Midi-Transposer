@@ -66,22 +66,6 @@ void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, i
     g.drawText(text, bounds, juce::Justification::centredLeft);
 }
 
-void BaseLookAndFeel::drawBubble(juce::Graphics& g, juce::BubbleComponent& /* bubble */, const juce::Point<float>& /* tip */,
-                    const juce::Rectangle<float>& body)
-{
-    // Only draw a very basic rectangle, without the tip
-    juce::Path p;
-
-    p.addRectangle(body);
-
-    g.setColour(findColour(juce::BubbleComponent::backgroundColourId));
-    g.fillPath(p);
-
-    g.setColour(findColour(juce::BubbleComponent::outlineColourId));
-    g.strokePath(p, juce::PathStrokeType(1.0f));
-}
-
-
 /**
  * @brief Draw a simple rectangular slider with a square thumb
  */
@@ -89,7 +73,7 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
                                        float /* minSliderPos */, float /* maxSliderPos */, const juce::Slider::SliderStyle,
                                        juce::Slider& slider)
 {
-    auto trackWidth = juce::jmin (12.0f, slider.isHorizontal() ? (float) height * 0.25f : (float) width * 0.25f);
+    auto trackWidth = juce::jmin (10.0f, slider.isHorizontal() ? (float) height * 0.25f : (float) width * 0.25f);
 
     juce::Point<float> startPoint (slider.isHorizontal() ? (float) x : (float) x + (float) width * 0.5f,
                              slider.isHorizontal() ? (float) y + (float) height * 0.5f : (float) (height + y));
@@ -112,18 +96,16 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
     minPoint = startPoint;
     maxPoint = { kx, ky };
 
-    auto thumbWidth = trackWidth * 1.3f; // getSliderThumbRadius (slider);
-
     valueTrack.startNewSubPath (minPoint);
     valueTrack.lineTo (maxPoint);
-    g.setColour (slider.findColour (juce::Slider::trackColourId));
+    g.setColour (slider.findColour (juce::Slider::backgroundColourId));
     g.strokePath (valueTrack, { trackWidth, juce::PathStrokeType::mitered, juce::PathStrokeType::square });
 
     g.setColour (slider.findColour (juce::Slider::thumbColourId));
-    g.fillRect(juce::Rectangle<float> (static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre (maxPoint));
+    g.fillRect(juce::Rectangle<float> (trackWidth * 2.f, trackWidth / 2.f).withCentre (maxPoint));
 }
 
-void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height,
+void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, int width, int height,
                        float sliderPos, float rotaryStartAngle,
                        float rotaryEndAngle, juce::Slider& slider)
 {

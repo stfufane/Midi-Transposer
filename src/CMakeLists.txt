@@ -14,7 +14,6 @@ target_sources(${BaseTargetName} PRIVATE
 		gui/widgets/CustomSlider.cpp
 		gui/widgets/IndexedToggleButton.cpp
 		gui/widgets/NoteKey.cpp
-		gui/widgets/NoteMappingToggle.cpp
 		gui/panels/MainPanel.cpp
 		gui/panels/MidiPanel.cpp
 		gui/panels/ArpPanel.cpp
@@ -22,8 +21,12 @@ target_sources(${BaseTargetName} PRIVATE
 		gui/panels/KeysPanel.cpp
 		gui/panels/PresetsPanel.cpp)
 
-# Build the binary data from the images and fonts folder
-add_binary_data_from_directory(${BaseTargetName} ../data/img ../data/fonts)
+# Build the binary data
+set (DataTarget "${BaseTargetName}-Data")
+juce_add_binary_data(${DataTarget} SOURCES
+		${CMAKE_CURRENT_LIST_DIR}/../data/fonts/iosevka-regular.ttf)
+
+target_link_libraries(${BaseTargetName} PRIVATE ${DataTarget})
 
 # Set the base for includes to avoid having to use relative paths
 target_include_directories(${BaseTargetName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

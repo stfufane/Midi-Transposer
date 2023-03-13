@@ -15,7 +15,7 @@ void ArpeggiatorParams::addParams(juce::AudioProcessor& p)
                                                             juce::AudioParameterBoolAttributes().withLabel("Sync the arpeggiator with the host")));
     p.addParameter(syncRate  = new juce::AudioParameterInt(ParamIDs::arpeggiatorSyncRate,
                                                            "Arpeggiator Rate Sync",
-                                                           0, (int)Notes::divisions.size() - 1, 2,
+                                                           0, static_cast<int>(Notes::divisions.size()) - 1, 2,
                                                            juce::AudioParameterIntAttributes().withLabel("Rate")));
     p.addParameter(rate      = new juce::AudioParameterFloat(ParamIDs::arpeggiatorRate,
                                                              "Arpeggiator Rate",

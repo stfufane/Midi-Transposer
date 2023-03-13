@@ -23,7 +23,7 @@ private:
 
     juce::MidiBuffer processedMidi;
 
-    std::vector< std::vector<int> > notesMapping;
+    std::vector< std::set<int> > notesMapping;
     
     struct NoteState {
         int note { -1 };

@@ -4,19 +4,13 @@
 namespace Gui
 {
 
-KeysPanel::KeysPanel(Params::NoteParams& noteParams)
-    : juce::Component("Keys Panel")
+KeysPanel::KeysPanel() : juce::Component("Keys Panel")
 {
     noteKeys.reserve(kNbNotes);
-    // noteMappingToggles.reserve(kNbNotes);
 
     for (size_t i = 0; i < kNbNotes; i++) {
         noteKeys.emplace_back(new Gui::NoteKey(static_cast<int>(i)));
         addAndMakeVisible(noteKeys.back().get());
-
-        // auto* noteParam = noteParams.notes[i].get();
-        // noteMappingToggles.emplace_back(new Gui::NoteMappingToggle(*noteParam, &powerImage));
-        // addAndMakeVisible(noteMappingToggles.back().get()); //TODO: move somewhere else later.
     }
 }
 
@@ -32,7 +26,7 @@ void KeysPanel::resized()
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
         // Keys are drawn on 2 lines, white keys at the bottom and black keys at the top.
-        auto line_height = static_cast<float>(getLocalBounds().reduced(coordinates.mMargin).getHeight()) / 2.f;
+        auto line_height = static_cast<float>(getLocalBounds().reduced(static_cast<int>(coordinates.mMargin)).getHeight()) / 2.f;
         // Keys are square and have a small margin
         auto keys_side = line_height * coordinates.mKeyRatio;
         auto keys_margin = line_height * 0.1f;

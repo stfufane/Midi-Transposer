@@ -1,5 +1,7 @@
 #include "MainPanel.h"
 
+#include "gui/lookandfeel/BaseLookAndFeel.h"
+
 namespace Gui
 {
 
@@ -8,8 +10,7 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
           mConfiguration(CONFIG_FOLDER, this),
           presetsPanel(p.getPresetManager()),
           midiPanel(p),
-          arpPanel(p),
-          keysPanel(p.getMidiProcessor().getNoteParams())
+          arpPanel(p)
 {
     mConfiguration.addListener(this);
 
@@ -40,6 +41,7 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         });
     }
 
+    // TODO: custom dummy panel that displays all the transpositions
     // Invert label color so it's black on white.
     dummyPanel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
     dummyPanel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::whitesmoke);
@@ -88,7 +90,6 @@ void MainPanel::paint(juce::Graphics& g)
                                                            static_cast<float>(coordinates.mArpPanel.getWidth()),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(arp_header_coordinates, coordinates.mFrameCorner / 2.f);
-    g.fillRoundedRectangle(coordinates.mArpLabel, coordinates.mKeyCorner);
 
     // Presets frame
     const auto presets_panel_x = coordinates.mPresetsPanel.getX();
@@ -116,6 +117,8 @@ void MainPanel::paint(juce::Graphics& g)
     // Intervals frame
     g.drawRoundedRectangle(coordinates.mIntervalsPanel.reduced(coordinates.mMargin),
                            coordinates.mFrameCorner, 1.f);
+    g.fillRoundedRectangle(coordinates.mIntervalsTransposeLabel, coordinates.mIntervalsLabelCorner);
+    g.fillRoundedRectangle(coordinates.mIntervalsSlidersLabel, coordinates.mIntervalsLabelCorner);
 
     // Header texts
     g.setColour(findColour(juce::Label::ColourIds::textColourId));
@@ -128,6 +131,8 @@ void MainPanel::paint(juce::Graphics& g)
     g.drawText("IN", coordinates.mMidiLabels.withX(coordinates.mMidiInX), juce::Justification::left);
     g.drawText("OUT", coordinates.mMidiLabels.withX(coordinates.mMidiOutX), juce::Justification::left);
     g.drawText(juce::CharPointer_UTF8("OCT±"), coordinates.mMidiOct.withX(coordinates.mMidiOctX), juce::Justification::left);
+    g.setFont(coordinates.mIntervalsLabelFontSize);
+    g.drawText("Transpose", coordinates.mIntervalsTransposeLabel, juce::Justification::centred);
 }
 
 void MainPanel::resized()

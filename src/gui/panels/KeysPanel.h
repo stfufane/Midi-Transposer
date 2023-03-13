@@ -4,7 +4,6 @@
 #include "JuceHeader.h"
 #include "params/Params.h"
 #include "gui/widgets/NoteKey.h"
-#include "gui/widgets/NoteMappingToggle.h"
 
 namespace Gui
 {
@@ -14,8 +13,7 @@ namespace Gui
 class KeysPanel : public juce::Component
 {
 public:
-    KeysPanel() = delete;
-    explicit KeysPanel(Params::NoteParams& noteParams);
+    KeysPanel();
 
     void resized() override;
 
@@ -23,9 +21,6 @@ public:
     void setNoteKeyEdited(int index);
 private:
     std::vector<std::unique_ptr<Gui::NoteKey>> noteKeys;
-    std::vector<std::unique_ptr<Gui::NoteMappingToggle>> noteMappingToggles;
-
-    juce::Image powerImage { juce::ImageCache::getFromMemory(BinaryData::power_button_png, BinaryData::power_button_pngSize) };
 
     static constexpr auto kNbNotes = 12;
 

@@ -5,7 +5,6 @@
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
 #include "gui/widgets/IndexedToggleButton.h"
-#include "gui/lookandfeel/BarSliderLookAndFeel.h"
 
 namespace Gui
 {
@@ -19,16 +18,21 @@ public:
     IntervalsPanel() = delete;
     explicit IntervalsPanel(Params::NoteParam& noteParam);
 
-    ~IntervalsPanel() override;
-
     void resized() override;
 
 private:
-    LnF::BarSliderLookAndFeel mLookAndFeel;
-    juce::Image buttonsImage { juce::ImageCache::getFromMemory(BinaryData::buttons_png, BinaryData::buttons_pngSize) };
-
-    std::unique_ptr<AttachedComponent<CustomSlider, juce::SliderParameterAttachment>> transpose;
-    std::vector<std::unique_ptr<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>>> intervalsChoices;
+    /**
+     * @brief Global transpose knob of the note
+     */
+    std::unique_ptr<AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment>> transpose;
+    /**
+     * @brief List of all the possible intervals
+     */
+    std::vector<std::unique_ptr<AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment>>> intervalsChoices;
+    /**
+     * @brief Button to toggle the mapping
+     */
+    std::unique_ptr<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
 
     static constexpr int kNbIntervals { 12 };
 

@@ -6,9 +6,9 @@ namespace Params
  * NoteParam
  ***********************************************/
 NoteParam::NoteParam(const int index)
-        : noteIndex(index), noteName(Notes::names[index]), noteLabel(Notes::labels[index])
+        : noteIndex(index), noteName(Notes::names[static_cast<size_t>(index)]), noteLabel(Notes::labels[index])
 {
-    intervals.reserve(static_cast<size_t>(Notes::names.size()));
+    intervals.reserve(Notes::names.size());
     for (int i = 0; i < Notes::count; i++) {
         intervals.emplace_back(new IntervalParam(noteName, noteLabel, i));
     }
@@ -24,11 +24,11 @@ NoteParam::~NoteParam()
 
 void NoteParam::addParams(juce::AudioProcessor& p)
 {
-    p.addParameter(mapNote = new juce::AudioParameterBool(noteName + ParamIDs::mapNote,
+    p.addParameter(mapNote = new juce::AudioParameterBool(juce::String(noteName) + ParamIDs::mapNote,
                                                           "Map " + noteLabel, true,
                                                           juce::AudioParameterBoolAttributes().withLabel(
                                                                   "Map " + noteLabel)));
-    p.addParameter(transpose = new juce::AudioParameterInt(noteName + ParamIDs::noteTranspose,
+    p.addParameter(transpose = new juce::AudioParameterInt(juce::String(noteName) + ParamIDs::noteTranspose,
                                                            noteLabel + " transpose",
                                                            -12, 12, 0,
                                                            juce::AudioParameterIntAttributes().withLabel(
