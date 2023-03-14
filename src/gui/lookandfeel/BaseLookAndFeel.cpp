@@ -67,19 +67,17 @@ void BaseLookAndFeel::drawTooltip(juce::Graphics& g, const juce::String& text, i
 }
 
 /**
- * @brief Draw a simple rectangular slider with a square thumb
+ * @brief Draw a simple rectangular slider with a square thumb. Handling only vertical because I'm lazy and only use this one.
  */
 void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
                                        float /* minSliderPos */, float /* maxSliderPos */, const juce::Slider::SliderStyle,
                                        juce::Slider& slider)
 {
-    auto trackWidth = juce::jmin (10.0f, slider.isHorizontal() ? (float) height * 0.25f : (float) width * 0.25f);
+    auto trackWidth = 10.f;
+    auto h_ratio = .72f;
 
-    juce::Point<float> startPoint (slider.isHorizontal() ? (float) x : (float) x + (float) width * 0.5f,
-                             slider.isHorizontal() ? (float) y + (float) height * 0.5f : (float) (height + y));
-
-    juce::Point<float> endPoint (slider.isHorizontal() ? (float) (width + x) : startPoint.x,
-                           slider.isHorizontal() ? startPoint.y : (float) y);
+    juce::Point<float> startPoint ((float) x + (float) width * 0.5f, (float) (height + y) * h_ratio);
+    juce::Point<float> endPoint (startPoint.x, (float) y * h_ratio);
 
     juce::Path backgroundTrack;
     backgroundTrack.startNewSubPath (startPoint);
@@ -90,8 +88,8 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
     juce::Path valueTrack;
     juce::Point<float> minPoint, maxPoint;
 
-    auto kx = slider.isHorizontal() ? sliderPos : ((float) x + (float) width * 0.5f);
-    auto ky = slider.isHorizontal() ? ((float) y + (float) height * 0.5f) : sliderPos;
+    auto kx = (float) x + (float) width * 0.5f;
+    auto ky = sliderPos * h_ratio;
 
     minPoint = startPoint;
     maxPoint = { kx, ky };
@@ -103,6 +101,15 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
 
     g.setColour (slider.findColour (juce::Slider::thumbColourId));
     g.fillRect(juce::Rectangle<float> (trackWidth * 2.f, trackWidth / 2.f).withCentre (maxPoint));
+
+    const auto value = slider.getValue();
+    auto text = (value > 0 ? "+" : "") + juce::String(value);
+    auto text_bounds = juce::Rectangle<float>(0.f, static_cast<float>(slider.getHeight()) * h_ratio, 
+        static_cast<float>(width), static_cast<float>(slider.getHeight()) * (1.f - h_ratio));
+
+    g.setFont(LnF::getDefaultFont(20.f));
+    g.setColour(juce::Colours::white);
+    g.drawText(text, text_bounds, juce::Justification::centred);
 }
 
 void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, int width, int height,

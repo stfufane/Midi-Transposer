@@ -14,13 +14,6 @@ IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam)
             *noteParam.intervals[static_cast<size_t>(i)]->interval, *this,
             [](Gui::CustomSlider& slider) {
                 slider.setNormalisableRange({ -12, 12, 1 });
-                slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
-                    const auto value = slider.getValue();
-                    auto text = (value > 0 ? "+" : "") + juce::String(value);
-                    g.setFont(LnF::getDefaultFont(20.f));
-                    g.setColour(juce::Colours::white);
-                    g.drawText(text, slider.getLocalBounds().withY(slider.getHeight()), juce::Justification::centred);
-                });
             },
             // Extra constructor params
             "Interval transpose " + noteParam.noteName + "_" + std::to_string(i), juce::Slider::SliderStyle::LinearVertical
@@ -72,7 +65,7 @@ void IntervalsPanel::resized()
         }
         fb.performLayout(juce::Rectangle<float>(coordinates.mIntervalsX + coordinates.mIntervalKnobW, 0.f,
                                                                coordinates.mIntervalsSlidersW,
-                                                               coordinates.mIntervalsH)
+                                                               static_cast<float>(getHeight()))
                                                                .reduced(coordinates.mMargin));
     }
 }
