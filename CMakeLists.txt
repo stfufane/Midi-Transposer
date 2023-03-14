@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 set (BaseTargetName MidiBassPedalChords)
 project(${BaseTargetName} 
 LANGUAGES CXX
-VERSION 0.0.2)
+VERSION 0.5)
 
 include(Utils.cmake)
 
@@ -38,7 +38,7 @@ add_subdirectory(${juce_SOURCE_DIR})
 juce_add_module(${gin_SOURCE_DIR}/modules/gin)
 
 juce_add_plugin("${BaseTargetName}"
-        VERSION 0.2                                 # Set this if the plugin version is different to the project version
+        VERSION 0.5                                 # Set this if the plugin version is different to the project version
         # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
         # ICON_SMALL ...
         COMPANY_NAME "Stfufane"
