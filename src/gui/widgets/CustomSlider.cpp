@@ -30,13 +30,13 @@ namespace Gui
         return juce::Slider::getTextFromValue(value);
     }
 
-void CustomSlider::setCustomTextLambda(std::function<juce::String(double)> inLambda)
-{
-    mCustomTextLambda = std::move(inLambda);
-}
+    void CustomSlider::setCustomTextLambda(std::function<juce::String(double)> inLambda)
+    {
+        mCustomTextLambda = std::move(inLambda);
+    }
 
-void CustomSlider::setCustomPaintLambda(std::function<void(juce::Graphics&)> inLambda)
-{
-    mCustomPaintLambda = std::move(inLambda);
-}
+    void CustomSlider::setCustomPaintLambda(std::function<void(juce::Graphics&)> inLambda)
+    {
+        mCustomPaintLambda = std::move(inLambda);
+    }
 } // Gui

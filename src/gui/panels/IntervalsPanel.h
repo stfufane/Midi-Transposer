@@ -4,7 +4,7 @@
 #include "JuceHeader.h"
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
-#include "gui/widgets/IndexedToggleButton.h"
+#include "gui/widgets/TextSwitch.h"
 
 namespace Gui
 {
@@ -32,7 +32,7 @@ private:
     /**
      * @brief Button to toggle the mapping
      */
-    std::unique_ptr<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>> mapChoice;
+    std::unique_ptr<AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment>> mapChoice;
 
     static constexpr int kNbIntervals { 12 };
 

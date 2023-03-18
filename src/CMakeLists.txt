@@ -12,8 +12,9 @@ target_sources(${BaseTargetName} PRIVATE
         gui/Configuration.hpp
 		gui/lookandfeel/BaseLookAndFeel.cpp
 		gui/widgets/CustomSlider.cpp
-		gui/widgets/IndexedToggleButton.cpp
+		gui/widgets/CustomToggleButton.cpp
 		gui/widgets/NoteKey.cpp
+		gui/widgets/TextSwitch.cpp
 		gui/panels/MainPanel.cpp
 		gui/panels/MidiPanel.cpp
 		gui/panels/ArpPanel.cpp

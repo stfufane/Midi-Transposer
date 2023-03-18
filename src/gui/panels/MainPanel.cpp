@@ -96,12 +96,7 @@ void MainPanel::paint(juce::Graphics& g)
     const auto presets_panel_width = static_cast<float>(coordinates.mPresetsPanel.getWidth());
     const auto presets_panel_height = static_cast<float>(coordinates.mPresetsPanel.getHeight());
     g.drawRoundedRectangle(juce::Rectangle<float>(presets_panel_x, 0.f,
-                                          presets_panel_width,
-                                          presets_panel_height * coordinates.mPresetsRatio).reduced(coordinates.mMargin),
-                           coordinates.mFrameCorner, 1.f);
-    g.drawRoundedRectangle(juce::Rectangle<float>(presets_panel_x, presets_panel_height * coordinates.mPresetsRatio,
-                                                  presets_panel_width,
-                                                  presets_panel_height * (1.f - coordinates.mPresetsRatio)).reduced(coordinates.mMargin),
+                                          presets_panel_width, presets_panel_height).reduced(coordinates.mMargin),
                            coordinates.mFrameCorner, 1.f);
     const auto preset_header_coordinates = juce::Rectangle<float>(presets_panel_x, 0.f,
                                                                   presets_panel_width,

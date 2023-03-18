@@ -54,15 +54,17 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
         "Arp Sync Rate Slider", juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
-    arpSynced = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
+    arpSynced = std::make_unique< AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment> >(
         *arpParams.synced, *this,
-        [this](juce::ToggleButton& button) {
-            button.setButtonText("Tempo Sync");
+        [this](Gui::TextSwitch& button) {
             button.onStateChange = [this]() {
                 resized();
             };
+            button.setCustomTooltipLambda([&button]() -> juce::String {
+                return !button.getToggleState() ? "Set the arpeggiator rate to tempo sync" : "Set the arpeggiator rate to an arbitrary value";
+            });
         },
-        "Arp Sync Toggle"
+        "Arp Sync Toggle", "SYNC", "FREE"
     );
 }
 
@@ -78,6 +80,11 @@ void ArpPanel::resized()
                 .reduced(static_cast<int>(coordinates.mMargin));
         arpRate->getComponent().setBounds(knob_bounds);
         arpSyncRate->getComponent().setBounds(knob_bounds);
+
+        auto toggle_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight + coordinates.mKnobHeight),
+                                                 getWidth(), static_cast<int>(coordinates.mToggleHeight))
+                .reduced(static_cast<int>(coordinates.mMargin));
+        arpSynced->getComponent().setBounds(toggle_bounds);
     }
 }
 

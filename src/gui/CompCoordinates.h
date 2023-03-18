@@ -30,8 +30,10 @@ struct CompCoordinates {
     float mMidiOutX { 1.f };
     float mMidiOctX { 1.f };
     float mKnobHeight { 1.f };
+    float mToggleHeight { 1.f };
+    float mToggleMargin { 1.f };
+    float mToggleFontSize { 1.f };
     float mButtonHeight { 1.f };
-    float mPresetsRatio { 1.f };
     float mKeyFontSize { 1.f };
     float mKeyCorner { 1.f };
     float mKeyRatio { 1.f };
@@ -88,8 +90,10 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     j.at("midi_out_x").get_to(pos.mMidiOutX);
     j.at("midi_oct_x").get_to(pos.mMidiOctX);
     j.at("knob_height").get_to(pos.mKnobHeight);
+    j.at("toggle_height").get_to(pos.mToggleHeight);
+    j.at("toggle_margin").get_to(pos.mToggleMargin);
+    j.at("toggle_font_size").get_to(pos.mToggleFontSize);
     j.at("button_height").get_to(pos.mButtonHeight);
-    j.at("presets_ratio").get_to(pos.mPresetsRatio);
     j.at("key_font_size").get_to(pos.mKeyFontSize);
     j.at("key_corner").get_to(pos.mKeyCorner);
     j.at("key_ratio").get_to(pos.mKeyRatio);

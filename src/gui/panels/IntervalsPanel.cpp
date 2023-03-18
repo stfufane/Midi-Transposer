@@ -36,11 +36,17 @@ IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam)
         "Note Transpose " + noteParam.noteName, juce::Slider::SliderStyle::RotaryVerticalDrag
     );
 
-    mapChoice = std::make_unique<AttachedComponent<Gui::IndexedToggleButton, juce::ButtonParameterAttachment>>(
+    mapChoice = std::make_unique<AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment>>(
         *noteParam.mapNote, *this,
-        [](Gui::IndexedToggleButton& button) {
-            // TODO something :)
-        }
+        [this](Gui::TextSwitch& b) {
+            b.onStateChange = [this]() {
+                resized();
+            };
+            b.setCustomTooltipLambda([&b]() {
+                return juce::String(b.getToggleState() ? "Dea" : "A") + "ctivate the transposition of this note.";
+            });
+        },
+        "Note Transpose " + noteParam.noteName + " toggle", "ON", "OFF"
     );
 }
 
@@ -53,8 +59,14 @@ void IntervalsPanel::resized()
         transpose_slider.setBounds(juce::Rectangle<float>(coordinates.mIntervalsX, 0.f,
                                                           coordinates.mIntervalKnobW,
                                                           coordinates.mIntervalsH)
-                                                          .reduced(coordinates.mMargin, coordinates.mMargin * 2.f)
+                                                          .reduced(coordinates.mMargin, coordinates.mMargin * 5.f)
                                                           .toNearestInt());
+
+        auto& map_choice_button = mapChoice->getComponent();
+        map_choice_button.setBounds(juce::Rectangle<float>(0.f, 0.f,
+                                                           static_cast<float>(getWidth()) * .1f,
+                                                           static_cast<float>(getHeight()) * .2f)
+                                                           .toNearestInt());
 
         juce::FlexBox fb;
         fb.flexDirection = juce::FlexBox::Direction::row;
