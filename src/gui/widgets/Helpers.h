@@ -19,18 +19,18 @@ public:
     template<typename... Args>
     AttachedComponent<CompType, CompAttachment>(juce::RangedAudioParameter& param, juce::Component& parent,
                                                 std::function<void(CompType&)> init = nullptr, Args&&... args)
+    : component(std::forward<Args>(args)...),
+      attachment(param, component)
     {
-        component = std::make_unique<CompType>(std::forward<Args>(args)...);
-        attachment = std::make_unique<CompAttachment>(param, *component);
-        parent.addAndMakeVisible(component.get());
-        if (init != nullptr) { init(*component); }
-        attachment->sendInitialUpdate();
+        parent.addAndMakeVisible(component);
+        if (init != nullptr) { init(component); }
+        attachment.sendInitialUpdate();
     }
 
-    CompType& getComponent() { return *component; }
+    CompType& getComponent() { return component; }
 private:
-    std::unique_ptr<CompType> component;
-    std::unique_ptr<CompAttachment> attachment;
+    CompType component;
+    CompAttachment attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachedComponent)
 };
