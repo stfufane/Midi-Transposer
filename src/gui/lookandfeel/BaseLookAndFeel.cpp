@@ -15,7 +15,7 @@ BaseLookAndFeel::~BaseLookAndFeel()
     mConfiguration.removeListener(this);
 }
 
-void BaseLookAndFeel::onConfigChanged(const BaseColors&)
+void BaseLookAndFeel::onConfigChanged(const CompColors&)
 {
     resetColors();
 }
@@ -25,8 +25,9 @@ void BaseLookAndFeel::resetColors() {
     // Slider colors
     setColour(juce::Slider::backgroundColourId, juce::Colour::fromString(colors.mSliderBackground));
     setColour(juce::Slider::thumbColourId, juce::Colour::fromString(colors.mSliderThumb));
-    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour::fromString(colors.mSliderText));
+    setColour(juce::Slider::textBoxTextColourId, juce::Colour::fromString(colors.mSliderText));
     setColour(juce::Slider::trackColourId, juce::Colour::fromString(colors.mSliderTrack));
+    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::fromString(colors.mSliderOutline));
 
     // Label colors
     setColour(juce::Label::ColourIds::textColourId, juce::Colour::fromString(colors.mLabelText));

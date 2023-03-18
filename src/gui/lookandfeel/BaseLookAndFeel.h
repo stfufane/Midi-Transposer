@@ -3,38 +3,10 @@
 
 #include "JuceHeader.h"
 #include "gui/Configuration.hpp"
+#include "gui/CompColors.h"
 
 namespace Gui::LnF
 {
-
-/**
- * @brief String representations of the implemented colors
- * that can be read from a json file.
- */
-struct BaseColors {
-    std::string mSliderBackground;
-    std::string mSliderThumb;
-    std::string mSliderText;
-    std::string mSliderTrack;
-    std::string mLabelBackground;
-    std::string mLabelText;
-
-    static std::string getFileName() { return "colors.json"; }
-};
-
-inline void from_json(const nlohmann::json& j, BaseColors& colors)
-{
-    try {
-        j.at("slider_background").get_to(colors.mSliderBackground);
-        j.at("slider_thumb").get_to(colors.mSliderThumb);
-        j.at("slider_text").get_to(colors.mSliderText);
-        j.at("slider_track").get_to(colors.mSliderTrack);
-        j.at("label_background").get_to(colors.mLabelBackground);
-        j.at("label_text").get_to(colors.mLabelText);
-    } catch (std::exception& e) {
-        std::cout << "One or several values were not defined in the json configuration file\n" << e.what() << "\n";
-    }
-}
 
 inline juce::Font getDefaultFont(float inPointHeight = 16.f)
 {
@@ -44,7 +16,7 @@ inline juce::Font getDefaultFont(float inPointHeight = 16.f)
 }
 
 class BaseLookAndFeel : public juce::LookAndFeel_V4,
-        public Gui::Configuration<BaseColors>::Listener<BaseColors>
+        public Gui::Configuration<CompColors>::Listener<CompColors>
 {
 public:
     explicit BaseLookAndFeel(juce::Component* rootComponent);
@@ -67,7 +39,7 @@ public:
     void onConfigChanged(const BaseColors& colors) override;
 
 private:
-    Gui::Configuration<BaseColors> mConfiguration;
+    Gui::Configuration<CompColors> mConfiguration;
 
     void resetColors();
 };
