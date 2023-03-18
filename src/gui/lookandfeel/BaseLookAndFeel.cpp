@@ -131,22 +131,35 @@ void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, i
     g.setColour (outline);
     g.fillEllipse(bounds.reduced(3.0f));
 
-    if (slider.isEnabled())
-    {
-        juce::Path valueArc;
-        valueArc.addCentredArc (bounds.getCentreX(),
-                                bounds.getCentreY(),
-                                arcRadius,
-                                arcRadius,
-                                0.0f,
-                                rotaryStartAngle,
-                                toAngle,
-                                true);
+    // First draw the outline
+    juce::Path backgroundArc;
+    backgroundArc.addCentredArc (bounds.getCentreX(),
+                                 bounds.getCentreY(),
+                                 arcRadius,
+                                 arcRadius,
+                                 0.0f,
+                                 toAngle,
+                                 rotaryEndAngle,
+                                 true);
 
-        g.setColour (fill);
-        g.strokePath (valueArc, juce::PathStrokeType (lineW, juce::PathStrokeType::mitered, juce::PathStrokeType::square));
-    }
+    g.setColour(slider.findColour(juce::Slider::rotarySliderOutlineColourId));
+    g.strokePath(backgroundArc, juce::PathStrokeType (lineW, juce::PathStrokeType::mitered, juce::PathStrokeType::square));
 
+    // Then the value
+    juce::Path valueArc;
+    valueArc.addCentredArc (bounds.getCentreX(),
+                            bounds.getCentreY(),
+                            arcRadius,
+                            arcRadius,
+                            0.0f,
+                            rotaryStartAngle,
+                            toAngle,
+                            true);
+
+    g.setColour (fill);
+    g.strokePath (valueArc, juce::PathStrokeType (lineW, juce::PathStrokeType::mitered, juce::PathStrokeType::square));
+    
+    // The thumb is just a small square
     auto thumbWidth = lineW * 2.f;
     juce::Point<float> thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - juce::MathConstants<float>::halfPi),
                              bounds.getCentreY() + arcRadius * std::sin (toAngle - juce::MathConstants<float>::halfPi));
