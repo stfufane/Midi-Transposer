@@ -26,7 +26,7 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
             slider.setRange(0., 1.0, 0.01);
             slider.setNumDecimalPlacesToDisplay(0);
             slider.setCustomTextLambda([](double value) -> juce::String {
-                return juce::String(100. * (.1 + (5. - 5. * value))) + "ms";
+                return juce::String(1000. / (100. * (.1 + (5. - 5. * value))), 1) + "Hz";
             });
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
                 auto text = slider.getTextFromValue(slider.getValue());
