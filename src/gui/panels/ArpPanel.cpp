@@ -10,12 +10,14 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
 {
     auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
 
-    arpActivated = std::make_unique< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> >(
+    arpActivated = std::make_unique< AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment> >(
         *arpParams.activated, *this,
-        [](juce::ToggleButton& button) {
-            button.setButtonText("Arpeggiator");
+        [](Gui::TextSwitch& button) {
+            button.setCustomTooltipLambda([&button]() -> juce::String {
+                return juce::String(button.getToggleState() ? "Dea" : "A") + "ctivate the arpeggiator";
+            });
         },
-        "Arp Activation Toggle"
+        "Arp Activation Toggle", "ON", "OFF", 16.f
     );
 
     arpRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
@@ -64,7 +66,7 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
                 return !button.getToggleState() ? "Set the arpeggiator rate to tempo sync" : "Set the arpeggiator rate to an arbitrary value";
             });
         },
-        "Arp Sync Toggle", "SYNC", "FREE"
+        "Arp Sync Toggle", "SYNC", "FREE", 16.f
     );
 }
 
@@ -75,16 +77,17 @@ void ArpPanel::resized()
 
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
-        auto knob_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight),
-                                                getWidth(), static_cast<int>(coordinates.mKnobHeight))
-                .reduced(static_cast<int>(coordinates.mMargin));
+        auto knob_bounds = juce::Rectangle<float>(0, coordinates.mHeaderHeight,
+                                                static_cast<float>(getWidth()), coordinates.mKnobHeight)
+                .reduced(coordinates.mMargin).toNearestInt();
         arpRate->getComponent().setBounds(knob_bounds);
         arpSyncRate->getComponent().setBounds(knob_bounds);
 
-        auto toggle_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight + coordinates.mKnobHeight),
-                                                 getWidth(), static_cast<int>(coordinates.mToggleHeight))
-                .reduced(static_cast<int>(coordinates.mMargin));
-        arpSynced->getComponent().setBounds(toggle_bounds);
+        auto toggle_bounds = juce::Rectangle<float>(coordinates.mToggleX, coordinates.mHeaderHeight + coordinates.mKnobHeight,
+                                                 coordinates.mToggleWidth, coordinates.mToggleHeight)
+                .reduced(coordinates.mMargin).toNearestInt();
+        arpActivated->getComponent().setBounds(toggle_bounds);
+        arpSynced->getComponent().setBounds(toggle_bounds.withWidth(coordinates.mToggleSyncWidth).translated(coordinates.mToggleWidth, 0));
     }
 }
 

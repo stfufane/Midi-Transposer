@@ -13,6 +13,9 @@ public:
 
     juce::String getTooltip() override;
 
+    void mouseEnter(const juce::MouseEvent& event) override;
+    void mouseExit(const juce::MouseEvent& event) override;
+
     void setCustomTooltipLambda(std::function<juce::String()> inLambda);
 
 private:

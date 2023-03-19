@@ -36,7 +36,7 @@ public:
                            float sliderPos, float rotaryStartAngle,
                            float rotaryEndAngle, juce::Slider&) override;
 
-    void onConfigChanged(const BaseColors& colors) override;
+    void onConfigChanged(const CompColors& colors) override;
 
 private:
     Gui::Configuration<CompColors> mConfiguration;

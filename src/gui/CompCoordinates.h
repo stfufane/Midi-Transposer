@@ -31,8 +31,9 @@ struct CompCoordinates {
     float mMidiOctX { 1.f };
     float mKnobHeight { 1.f };
     float mToggleHeight { 1.f };
-    float mToggleMargin { 1.f };
-    float mToggleFontSize { 1.f };
+    float mToggleWidth { 1.f };
+    float mToggleSyncWidth { 1.f }; 
+    float mToggleX { 1.f };
     float mButtonHeight { 1.f };
     float mKeyFontSize { 1.f };
     float mKeyCorner { 1.f };
@@ -40,6 +41,8 @@ struct CompCoordinates {
     float mKeyOver { 1.f };
     float mIntervalsX { 1.f };
     float mIntervalsH { 1.f };
+    float mIntervalsToggleW { 1.f };
+    float mIntervalsToggleH { 1.f };
     float mIntervalKnobW { 1.f };
     float mIntervalsSlidersW { 1.f };
     float mIntervalsLabelCorner { 1.f };
@@ -91,8 +94,9 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     j.at("midi_oct_x").get_to(pos.mMidiOctX);
     j.at("knob_height").get_to(pos.mKnobHeight);
     j.at("toggle_height").get_to(pos.mToggleHeight);
-    j.at("toggle_margin").get_to(pos.mToggleMargin);
-    j.at("toggle_font_size").get_to(pos.mToggleFontSize);
+    j.at("toggle_width").get_to(pos.mToggleWidth);
+    j.at("toggle_sync_width").get_to(pos.mToggleSyncWidth);
+    j.at("toggle_x").get_to(pos.mToggleX);
     j.at("button_height").get_to(pos.mButtonHeight);
     j.at("key_font_size").get_to(pos.mKeyFontSize);
     j.at("key_corner").get_to(pos.mKeyCorner);
@@ -100,6 +104,8 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     j.at("key_over").get_to(pos.mKeyOver);
     j.at("intervals_x").get_to(pos.mIntervalsX);
     j.at("intervals_h").get_to(pos.mIntervalsH);
+    j.at("intervals_toggle_w").get_to(pos.mIntervalsToggleW);
+    j.at("intervals_toggle_h").get_to(pos.mIntervalsToggleH);
     j.at("intervals_knob_w").get_to(pos.mIntervalKnobW);
     j.at("intervals_sliders_w").get_to(pos.mIntervalsSlidersW);
     j.at("intervals_label_corner").get_to(pos.mIntervalsLabelCorner);

@@ -18,7 +18,7 @@ public:
 
     void resized() override;
 private:
-    std::unique_ptr< AttachedComponent<juce::ToggleButton, juce::ButtonParameterAttachment> > arpActivated;
+    std::unique_ptr< AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment> > arpActivated;
     std::unique_ptr< AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment> > arpSynced;
     std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > arpSyncRate;
     std::unique_ptr< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> > arpRate;

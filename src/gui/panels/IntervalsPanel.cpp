@@ -46,7 +46,7 @@ IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam)
                 return juce::String(b.getToggleState() ? "Dea" : "A") + "ctivate the transposition of this note.";
             });
         },
-        "Note Transpose " + noteParam.noteName + " toggle", "ON", "OFF"
+        "Note Transpose " + noteParam.noteName + " toggle", "ON", "OFF", 14.f
     );
 }
 
@@ -63,9 +63,9 @@ void IntervalsPanel::resized()
                                                           .toNearestInt());
 
         auto& map_choice_button = mapChoice->getComponent();
-        map_choice_button.setBounds(juce::Rectangle<float>(0.f, 0.f,
-                                                           static_cast<float>(getWidth()) * .1f,
-                                                           static_cast<float>(getHeight()) * .2f)
+        map_choice_button.setBounds(juce::Rectangle<float>(coordinates.mMargin * 2.f, coordinates.mMargin * 2.f,
+                                                           coordinates.mIntervalsToggleW,
+                                                           coordinates.mIntervalsToggleH)
                                                            .toNearestInt());
 
         juce::FlexBox fb;

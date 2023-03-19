@@ -21,10 +21,10 @@
     "x": 0, "y": 265, "w": 741, "h": 135
   },
   "intervals_transpose_label": {
-    "x": 36, "y": 366, "w": 116, "h": 25
+    "x": 44, "y": 366, "w": 116, "h": 25
   },
   "intervals_sliders_label": {
-    "x": 164, "y": 366, "w": 560, "h": 25
+    "x": 170, "y": 366, "w": 560, "h": 25
   },
   "tooltips_panel": {
     "x": 0, "y": 400, "w": 741, "h": 42
@@ -39,16 +39,19 @@
   "midi_oct_x": 256.0,
   "knob_height": 85.0,
   "toggle_height": 35.0,
-  "toggle_margin": 20.0,
-  "toggle_font_size": 20.0,
+  "toggle_width": 70.0,
+  "toggle_sync_width": 90.0,
+  "toggle_x": 3.0,
   "button_height": 40.0,
   "presets_ratio": 0.69,
   "key_font_size": 28.0,
   "key_corner": 16.0,
   "key_ratio": 1.9,
   "key_over": 1.03,
-  "intervals_x": 32.0,
+  "intervals_x": 40.0,
   "intervals_h": 110.0,
+  "intervals_toggle_w": 60.0,
+  "intervals_toggle_h": 30.0,
   "intervals_knob_w": 130.0,
   "intervals_sliders_w": 560.0,
   "intervals_label_corner": 12.0,
