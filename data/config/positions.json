@@ -21,13 +21,16 @@
     "x": 0, "y": 265, "w": 741, "h": 135
   },
   "intervals_transpose_label": {
-    "x": 44, "y": 366, "w": 116, "h": 25
+    "x": 54, "y": 366, "w": 116, "h": 25
   },
   "intervals_sliders_label": {
-    "x": 170, "y": 366, "w": 560, "h": 25
+    "x": 180, "y": 366, "w": 540, "h": 25
   },
   "tooltips_panel": {
     "x": 0, "y": 400, "w": 741, "h": 42
+  },
+  "intervals_toggle": {
+    "x": 6, "y": 40, "w": 60, "h": 30
   },
   "margin": 3.0,
   "frame_corner": 6.0,
@@ -48,12 +51,10 @@
   "key_corner": 16.0,
   "key_ratio": 1.9,
   "key_over": 1.03,
-  "intervals_x": 40.0,
+  "intervals_x": 60.0,
   "intervals_h": 110.0,
-  "intervals_toggle_w": 60.0,
-  "intervals_toggle_h": 30.0,
-  "intervals_knob_w": 130.0,
-  "intervals_sliders_w": 560.0,
+  "intervals_knob_w": 110.0,
+  "intervals_sliders_w": 540.0,
   "intervals_label_corner": 12.0,
   "intervals_label_fontsize": 20.0
 }

@@ -63,10 +63,7 @@ void IntervalsPanel::resized()
                                                           .toNearestInt());
 
         auto& map_choice_button = mapChoice->getComponent();
-        map_choice_button.setBounds(juce::Rectangle<float>(coordinates.mMargin * 2.f, coordinates.mMargin * 2.f,
-                                                           coordinates.mIntervalsToggleW,
-                                                           coordinates.mIntervalsToggleH)
-                                                           .toNearestInt());
+        map_choice_button.setBounds(coordinates.mIntervalsToggle.toNearestInt());
 
         juce::FlexBox fb;
         fb.flexDirection = juce::FlexBox::Direction::row;

@@ -19,6 +19,7 @@ struct CompCoordinates {
     juce::Rectangle<float> mIntervalsTransposeLabel;
     juce::Rectangle<float> mIntervalsSlidersLabel;
     juce::Rectangle<float> mTooltipsPanel;
+    juce::Rectangle<float> mIntervalsToggle;
 
     // Some globals to draw different components.
     float mMargin { 1.f }; // The global margin separating the different panels
@@ -41,8 +42,6 @@ struct CompCoordinates {
     float mKeyOver { 1.f };
     float mIntervalsX { 1.f };
     float mIntervalsH { 1.f };
-    float mIntervalsToggleW { 1.f };
-    float mIntervalsToggleH { 1.f };
     float mIntervalKnobW { 1.f };
     float mIntervalsSlidersW { 1.f };
     float mIntervalsLabelCorner { 1.f };
@@ -83,6 +82,9 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     auto tooltips_panel = j.at("tooltips_panel");
     pos.mTooltipsPanel = { tooltips_panel.at("x"), tooltips_panel.at("y"),
                            tooltips_panel.at("w"), tooltips_panel.at("h") };
+    auto intervals_toggle = j.at("intervals_toggle");
+    pos.mIntervalsToggle = { intervals_toggle.at("x"), intervals_toggle.at("y"),
+                             intervals_toggle.at("w"), intervals_toggle.at("h") };
 
     j.at("margin").get_to(pos.mMargin);
     j.at("frame_corner").get_to(pos.mFrameCorner);
@@ -104,8 +106,6 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     j.at("key_over").get_to(pos.mKeyOver);
     j.at("intervals_x").get_to(pos.mIntervalsX);
     j.at("intervals_h").get_to(pos.mIntervalsH);
-    j.at("intervals_toggle_w").get_to(pos.mIntervalsToggleW);
-    j.at("intervals_toggle_h").get_to(pos.mIntervalsToggleH);
     j.at("intervals_knob_w").get_to(pos.mIntervalKnobW);
     j.at("intervals_sliders_w").get_to(pos.mIntervalsSlidersW);
     j.at("intervals_label_corner").get_to(pos.mIntervalsLabelCorner);
