@@ -16,7 +16,7 @@ public:
     explicit PresetsPanel(PresetBrowser::PresetManager& pm);
     ~PresetsPanel() override;
 
-    void initButton(juce::Button& ioButton, const juce::String& inText);
+    void initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable);
 
     void resized() override;
 
@@ -29,9 +29,9 @@ private:
 
     PresetBrowser::PresetManager& presetManager; // Only a reference, the audio processor is owning it.
 
-    juce::TextButton presetSaveButton { "btnSavePreset" };
-    juce::TextButton presetResetButton { "btnResetPreset" };
-    juce::TextButton presetDeleteButton { "btnDeletePreset" };
+    juce::DrawableButton presetSaveButton { "btnSavePreset", juce::DrawableButton::ButtonStyle::ImageFitted };
+    juce::DrawableButton presetResetButton { "btnResetPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
+    juce::DrawableButton presetDeleteButton { "btnDeletePreset", juce::DrawableButton::ButtonStyle::ImageFitted };
 
     juce::ComboBox presetListComboBox { "cmbPresetList" };
 

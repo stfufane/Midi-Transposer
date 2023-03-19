@@ -25,7 +25,8 @@ target_sources(${BaseTargetName} PRIVATE
 # Build the binary data
 set (DataTarget "${BaseTargetName}-Data")
 juce_add_binary_data(${DataTarget} SOURCES
-		${CMAKE_CURRENT_LIST_DIR}/../data/fonts/iosevka-regular.ttf)
+		${CMAKE_CURRENT_LIST_DIR}/../data/fonts/iosevka-regular.ttf
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/save.png)
 
 target_link_libraries(${BaseTargetName} PRIVATE ${DataTarget})
 

@@ -27,9 +27,11 @@ PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
     presetListComboBox.addListener(this);
     updatePresetsList();
 
-    initButton(presetSaveButton, "Sav");
-    initButton(presetResetButton, "New");
-    initButton(presetDeleteButton, "Del");
+    auto save_icon = juce::Drawable::createFromImageData(BinaryData::save_png, BinaryData::save_pngSize);
+    initButton(presetSaveButton, &*save_icon);
+    initButton(presetResetButton, &*save_icon);
+    initButton(presetDeleteButton, &*save_icon);
+
 }
 
 PresetsPanel::~PresetsPanel()
@@ -40,10 +42,11 @@ PresetsPanel::~PresetsPanel()
     presetListComboBox.removeListener(this);
 }
 
-void PresetsPanel::initButton(juce::Button& ioButton, const juce::String& inText)
+void PresetsPanel::initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable)
 {
     addAndMakeVisible(ioButton);
-    ioButton.setButtonText(inText);
+    // ioButton.setButtonText(inText);
+    ioButton.setImages(inDrawable);
     ioButton.setMouseCursor(juce::MouseCursor::PointingHandCursor);
     ioButton.addListener(this);
 }
