@@ -21,7 +21,7 @@
     "x": 0, "y": 265, "w": 741, "h": 135
   },
   "intervals_transpose_label": {
-    "x": 54, "y": 366, "w": 116, "h": 25
+    "x": 64, "y": 366, "w": 110, "h": 25
   },
   "intervals_sliders_label": {
     "x": 180, "y": 366, "w": 540, "h": 25
@@ -51,10 +51,10 @@
   "key_corner": 16.0,
   "key_ratio": 1.9,
   "key_over": 1.03,
-  "intervals_x": 60.0,
+  "intervals_x": 65.0,
   "intervals_h": 110.0,
   "intervals_knob_w": 110.0,
-  "intervals_sliders_w": 540.0,
+  "intervals_sliders_w": 550.0,
   "intervals_label_corner": 12.0,
   "intervals_label_fontsize": 20.0
 }

@@ -17,7 +17,7 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
                 return juce::String(button.getToggleState() ? "Dea" : "A") + "ctivate the arpeggiator";
             });
         },
-        "Arp Activation Toggle", "ON", "OFF", 16.f
+        "Arp Activation Toggle", "ON", "OFF", 14.f
     );
 
     arpRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
@@ -66,7 +66,7 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
                 return !button.getToggleState() ? "Set the arpeggiator rate to tempo sync" : "Set the arpeggiator rate to an arbitrary value";
             });
         },
-        "Arp Sync Toggle", "SYNC", "FREE", 16.f
+        "Arp Sync Toggle", "SYNC", "FREE", 14.f
     );
 }
 
@@ -87,7 +87,9 @@ void ArpPanel::resized()
                                                  coordinates.mToggleWidth, coordinates.mToggleHeight)
                 .reduced(coordinates.mMargin).toNearestInt();
         arpActivated->getComponent().setBounds(toggle_bounds);
-        arpSynced->getComponent().setBounds(toggle_bounds.withWidth(coordinates.mToggleSyncWidth).translated(coordinates.mToggleWidth, 0));
+        arpSynced->getComponent().setBounds(toggle_bounds
+            .withWidth(static_cast<int>(coordinates.mToggleSyncWidth))
+            .translated(static_cast<int>(coordinates.mToggleWidth), 0));
     }
 }
 

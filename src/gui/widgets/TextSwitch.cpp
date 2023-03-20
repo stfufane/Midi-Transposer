@@ -15,7 +15,8 @@ namespace Gui
             
             const auto total_bounds = getLocalBounds();
 
-            const auto toggle_left = total_bounds.withWidth(total_bounds.getWidth() / 2).reduced(coordinates.mMargin);
+            const auto toggle_left = total_bounds.withWidth(total_bounds.getWidth() / 2)
+                .reduced(static_cast<int>(coordinates.mMargin));
             const auto toggle_right = toggle_left.translated(total_bounds.getWidth() / 2, 0);
 
             const auto bg_color_on = findColour(juce::Label::ColourIds::textColourId);
