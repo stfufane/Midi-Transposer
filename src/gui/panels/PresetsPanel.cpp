@@ -22,38 +22,97 @@ PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
           presetManager(pm)
 {
     addAndMakeVisible(presetListComboBox);
-    presetListComboBox.setTextWhenNothingSelected("Default");
+    presetListComboBox.setTextWhenNothingSelected(PresetBrowser::PresetManager::kInitPreset);
     presetListComboBox.setMouseCursor(juce::MouseCursor::PointingHandCursor);
     presetListComboBox.addListener(this);
     updatePresetsList();
 
-    auto save_icon = juce::Drawable::createFromImageData(BinaryData::save_png, BinaryData::save_pngSize);
-    initButton(presetSaveButton, &*save_icon);
-    initButton(presetResetButton, &*save_icon);
-    initButton(presetDeleteButton, &*save_icon);
+    auto new_icon = juce::Drawable::createFromImageData(BinaryData::new_svg, BinaryData::new_svgSize);
+    auto save_icon = juce::Drawable::createFromImageData(BinaryData::save_svg, BinaryData::save_svgSize);
+    auto copy_icon = juce::Drawable::createFromImageData(BinaryData::copy_svg, BinaryData::copy_svgSize);
+    auto delete_icon = juce::Drawable::createFromImageData(BinaryData::delete_svg, BinaryData::delete_svgSize);
 
+    auto previous_icon = juce::Drawable::createFromImageData(BinaryData::previous_svg, BinaryData::previous_svgSize);
+    auto next_icon = juce::Drawable::createFromImageData(BinaryData::next_svg, BinaryData::next_svgSize);
+
+    initButton(presetNewButton, &*new_icon, "Create a new preset");
+    initButton(presetSaveButton, &*save_icon, "Save the current preset");
+    initButton(presetCopyButton, &*copy_icon, "Copy the current preset");
+    initButton(presetDeleteButton, &*delete_icon, "Delete the current preset");
+
+    initButton(presetPreviousButton, &*previous_icon, "Load the previous preset");
+    initButton(presetNextButton, &*next_icon, "Load the next preset");
 }
 
 PresetsPanel::~PresetsPanel()
 {
     presetSaveButton.removeListener(this);
-    presetResetButton.removeListener(this);
+    presetNewButton.removeListener(this);
     presetDeleteButton.removeListener(this);
     presetListComboBox.removeListener(this);
 }
 
-void PresetsPanel::initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable)
+void PresetsPanel::initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable, const juce::String& inTooltip)
 {
     addAndMakeVisible(ioButton);
-    // ioButton.setButtonText(inText);
     ioButton.setImages(inDrawable);
     ioButton.setMouseCursor(juce::MouseCursor::PointingHandCursor);
+    ioButton.setTooltip(inTooltip);
     ioButton.addListener(this);
 }
 
 void PresetsPanel::buttonClicked(juce::Button* button)
 {
+    if (button == &presetCopyButton) {
+        savePreset();
+        return;
+    }
+
+    const auto& current_preset = presetManager.getCurrentPreset();
     if (button == &presetSaveButton) {
+        if (current_preset == PresetBrowser::PresetManager::kInitPreset) {
+            savePreset();
+        } else {
+            presetManager.savePreset(current_preset);
+            updatePresetsList();
+        }
+        return;
+    }
+
+    if (button == &presetDeleteButton) {
+        presetManager.deletePreset(current_preset);
+        updatePresetsList();
+        return;
+    }
+
+    if (button == &presetNewButton) {
+        presetManager.resetPreset();
+        presetListComboBox.setSelectedItemIndex(-1, juce::NotificationType::dontSendNotification);
+        return;
+    }
+
+    if (button == &presetPreviousButton) {
+        loadPreset(-1);
+        return;
+    }
+
+    if (button == &presetNextButton) {
+        loadPreset(1);
+        return;
+    }
+}
+
+void PresetsPanel::loadPreset(int offset)
+{
+    auto new_index = (presetListComboBox.getSelectedItemIndex() + offset);
+    // Make the index loop around.
+    new_index = new_index < 0 ? presetListComboBox.getNumItems() - 1 : new_index % presetListComboBox.getNumItems();
+    presetManager.loadPreset(presetListComboBox.getItemText(new_index));
+    presetListComboBox.setSelectedItemIndex(new_index, juce::NotificationType::dontSendNotification);
+}
+
+void PresetsPanel::savePreset()
+{
         presetNameChooser = std::make_unique<juce::AlertWindow>("Save this preset",
                                                           "Choose the name for your preset.",
                                                                 juce::MessageBoxIconType::NoIcon);
@@ -63,13 +122,6 @@ void PresetsPanel::buttonClicked(juce::Button* button)
         presetNameChooser->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
 
         presetNameChooser->enterModalState(true, juce::ModalCallbackFunction::create(PresetNameDialogChosen{*this}));
-        return;
-    }
-
-    if (button == &presetResetButton) {
-        presetManager.resetPreset();
-        presetListComboBox.setSelectedItemIndex(-1, juce::NotificationType::dontSendNotification);
-    }
 }
 
 void PresetsPanel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
@@ -106,37 +158,40 @@ void PresetsPanel::validatePresetSave(int result)
 
 void PresetsPanel::resized()
 {
-    using juce::operator""_px;
-    using juce::operator""_fr;
+    juce::FlexBox file_buttons;
+    file_buttons.flexDirection = juce::FlexBox::Direction::row;
+    file_buttons.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 
-    juce::Grid grid;
-    using Track = juce::Grid::TrackInfo;
+    file_buttons.items.add(juce::FlexItem(presetNewButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
+    file_buttons.items.add(juce::FlexItem(presetSaveButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
+    file_buttons.items.add(juce::FlexItem(presetCopyButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
+    file_buttons.items.add(juce::FlexItem(presetDeleteButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
 
-    grid.templateRows    = { Track (1_fr) };
-    grid.templateColumns = { Track (1_fr), Track (1_fr), Track (1_fr) };
+    juce::FlexBox preset_buttons;
+    preset_buttons.flexDirection = juce::FlexBox::Direction::row;
+    preset_buttons.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 
-    grid.alignContent    = juce::Grid::AlignContent::center;
-    grid.justifyContent  = juce::Grid::JustifyContent::center;
-    grid.alignItems      = juce::Grid::AlignItems::center;
-    grid.justifyItems    = juce::Grid::JustifyItems::center;
-
-    grid.columnGap = 3_px;
-
-    grid.items = {
-        juce::GridItem(presetResetButton),
-        juce::GridItem(presetSaveButton),
-        juce::GridItem(presetDeleteButton)
-    };
+    preset_buttons.items.add(juce::FlexItem(presetPreviousButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
+    preset_buttons.items.add(juce::FlexItem(presetNextButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
 
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
-        grid.performLayout(juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight),
+
+        // Draw the file buttons icons.
+        file_buttons.performLayout(juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight),
                                                 getWidth(), static_cast<int>(coordinates.mButtonHeight))
                                    .reduced(static_cast<int>(coordinates.mMargin) * 2, 0));
+
+        // Calculate the combobox coordinates.
         auto combo_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight) + static_cast<int>(coordinates.mButtonHeight),
                                          getWidth(), static_cast<int>(static_cast<int>(coordinates.mButtonHeight)))
                                          .reduced(static_cast<int>(coordinates.mMargin) * 2, static_cast<int>(coordinates.mMargin));
         presetListComboBox.setBounds(combo_bounds);
+
+        // Draw the preset navigation buttons just below.
+        preset_buttons.performLayout(combo_bounds
+            .translated(0, combo_bounds.getHeight() + static_cast<int>(coordinates.mMargin))
+            .withHeight(static_cast<int>(coordinates.mButtonHeight)));
     }
 }
 

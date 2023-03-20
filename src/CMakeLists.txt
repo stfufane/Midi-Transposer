@@ -26,7 +26,12 @@ target_sources(${BaseTargetName} PRIVATE
 set (DataTarget "${BaseTargetName}-Data")
 juce_add_binary_data(${DataTarget} SOURCES
 		${CMAKE_CURRENT_LIST_DIR}/../data/fonts/iosevka-regular.ttf
-		${CMAKE_CURRENT_LIST_DIR}/../data/img/save.png)
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/new.svg
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/save.svg
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/copy.svg
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/delete.svg
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/previous.svg
+		${CMAKE_CURRENT_LIST_DIR}/../data/img/next.svg)
 
 target_link_libraries(${BaseTargetName} PRIVATE ${DataTarget})
 

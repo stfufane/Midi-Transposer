@@ -36,6 +36,12 @@ public:
                            float sliderPos, float rotaryStartAngle,
                            float rotaryEndAngle, juce::Slider&) override;
 
+    void drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown,
+                      int buttonX, int buttonY, int buttonW, int buttonH,
+                      juce::ComboBox& combo) override;
+
+    void positionComboBoxText(juce::ComboBox& combo, juce::Label& label) override;
+
     void onConfigChanged(const CompColors& colors) override;
 
 private:

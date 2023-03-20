@@ -168,4 +168,22 @@ void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, i
     g.fillRect(juce::Rectangle<float> (static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre (thumbPoint));
 }
 
+void BaseLookAndFeel::drawComboBox (juce::Graphics& g, int width, int height, bool /* isButtonDown */,
+                                    int /* buttonX */, int /* buttonY */, int /* buttonW */, int /* buttonH */,
+                                    juce::ComboBox& box)
+{
+    auto cornerSize = 16.f;
+    auto bounds = juce::Rectangle<int> (0, 0, width, height).toFloat().reduced (3.f, 0.f);
+
+    g.setColour (box.findColour (juce::Label::backgroundColourId).brighter(box.isMouseOver(true) ? .1f : 0.f));
+    g.fillRoundedRectangle (bounds, cornerSize);
+}
+
+void BaseLookAndFeel::positionComboBoxText (juce::ComboBox& box, juce::Label& label)
+{
+    label.setBounds (juce::Rectangle<int>(0, 0, box.getWidth(), box.getHeight()).reduced(3, 1));
+    label.setFont (LnF::getDefaultFont(18.f));
+    label.setJustificationType(juce::Justification::centred);
+}
+
 }

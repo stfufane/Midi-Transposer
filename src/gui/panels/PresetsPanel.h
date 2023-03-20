@@ -16,7 +16,7 @@ public:
     explicit PresetsPanel(PresetBrowser::PresetManager& pm);
     ~PresetsPanel() override;
 
-    void initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable);
+    void initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable, const juce::String& inTooltip);
 
     void resized() override;
 
@@ -27,11 +27,23 @@ public:
 private:
     void updatePresetsList();
 
+    /**
+     * @brief Load a preset from the preset manager
+     * @param offset Offset from the current preset (-1 for previous, 1 for next)
+    */
+    void loadPreset(int offset);
+
+    void savePreset();
+
     PresetBrowser::PresetManager& presetManager; // Only a reference, the audio processor is owning it.
 
+    juce::DrawableButton presetNewButton { "btnNewPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
     juce::DrawableButton presetSaveButton { "btnSavePreset", juce::DrawableButton::ButtonStyle::ImageFitted };
-    juce::DrawableButton presetResetButton { "btnResetPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
+    juce::DrawableButton presetCopyButton { "btnCopyPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
     juce::DrawableButton presetDeleteButton { "btnDeletePreset", juce::DrawableButton::ButtonStyle::ImageFitted };
+
+    juce::DrawableButton presetPreviousButton { "btnPreviousPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
+    juce::DrawableButton presetNextButton { "btnNextPreset", juce::DrawableButton::ButtonStyle::ImageFitted };
 
     juce::ComboBox presetListComboBox { "cmbPresetList" };
 
