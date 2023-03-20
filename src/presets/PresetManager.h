@@ -14,13 +14,19 @@ namespace PresetBrowser {
          * @brief Saves the current state of params in an XML file
          * @param inPresetName The name of the XML file
          */
-        bool savePreset(const juce::String &inPresetName);
+        bool savePreset(const juce::String& inPresetName);
 
         /**
          * @brief Loads an XML file and gets the param values to reset the audio processor.
          * @param inPresetName The name of the XML file to load.
          */
-        bool loadPreset(const juce::String &inPresetName);
+        void loadPreset(const juce::String& inPresetName);
+
+        /**
+         * @brief Deletes a preset from the presets directory
+         * @param inPresetName The name of the preset to delete
+         */
+        void deletePreset(const juce::String& inPresetName);
 
         /**
          * @brief Resets all the parameters to their default values and set the current preset to Default.
@@ -52,6 +58,7 @@ namespace PresetBrowser {
 
     public:
         static const juce::String kPresetsExtension;
+        static const juce::String kInitPreset;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PresetManager)
     };

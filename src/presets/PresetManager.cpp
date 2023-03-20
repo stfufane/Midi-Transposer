@@ -4,6 +4,7 @@
 namespace PresetBrowser {
 
     const juce::String PresetManager::kPresetsExtension = "preset";
+    const juce::String PresetManager::kInitPreset = "Init";
 
     PresetManager::PresetManager(juce::AudioProcessor& p) :
             processor(p),
@@ -23,7 +24,7 @@ namespace PresetBrowser {
 
     bool PresetManager::savePreset(const juce::String& inPresetName)
     {
-        if (inPresetName.isEmpty()) {
+        if (inPresetName.isEmpty() || inPresetName == kInitPreset) {
             return false;
         }
         juce::XmlElement xml("preset");
@@ -44,16 +45,16 @@ namespace PresetBrowser {
         return true;
     }
 
-    bool PresetManager::loadPreset(const juce::String& inPresetName)
+    void PresetManager::loadPreset(const juce::String& inPresetName)
     {
         if (inPresetName.isEmpty()) {
-            return false;
+            return;
         }
         const auto preset_file = presetsPath.getChildFile(inPresetName + "." + kPresetsExtension);
         if (!preset_file.existsAsFile()) {
             DBG("Preset file " + preset_file.getFullPathName() + " does not exist");
             jassertfalse;
-            return false;
+            return;
         }
 
         juce::XmlDocument xml_document { preset_file };
@@ -65,10 +66,25 @@ namespace PresetBrowser {
                     param->setValueNotifyingHost(static_cast<float>(params->getDoubleAttribute(Params::ParamHelper::getParamID(param), param->getValue())));
                 }
                 currentPreset = inPresetName;
-                return true;
             }
         }
-        return false;
+    }
+
+    void PresetManager::deletePreset(const juce::String& inPresetName)
+    {
+        if (inPresetName.isEmpty() || inPresetName == kInitPreset) {
+            return;
+        }
+
+        const auto preset_file = presetsPath.getChildFile(inPresetName + "." + kPresetsExtension);
+        if (!preset_file.existsAsFile()) {
+            DBG("Preset file " + preset_file.getFullPathName() + " does not exist");
+            jassertfalse;
+            return;
+        }
+        preset_file.deleteFile();
+        // Reload the default preset after the deletion.
+        resetPreset();
     }
 
     void PresetManager::resetPreset()
@@ -76,7 +92,7 @@ namespace PresetBrowser {
         for (auto& param : processor.getParameters()) {
             param->setValueNotifyingHost(param->getDefaultValue());
         }
-        currentPreset = "Default";
+        currentPreset = kInitPreset;
     }
 
     juce::StringArray PresetManager::getAllPresets() const {
