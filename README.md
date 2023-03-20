@@ -64,3 +64,11 @@ Some ideas I have in mind to improve it :
  * Shortcuts to add some intervals to all notes
  * Shortcut to reset the intervals of one note
  * Different arpeggiator patterns
+
+ ## Third party dependencies
+
+- [JUCE](https://juce.com/)
+- [Gin](https://github.com/FigBug/Gin)
+- [nlohmann/json](https://github.com/nlohmann/json)
+- [Iosevka font](https://github.com/be5invis/Iosevka)
+- [Scarlab Solid Oval Interface Icons Collection](https://www.svgrepo.com/collection/scarlab-solid-oval-interface-icons/)
