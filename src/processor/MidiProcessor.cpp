@@ -20,10 +20,10 @@ void MidiProcessor::process(juce::MidiBuffer& midiMessages, const int numSamples
      * This will filter notes on/off and keep other messages.
      * In arpeggiator mode it will just calculate the chord notes to play
      */
+    const auto inputChannel = midiParams.inputChannel->get();
     for (const auto& metadata: midiMessages) {
         const auto& m = metadata.getMessage();
         // Only notes on and off from input channel are processed, the rest is passed through.
-        const auto inputChannel = midiParams.inputChannel->get();
         if (inputChannel == 0 || m.getChannel() == inputChannel) {
             if (m.isNoteOnOrOff()) {
                 mapNote(m, metadata.samplePosition);
