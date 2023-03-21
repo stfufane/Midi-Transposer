@@ -9,7 +9,7 @@ namespace Gui
 /**
  * @brief The drawing of a key with an event to display its intervals.
  */
-class NoteKey : public juce::Component
+class NoteKey : public juce::TextButton
 {
 public:
     NoteKey() = delete;

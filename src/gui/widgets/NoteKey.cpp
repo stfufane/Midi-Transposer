@@ -7,11 +7,14 @@ namespace Gui
 {
 
 NoteKey::NoteKey(int index)
-        : juce::Component("Note Key " + juce::String(index)), noteIndex(index)
-{}
+        : juce::TextButton("Note Key " + juce::String(index)), noteIndex(index)
+{
+    setTooltip("Click to change the intervals for this note.");
+}
 
 void NoteKey::paint(juce::Graphics& g)
 {
+    setMouseCursor(juce::MouseCursor::PointingHandCursor);
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
         const auto key_bounds = juce::Rectangle<float>(0.f, 0.f,
@@ -51,13 +54,11 @@ void NoteKey::mouseDown(const juce::MouseEvent&)
 void NoteKey::mouseEnter(const juce::MouseEvent&)
 {
     isOver = true;
-    setMouseCursor(juce::MouseCursor::PointingHandCursor);
     repaint();
 }
 
 void NoteKey::mouseExit(const juce::MouseEvent&)
 {
-    setMouseCursor(juce::MouseCursor::NormalCursor);
     isOver = false;
     repaint();
 }
