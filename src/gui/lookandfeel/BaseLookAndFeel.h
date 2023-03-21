@@ -44,6 +44,15 @@ public:
 
     void onConfigChanged(const CompColors& colors) override;
 
+    void drawPopupMenuBackground (juce::Graphics& g, int width, int height) override;
+
+    void drawPopupMenuItem (juce::Graphics& g, const juce::Rectangle<int>& area,
+                                 const bool isSeparator, const bool isActive,
+                                 const bool isHighlighted, const bool isTicked,
+                                 const bool hasSubMenu, const juce::String& text,
+                                 const juce::String& shortcutKeyText,
+                                 const juce::Drawable* icon, const juce::Colour* const textColourToUse) override;
+
 private:
     Gui::Configuration<CompColors> mConfiguration;
 

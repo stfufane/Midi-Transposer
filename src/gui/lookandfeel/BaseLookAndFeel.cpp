@@ -186,4 +186,44 @@ void BaseLookAndFeel::positionComboBoxText (juce::ComboBox& box, juce::Label& la
     label.setJustificationType(juce::Justification::centred);
 }
 
+void BaseLookAndFeel::drawPopupMenuBackground (juce::Graphics& g, int width, int height)
+{
+    g.fillAll(juce::Colours::transparentWhite);
+
+    g.setColour(findColour(juce::Label::backgroundColourId));
+    g.fillRect(juce::Rectangle<int>(0, 0, width - 30, height).withCentre(juce::Point<int>(width / 2, height / 2)));
+}
+
+void BaseLookAndFeel::drawPopupMenuItem (juce::Graphics& g, const juce::Rectangle<int>& area,
+                                        const bool isSeparator, const bool isActive,
+                                        const bool isHighlighted, const bool isTicked,
+                                        const bool hasSubMenu, const juce::String& text,
+                                        const juce::String& shortcutKeyText,
+                                        const juce::Drawable* icon, const juce::Colour* const textColourToUse)
+{
+    g.fillAll(juce::Colours::transparentWhite);
+    
+    auto textColour = findColour (juce::Label::textColourId);
+    auto r  = area.reduced (1);
+    r.reduce (juce::jmin (5, area.getWidth() / 20), 0);
+
+    if (isHighlighted && isActive) {
+        g.setColour (findColour (juce::Label::backgroundColourId).brighter(0.2f));
+        g.fillRect (r);
+
+        g.setColour (findColour (juce::PopupMenu::highlightedTextColourId));
+    } else {
+        g.setColour (textColour.withMultipliedAlpha (isActive ? 1.0f : 0.5f));
+    }
+
+    auto font = getDefaultFont();
+    auto maxFontHeight = (float) r.getHeight() / 1.3f;
+    if (font.getHeight() > maxFontHeight)
+        font.setHeight (maxFontHeight);
+
+    g.setFont (font);
+    g.drawFittedText (text, r, juce::Justification::centred, 1);
+
+}
+
 }
