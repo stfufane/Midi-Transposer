@@ -109,7 +109,7 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
         static_cast<float>(width), static_cast<float>(slider.getHeight()) * (1.f - h_ratio));
 
     g.setFont(LnF::getDefaultFont(20.f));
-    g.setColour(juce::Colours::white);
+    g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
     g.drawText(text, text_bounds, juce::Justification::centred);
 }
 
@@ -175,7 +175,7 @@ void BaseLookAndFeel::drawComboBox (juce::Graphics& g, int width, int height, bo
     auto cornerSize = 16.f;
     auto bounds = juce::Rectangle<int> (0, 0, width, height).toFloat().reduced (3.f, 0.f);
 
-    g.setColour (box.findColour (juce::Label::backgroundColourId).brighter(box.isMouseOver(true) ? .1f : 0.f));
+    g.setColour (box.findColour (juce::Label::backgroundColourId).darker(box.isMouseOver(true) ? .2f : .1f));
     g.fillRoundedRectangle (bounds, cornerSize);
 }
 

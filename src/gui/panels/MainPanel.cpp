@@ -79,8 +79,8 @@ void MainPanel::paint(juce::Graphics& g)
                                                            static_cast<float>(coordinates.mMidiPanel.getWidth()),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(midi_header_coordinates, coordinates.mFrameCorner / 2.f);
-    g.fillRoundedRectangle(coordinates.mMidiLabels, coordinates.mKeyCorner);
-    g.fillRoundedRectangle(coordinates.mMidiOct, coordinates.mKeyCorner);
+    g.drawRoundedRectangle(coordinates.mMidiLabels, coordinates.mKeyCorner, 1.f);
+    g.drawRoundedRectangle(coordinates.mMidiOct, coordinates.mKeyCorner, 1.f);
 
     // Arp frame
     g.drawRoundedRectangle(coordinates.mArpPanel.reduced(coordinates.mMargin),
@@ -106,14 +106,12 @@ void MainPanel::paint(juce::Graphics& g)
     // Tooltips frame
     g.drawRoundedRectangle(coordinates.mTooltipsPanel.reduced(coordinates.mMargin),
                            coordinates.mFrameCorner, 1.f);
-    // Keys frame
-    g.drawRoundedRectangle(coordinates.mKeysPanel.reduced(coordinates.mMargin),
-                           coordinates.mFrameCorner, 1.f);
+    
     // Intervals frame
     g.drawRoundedRectangle(coordinates.mIntervalsPanel.reduced(coordinates.mMargin),
                            coordinates.mFrameCorner, 1.f);
-    g.fillRoundedRectangle(coordinates.mIntervalsTransposeLabel, coordinates.mIntervalsLabelCorner);
-    g.fillRoundedRectangle(coordinates.mIntervalsSlidersLabel, coordinates.mIntervalsLabelCorner);
+    g.drawRoundedRectangle(coordinates.mIntervalsTransposeLabel, coordinates.mIntervalsLabelCorner, 1.f);
+    g.drawRoundedRectangle(coordinates.mIntervalsSlidersLabel, coordinates.mIntervalsLabelCorner, 1.f);
 
     // Header texts
     g.setColour(findColour(juce::Label::ColourIds::textColourId));
@@ -121,11 +119,14 @@ void MainPanel::paint(juce::Graphics& g)
     g.drawText("MIDI", midi_header_coordinates, juce::Justification::centred);
     g.drawText("ARP", arp_header_coordinates, juce::Justification::centred);
     g.drawText("PRESETS", preset_header_coordinates, juce::Justification::centred);
+    
     // Label texts
     g.setFont(coordinates.mLabelFontSize);
+    g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
     g.drawText("IN", coordinates.mMidiLabels.withX(coordinates.mMidiInX), juce::Justification::left);
     g.drawText("OUT", coordinates.mMidiLabels.withX(coordinates.mMidiOutX), juce::Justification::left);
     g.drawText(juce::CharPointer_UTF8("OCT±"), coordinates.mMidiOct.withX(coordinates.mMidiOctX), juce::Justification::left);
+    
     g.setFont(coordinates.mIntervalsLabelFontSize);
     g.drawText("Transpose", coordinates.mIntervalsTransposeLabel, juce::Justification::centred);
 }

@@ -3,13 +3,19 @@
     "x": 0, "y": 0, "w": 342, "h": 172
   },
   "midi_labels": {
-    "x": 12, "y": 135, "w": 206, "h": 30
+    "x": 12, "y": 131, "w": 206, "h": 30
   },
   "midi_oct": {
-    "x": 228, "y": 135, "w": 100, "h": 30
+    "x": 228, "y": 131, "w": 100, "h": 30
   },
   "arp_panel": {
     "x": 342, "y": 0, "w": 174, "h": 172
+  },
+  "arp_switch": {
+    "x": 14, "y": 132, "w": 60, "h": 28
+  },
+  "arp_sync_switch": {
+    "x": 82, "y": 132, "w": 80, "h": 28
   },
   "presets_panel": {
     "x": 516, "y": 0, "w": 225, "h": 172
@@ -30,12 +36,13 @@
     "x": 0, "y": 400, "w": 741, "h": 42
   },
   "intervals_toggle": {
-    "x": 6, "y": 40, "w": 60, "h": 30
+    "x": 8, "y": 40, "w": 60, "h": 30
   },
-  "margin": 3.0,
+  "margin": 4.0,
+  "switch_margin": 3.0,
   "frame_corner": 6.0,
   "header_height": 48.0,
-  "header_font_size": 32.0,
+  "header_font_size": 30.0,
   "label_font_size": 28.0,
   "midi_in_x": 46.0,
   "midi_out_x": 152.0,

@@ -83,13 +83,8 @@ void ArpPanel::resized()
         arpRate->getComponent().setBounds(knob_bounds);
         arpSyncRate->getComponent().setBounds(knob_bounds);
 
-        auto toggle_bounds = juce::Rectangle<float>(coordinates.mToggleX, coordinates.mHeaderHeight + coordinates.mKnobHeight,
-                                                 coordinates.mToggleWidth, coordinates.mToggleHeight)
-                .reduced(coordinates.mMargin).toNearestInt();
-        arpActivated->getComponent().setBounds(toggle_bounds);
-        arpSynced->getComponent().setBounds(toggle_bounds
-            .withWidth(static_cast<int>(coordinates.mToggleSyncWidth))
-            .translated(static_cast<int>(coordinates.mToggleWidth), 0));
+        arpActivated->getComponent().setBounds(coordinates.mArpSwitch.toNearestInt());
+        arpSynced->getComponent().setBounds(coordinates.mArpSyncSwitch.toNearestInt());
     }
 }
 

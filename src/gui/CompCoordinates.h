@@ -13,6 +13,8 @@ struct CompCoordinates {
     juce::Rectangle<float> mMidiLabels;
     juce::Rectangle<float> mMidiOct;
     juce::Rectangle<float> mArpPanel;
+    juce::Rectangle<float> mArpSwitch;
+    juce::Rectangle<float> mArpSyncSwitch;
     juce::Rectangle<float> mPresetsPanel;
     juce::Rectangle<float> mKeysPanel;
     juce::Rectangle<float> mIntervalsPanel;
@@ -23,6 +25,7 @@ struct CompCoordinates {
 
     // Some globals to draw different components.
     float mMargin { 1.f }; // The global margin separating the different panels
+    float mSwitchMargin { 1.f };
     float mFrameCorner { 1.f }; // The frame's rounded rectangles size
     float mHeaderHeight { 1.f }; // The height of the title blocks
     float mHeaderFontSize { 1.f }; // The font size of the title blocks
@@ -64,6 +67,12 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
     auto arp_panel = j.at("arp_panel");
     pos.mArpPanel = { arp_panel.at("x"), arp_panel.at("y"),
                       arp_panel.at("w"), arp_panel.at("h") };
+    auto arp_switch = j.at("arp_switch");
+    pos.mArpSwitch = { arp_switch.at("x"), arp_switch.at("y"),
+                       arp_switch.at("w"), arp_switch.at("h") };
+    auto arp_sync_switch = j.at("arp_sync_switch");
+    pos.mArpSyncSwitch = { arp_sync_switch.at("x"), arp_sync_switch.at("y"),
+                           arp_sync_switch.at("w"), arp_sync_switch.at("h") };
     auto presets_panel = j.at("presets_panel");
     pos.mPresetsPanel = { presets_panel.at("x"), presets_panel.at("y"),
                           presets_panel.at("w"), presets_panel.at("h") };
@@ -87,6 +96,7 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
                              intervals_toggle.at("w"), intervals_toggle.at("h") };
 
     j.at("margin").get_to(pos.mMargin);
+    j.at("switch_margin").get_to(pos.mSwitchMargin);
     j.at("frame_corner").get_to(pos.mFrameCorner);
     j.at("header_height").get_to(pos.mHeaderHeight);
     j.at("header_font_size").get_to(pos.mHeaderFontSize);

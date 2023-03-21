@@ -171,8 +171,8 @@ void PresetsPanel::resized()
     preset_buttons.flexDirection = juce::FlexBox::Direction::row;
     preset_buttons.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 
-    preset_buttons.items.add(juce::FlexItem(presetPreviousButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
-    preset_buttons.items.add(juce::FlexItem(presetNextButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 5, 0, 5)));
+    preset_buttons.items.add(juce::FlexItem(presetPreviousButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 20, 0, 20)));
+    preset_buttons.items.add(juce::FlexItem(presetNextButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 20, 0, 20)));
 
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
