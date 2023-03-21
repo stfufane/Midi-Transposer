@@ -19,6 +19,8 @@ struct CompColors {
     std::string mSliderOutline;
     std::string mLabelBackground;
     std::string mLabelText;
+    std::string mKeyPlayedBackground;
+    std::string mKeyPlayedText;
 
     static std::string getFileName() { return "colors.json"; }
 };
@@ -33,6 +35,8 @@ inline void from_json(const nlohmann::json& j, CompColors& colors)
         j.at("slider_outline").get_to(colors.mSliderOutline);
         j.at("label_background").get_to(colors.mLabelBackground);
         j.at("label_text").get_to(colors.mLabelText);
+        j.at("key_played_background").get_to(colors.mKeyPlayedBackground);
+        j.at("key_played_text").get_to(colors.mKeyPlayedText);
     } catch (std::exception& e) {
         std::cout << "One or several values were not defined in the json configuration file\n" << e.what() << "\n";
     }

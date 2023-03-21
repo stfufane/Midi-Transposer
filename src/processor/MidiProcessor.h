@@ -12,6 +12,8 @@ public:
     void process(juce::MidiBuffer& midiMessages, int numSamples, juce::AudioPlayHead* playHead);
     void addParameters(juce::AudioProcessor& p);
 
+    int getLastNoteOn() const { return lastNoteOn.note; }
+
     Params::MidiParams& getMidiParams() { return midiParams; }
     Params::NoteParams& getNoteParams() { return noteParams; }
     Params::ArpeggiatorParams& getArpeggiatorParams() { return arpeggiatorParams; }

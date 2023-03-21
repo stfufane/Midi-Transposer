@@ -14,7 +14,9 @@
 namespace Gui
 {
 
-class MainPanel : public juce::Component, public Configuration<CompCoordinates>::Listener<CompCoordinates>
+class MainPanel : public juce::Component, 
+                  public Configuration<CompCoordinates>::Listener<CompCoordinates>,
+                  public juce::Timer
 {
 public:
     MainPanel() = delete;
@@ -28,8 +30,11 @@ public:
 
     [[nodiscard]] const CompCoordinates& getCoordinates() const { return mConfiguration.getData(); }
 
+    void timerCallback() override;
 private:
     Configuration<CompCoordinates> mConfiguration;
+
+    std::function<int()> getNotePlayed = nullptr;
 
     void onConfigChanged(const CompCoordinates& positions) override;
 

@@ -37,8 +37,8 @@ void BaseLookAndFeel::resetColors() {
     setColour(juce::TooltipWindow::backgroundColourId, juce::Colours::whitesmoke);
     setColour(juce::TooltipWindow::textColourId, juce::Colours::black);
 
-    setColour(juce::BubbleComponent::outlineColourId, juce::Colour::fromString(colors.mLabelBackground));
-    setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::whitesmoke);
+    setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromString(colors.mKeyPlayedBackground));
+    setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colour::fromString(colors.mKeyPlayedText));
 
     // ToggleButton colors
     setColour(juce::ToggleButton::ColourIds::textColourId, juce::Colours::black);

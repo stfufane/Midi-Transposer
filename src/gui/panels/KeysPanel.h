@@ -19,6 +19,7 @@ public:
 
     std::vector<std::unique_ptr<Gui::NoteKey>>& getNoteKeys() { return noteKeys; }
     void setNoteKeyEdited(int index);
+    void setNotePlayed(int index);
 private:
     std::vector<std::unique_ptr<Gui::NoteKey>> noteKeys;
 

@@ -5,5 +5,7 @@
   "slider_text": "ff121255",
   "slider_outline": "ffcfcfdf",
   "label_background": "ff153c69",
-  "label_text": "ffeff1f1"
+  "label_text": "ffeff1f1",
+  "key_played_background": "ff42bbfc",
+  "key_played_text": "ffeff1f1"
 }

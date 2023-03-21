@@ -12,6 +12,15 @@ NoteKey::NoteKey(int index)
     setTooltip("Click to change the intervals for this note.");
 }
 
+void NoteKey::setPlayed(const int index) 
+{
+    auto oldPlayed = isPlayed;
+    isPlayed = (noteIndex == index % 12); 
+    if (oldPlayed != isPlayed) {
+        repaint();
+    }
+}
+
 void NoteKey::paint(juce::Graphics& g)
 {
     setMouseCursor(juce::MouseCursor::PointingHandCursor);
@@ -21,10 +30,14 @@ void NoteKey::paint(juce::Graphics& g)
                                                        static_cast<float>(getWidth()),
                                                        static_cast<float>(getHeight())).reduced(3.f);
         auto draw_key = [&](int background_color, int text_color) {
-            if (isEdited) {
+            if (isPlayed) {
+                background_color = juce::TextButton::ColourIds::buttonColourId;
+                text_color = juce::TextButton::ColourIds::textColourOnId;
+            } else if (isEdited) {
                 background_color = juce::Slider::backgroundColourId;
                 text_color = juce::Slider::ColourIds::textBoxTextColourId;
-            }
+            } 
+
             if (isOver) {
                 g.addTransform(juce::AffineTransform::scale(coordinates.mKeyOver));
             }

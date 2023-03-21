@@ -21,6 +21,13 @@ void KeysPanel::setNoteKeyEdited(const int index)
     }
 }
 
+void KeysPanel::setNotePlayed(const int index)
+{
+    for (auto& noteKey: noteKeys) {
+        noteKey->setPlayed(index);
+    }
+}
+
 void KeysPanel::resized()
 {
     if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {

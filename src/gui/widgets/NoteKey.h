@@ -21,12 +21,14 @@ public:
     void mouseExit(const juce::MouseEvent&) override;
 
     void setEdited(const int index) { isEdited = (noteIndex == index); }
+    void setPlayed(const int index);
     void setChangeNoteCallback(std::function<void(int)> inCallback) { changeNote = std::move(inCallback); }
 
 private:
     int noteIndex;
-    bool isEdited = false;
-    bool isOver = false;
+    bool isEdited   = false;
+    bool isOver     = false;
+    bool isPlayed   = false;
     std::function<void(int index)> changeNote = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoteKey)

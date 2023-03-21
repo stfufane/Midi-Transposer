@@ -41,6 +41,11 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
         });
     }
 
+    // Get the last note played from the audio processor.
+    getNotePlayed = [&p]() {
+        return p.getMidiProcessor().getLastNoteOn();
+    };
+
     // TODO: custom dummy panel that displays all the transpositions
     // Invert label color so it's black on white.
     dummyPanel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
@@ -54,6 +59,8 @@ MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
     addAndMakeVisible(dummyPanel);
     addAndMakeVisible(keysPanel);
     addAndMakeVisible(tooltipPanel);
+
+    startTimerHz(20);
 }
 
 MainPanel::~MainPanel()
@@ -64,6 +71,14 @@ MainPanel::~MainPanel()
 void MainPanel::onConfigChanged(const CompCoordinates&)
 {
     resized();
+}
+
+void MainPanel::timerCallback()
+{
+    if (getNotePlayed) {
+        const auto note = getNotePlayed();
+        keysPanel.setNotePlayed(note);
+    }
 }
 
 void MainPanel::paint(juce::Graphics& g)
