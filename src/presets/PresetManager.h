@@ -54,7 +54,7 @@ namespace PresetBrowser {
         /**
          * @brief The name of the currently loaded preset
          */
-        juce::String currentPreset { "Default" };
+        juce::String currentPreset;
 
     public:
         static const juce::String kPresetsExtension;

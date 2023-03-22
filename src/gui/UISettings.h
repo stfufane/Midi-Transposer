@@ -36,7 +36,7 @@ struct UISettings
     int width = 0;
     int height = 0;
     int lastNoteIndex = 0;
-    juce::String presetName { "Default" };
+    juce::String presetName;
 };
 
 }
