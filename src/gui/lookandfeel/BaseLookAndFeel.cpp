@@ -44,6 +44,8 @@ void BaseLookAndFeel::resetColors() {
     setColour(juce::ToggleButton::ColourIds::textColourId, juce::Colours::black);
     setColour(juce::ToggleButton::ColourIds::tickColourId, juce::Colours::black);
     setColour(juce::ToggleButton::ColourIds::tickDisabledColourId, juce::Colours::darkgrey);
+
+    setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::transparentWhite);
 }
 
 juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& /* tipText */,
@@ -202,7 +204,7 @@ void BaseLookAndFeel::drawPopupMenuItem (juce::Graphics& g, const juce::Rectangl
                                         const juce::Drawable* icon, const juce::Colour* const textColourToUse)
 {
     g.fillAll(juce::Colours::transparentWhite);
-    
+
     auto textColour = findColour (juce::Label::textColourId);
     auto r  = area.reduced (1);
     r.reduce (juce::jmin (5, area.getWidth() / 20), 0);
