@@ -25,7 +25,7 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
         [](Gui::CustomSlider& slider) {
             slider.setRange(0., 1.0, 0.01);
             slider.setNumDecimalPlacesToDisplay(0);
-            slider.setCustomTextLambda([](double value) -> juce::String {
+            slider.setCustomTextLambda([](const double value) -> juce::String {
                 return juce::String(1000. / (100. * (.1 + (5. - 5. * value))), 1) + "Hz";
             });
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {
@@ -41,9 +41,9 @@ ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
     arpSyncRate = std::make_unique< AttachedComponent<Gui::CustomSlider, juce::SliderParameterAttachment> >(
         *arpParams.syncRate, *this,
         [](Gui::CustomSlider& slider) {
-            double nbDivisions = (double) Notes::divisions.size() - 1;
+            double nbDivisions = static_cast<double>(Notes::divisions.size()) - 1;
             slider.setNormalisableRange({ 0, nbDivisions, 1 });
-            slider.setCustomTextLambda([](double value) -> juce::String {
+            slider.setCustomTextLambda([](const double value) -> juce::String {
                 return Notes::divisions[static_cast<size_t>(value)].label;
             });
             slider.setCustomPaintLambda([&slider](juce::Graphics& g) {

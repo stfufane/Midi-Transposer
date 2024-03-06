@@ -1,8 +1,5 @@
 #include "MidiProcessor.h"
 
-MidiProcessor::MidiProcessor()
-        : notesMapping(12, std::set<int>({ 0 })) {}
-
 /*================================================================ */
 // PROCESS
 /*================================================================ */
@@ -12,7 +9,7 @@ void MidiProcessor::prepareToPlay(const double rate)
     arp.sampleRate = static_cast<float> (rate);
 }
 
-void MidiProcessor::process(juce::MidiBuffer& midiMessages, const int numSamples, juce::AudioPlayHead* playHead)
+void MidiProcessor::process(juce::MidiBuffer& midiMessages, const int numSamples, const juce::AudioPlayHead* playHead)
 {
     processedMidi.clear();
 
@@ -55,7 +52,7 @@ void MidiProcessor::mapNote(const juce::MidiMessage& m, const int samplePosition
 {
     // The output channel will be the original one or the one defined by the parameter knob.
     const auto outputChannel = midiParams.outputChannel->get();
-    const auto channel = (outputChannel == 0) ? m.getChannel() : outputChannel;
+    const auto channel = outputChannel == 0 ? m.getChannel() : outputChannel;
     const NoteState noteState {m.getNoteNumber(), channel, m.getVelocity() };
     if (m.isNoteOn()) {
         // Add the note to the vector of current notes played.
@@ -130,10 +127,10 @@ void MidiProcessor::stopCurrentNotes(const juce::uint8 velocity, const int sampl
 
 void MidiProcessor::removeHeldNote(const int note)
 {
-    currentInputNotesOn.erase(std::remove_if(currentInputNotesOn.begin(), currentInputNotesOn.end(),
-                                              [&note](const auto& note_state) {
-                                                  return note_state.note == note;
-                                              }), currentInputNotesOn.end());
+    std::erase_if(currentInputNotesOn,
+                  [&note](const auto& note_state) {
+                      return note_state.note == note;
+                  });
 }
 
 std::vector<MidiProcessor::NoteState> MidiProcessor::getMappedNotes(const NoteState& noteState) const
@@ -149,7 +146,7 @@ std::vector<MidiProcessor::NoteState> MidiProcessor::getMappedNotes(const NoteSt
 
     // Then add all the notes from the mapping vector at the transposed height.
     for (const auto noteMapping: notesMapping[static_cast<size_t>(baseNote)]) {
-        mappedNotes.push_back({noteState.note + noteMapping + (octaveTranspose * 12), noteState.channel, noteState.velocity});
+        mappedNotes.push_back({noteState.note + noteMapping + octaveTranspose * 12, noteState.channel, noteState.velocity});
     }
 
     return mappedNotes;
@@ -158,7 +155,7 @@ std::vector<MidiProcessor::NoteState> MidiProcessor::getMappedNotes(const NoteSt
 /*================================================================ */
 // ARPEGGIATOR
 /*================================================================ */
-void MidiProcessor::processArpeggiator(const int numSamples, juce::AudioPlayHead* playHead)
+void MidiProcessor::processArpeggiator(const int numSamples, const juce::AudioPlayHead* playHead)
 {
     juce::Optional<juce::AudioPlayHead::PositionInfo> positionInfo;
     if (playHead != nullptr) {
@@ -167,10 +164,10 @@ void MidiProcessor::processArpeggiator(const int numSamples, juce::AudioPlayHead
 
     // Update the arpeggiated notes if there's been an update in NoteParam listener
     // and the updated mapping is the currently played note.
-    if (arp.noteUpdated > -1 && (lastNoteOn.note % 12) == arp.noteUpdated) {
+    if (arp.noteUpdated > -1 && lastNoteOn.note % 12 == arp.noteUpdated) {
         auto mappedNotes = getMappedNotes(lastNoteOn);
         if (mappedNotes.size() < currentOutputNotesOn.size()) {
-            arp.currentIndex = juce::jmin(arp.currentIndex, (int) mappedNotes.size() - 1);
+            arp.currentIndex = juce::jmin(arp.currentIndex, static_cast<int>(mappedNotes.size()) - 1);
         }
         currentOutputNotesOn.swap(mappedNotes);
         arp.noteUpdated = -1;
@@ -209,14 +206,14 @@ void MidiProcessor::arpeggiate(const int numSamples, const juce::AudioPlayHead::
       => We loop through the number of samples and count elapsed time until no more note can be played.
     */
     if (numSamples < noteDuration) {
-        if ((arp.time + numSamples) >= noteDuration) {
-            auto offset = juce::jmax(0, juce::jmin((int) (noteDuration - arp.time), numSamples - 1));
+        if (arp.time + numSamples >= noteDuration) {
+            const auto offset = juce::jmax(0, juce::jmin(noteDuration - arp.time, numSamples - 1));
             playArpeggiatorNote(offset);
         }
         arp.time = (arp.time + numSamples) % noteDuration;
     } else {
         while (arp.time < numSamples) {
-            auto offset = arp.time + noteDuration;
+            const auto offset = arp.time + noteDuration;
             if (offset < numSamples) {
                 playArpeggiatorNote(offset);
             }
@@ -235,7 +232,7 @@ void MidiProcessor::arpeggiateSync(const int numSamples, const juce::AudioPlayHe
 
     while (offset < numSamples) {
         // Reset the position calculation if the division has changed.
-        auto lastDivision = Notes::divisions[static_cast<size_t>(arpeggiatorParams.syncRate->get())].division;
+        const auto lastDivision = Notes::divisions[static_cast<size_t>(arpeggiatorParams.syncRate->get())].division;
         if (arp.division != lastDivision) {
             // Update the current division from parameter
             arp.division = lastDivision;
@@ -247,7 +244,7 @@ void MidiProcessor::arpeggiateSync(const int numSamples, const juce::AudioPlayHe
             int nb_divisions = 1;
             while (arp.nextBeatPosition == 0.) {
                 // For divisions greater than 1.0, we just snap to the next quarter note.
-                auto nextDivision = std::floor(*beatPosition) + (nb_divisions * std::min(1., arp.division));
+                const auto nextDivision = std::floor(*beatPosition) + (nb_divisions * std::min(1., arp.division));
                 if (nextDivision >= *beatPosition) {
                     arp.nextBeatPosition = nextDivision;
                 }
@@ -277,7 +274,7 @@ void MidiProcessor::playArpeggiatorNote(const int offset)
         processedMidi.addEvent(
                 juce::MidiMessage::noteOn(arp.currentNote.channel, arp.currentNote.note, arp.currentNote.velocity),
                 offset);
-        arp.currentIndex = (arp.currentIndex + 1) % ((int) currentOutputNotesOn.size());
+        arp.currentIndex = (arp.currentIndex + 1) % static_cast<int>(currentOutputNotesOn.size());
     }
 }
 
@@ -299,6 +296,11 @@ void MidiProcessor::addParameters(juce::AudioProcessor& p)
     initParameters();
 }
 
+Params::MidiParams& MidiProcessor::getMidiParams()
+{
+    return midiParams;
+}
+
 void MidiProcessor::initParameters()
 {
     for (auto& noteParam: noteParams.notes) {
@@ -311,8 +313,7 @@ void MidiProcessor::updateNoteMapping(const Params::NoteParam& inNoteParam)
 {
     std::set<int> new_mapping;
     // There's a slider on each note defining a new interval to add.
-    const auto map_note = inNoteParam.mapNote->get();
-    if (map_note) {
+    if (inNoteParam.mapNote->get()) {
         auto transpose = inNoteParam.transpose->get();
         // Add the transposed value first, it's the root note.
         new_mapping.insert(transpose);

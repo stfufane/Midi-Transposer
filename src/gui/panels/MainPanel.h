@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_MAINPANEL_H
-#define MIDIBASSPEDALCHORDS_MAINPANEL_H
+#ifndef MIDITRANSPOSER_MAINPANEL_H
+#define MIDITRANSPOSER_MAINPANEL_H
 
-#include "JuceHeader.h"
 #include "processor/PluginProcessor.h"
 #include "gui/panels/KeysPanel.h"
 #include "gui/panels/IntervalsPanel.h"
@@ -90,4 +89,4 @@ private:
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_MAINPANEL_H
+#endif //MIDITRANSPOSER_MAINPANEL_H

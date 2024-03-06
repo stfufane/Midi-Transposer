@@ -1,7 +1,7 @@
-#ifndef MIDIBASSPEDALCHORDS_NOTEKEY_H
-#define MIDIBASSPEDALCHORDS_NOTEKEY_H
+#ifndef MIDITRANSPOSER_NOTEKEY_H
+#define MIDITRANSPOSER_NOTEKEY_H
 
-#include "JuceHeader.h"
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace Gui
 {
@@ -36,4 +36,4 @@ private:
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_NOTEKEY_H
+#endif //MIDITRANSPOSER_NOTEKEY_H

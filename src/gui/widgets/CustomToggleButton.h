@@ -1,7 +1,8 @@
-#ifndef MIDIBASSPEDALCHORDS_CUSTOMTOGGLEBUTTON_H
-#define MIDIBASSPEDALCHORDS_CUSTOMTOGGLEBUTTON_H
+#ifndef MIDITRANSPOSER_CUSTOMTOGGLEBUTTON_H
+#define MIDITRANSPOSER_CUSTOMTOGGLEBUTTON_H
 
-#include "JuceHeader.h"
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace Gui
 {
@@ -24,4 +25,4 @@ private:
 
 } // Gui
 
-#endif //MIDIBASSPEDALCHORDS_CUSTOMTOGGLEBUTTON_H
+#endif //MIDITRANSPOSER_CUSTOMTOGGLEBUTTON_H

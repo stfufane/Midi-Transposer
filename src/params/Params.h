@@ -1,6 +1,6 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <string_view>
 
 namespace ParamIDs
@@ -118,7 +118,7 @@ struct NoteParam : juce::AudioProcessorParameter::Listener
 {
     NoteParam() = delete;
 
-    explicit NoteParam(int i);
+    explicit NoteParam(int index);
 
     ~NoteParam() override;
 

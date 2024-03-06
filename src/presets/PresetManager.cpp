@@ -1,5 +1,6 @@
 #include "PresetManager.h"
 #include "params/Params.h"
+#include "ProjectInfo.h"
 
 namespace PresetBrowser {
 
@@ -14,8 +15,7 @@ namespace PresetBrowser {
                              .getChildFile(ProjectInfo::projectName))
     {
         if (!presetsPath.exists()) {
-            const auto result = presetsPath.createDirectory();
-            if (result.failed()) {
+            if (const auto result = presetsPath.createDirectory(); result.failed()) {
                 DBG("Could not create preset directory: " + result.getErrorMessage());
                 jassertfalse;
             }
@@ -82,9 +82,14 @@ namespace PresetBrowser {
             jassertfalse;
             return;
         }
-        preset_file.deleteFile();
-        // Reload the default preset after the deletion.
-        resetPreset();
+        if (preset_file.deleteFile()) {
+            DBG("Preset file " + preset_file.getFullPathName() + " deleted");
+            // Reload the default preset after the deletion.
+            resetPreset();
+        } else {
+            DBG("Could not delete preset file: " + preset_file.getFullPathName());
+            jassertfalse;
+        }
     }
 
     void PresetManager::resetPreset()

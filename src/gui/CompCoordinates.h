@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_COMPCOORDINATES_H
-#define MIDIBASSPEDALCHORDS_COMPCOORDINATES_H
+#ifndef MIDITRANSPOSER_COMPCOORDINATES_H
+#define MIDITRANSPOSER_COMPCOORDINATES_H
 
-#include "JuceHeader.h"
 #include "nlohmann/json.hpp"
 
 namespace Gui
@@ -124,4 +123,4 @@ inline void from_json(const nlohmann::json& j, CompCoordinates& pos)
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_COMPCOORDINATES_H
+#endif //MIDITRANSPOSER_COMPCOORDINATES_H

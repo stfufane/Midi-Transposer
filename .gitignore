@@ -2,6 +2,7 @@
 .idea/
 .vscode/
 .vs/
+.DS_Store
 build/
 out/
 Builds/
@@ -9,3 +10,5 @@ JuceLibraryCode/
 
 /CMakeSettings.json
 /cmake-build-debug/
+
+ProjectInfo.h

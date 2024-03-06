@@ -1,7 +1,8 @@
-#ifndef MIDIBASSPEDALCHORDS_COMPCOLORS_H
-#define MIDIBASSPEDALCHORDS_COMPCOLORS_H
+#ifndef MIDITRANSPOSER_COMPCOLORS_H
+#define MIDITRANSPOSER_COMPCOLORS_H
 
-#include "JuceHeader.h"
+#include <iostream>
+
 #include "nlohmann/json.hpp"
 
 namespace Gui

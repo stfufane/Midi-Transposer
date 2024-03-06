@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_ARPPANEL_H
-#define MIDIBASSPEDALCHORDS_ARPPANEL_H
+#ifndef MIDITRANSPOSER_ARPPANEL_H
+#define MIDITRANSPOSER_ARPPANEL_H
 
-#include "JuceHeader.h"
 #include "processor/PluginProcessor.h"
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
@@ -28,4 +27,4 @@ private:
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_ARPPANEL_H
+#endif //MIDITRANSPOSER_ARPPANEL_H

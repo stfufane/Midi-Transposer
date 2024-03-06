@@ -1,7 +1,8 @@
-#ifndef MIDIBASSPEDALCHORDS_PRESETMANAGER_H
-#define MIDIBASSPEDALCHORDS_PRESETMANAGER_H
+#ifndef MIDITRANSPOSER_PRESETMANAGER_H
+#define MIDITRANSPOSER_PRESETMANAGER_H
 
-#include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_core/juce_core.h>
 
 namespace PresetBrowser {
 
@@ -65,4 +66,4 @@ namespace PresetBrowser {
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_PRESETMANAGER_H
+#endif //MIDITRANSPOSER_PRESETMANAGER_H

@@ -1,0 +1,14 @@
+#pragma once
+
+struct ProjectInfo
+{
+    static const char* const  projectName;
+    static const char* const  companyName;
+    static const char* const  versionString;
+    static const int          versionNumber;
+};
+
+const char* const ProjectInfo::projectName = "@PROJECT_NAME@";
+const char* const ProjectInfo::companyName = "@PROJECT_COMPANY@";
+const char* const ProjectInfo::versionString = "@PROJECT_VERSION_STRING@";
+const int ProjectInfo::versionNumber = @PROJECT_VERSION_NUMBER@;

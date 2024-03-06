@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_INTERVALSPANEL_H
-#define MIDIBASSPEDALCHORDS_INTERVALSPANEL_H
+#ifndef MIDITRANSPOSER_INTERVALSPANEL_H
+#define MIDITRANSPOSER_INTERVALSPANEL_H
 
-#include "JuceHeader.h"
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
 #include "gui/widgets/TextSwitch.h"
@@ -16,7 +15,7 @@ class IntervalsPanel : public juce::Component
 {
 public:
     IntervalsPanel() = delete;
-    explicit IntervalsPanel(Params::NoteParam& noteParam);
+    explicit IntervalsPanel(const Params::NoteParam& noteParam);
 
     void resized() override;
 
@@ -41,4 +40,4 @@ private:
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_INTERVALSPANEL_H
+#endif //MIDITRANSPOSER_INTERVALSPANEL_H

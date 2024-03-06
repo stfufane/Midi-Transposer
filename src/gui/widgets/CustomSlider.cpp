@@ -4,7 +4,7 @@ namespace Gui
 {
     CustomSlider::CustomSlider(const juce::String& name,
                                juce::Slider::SliderStyle inStyle,
-                               juce::Slider::TextEntryBoxPosition inPosition)
+                               const juce::Slider::TextEntryBoxPosition inPosition)
         : juce::Slider(name)
     {
         // Init default slider form.

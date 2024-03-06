@@ -1,10 +1,9 @@
-#ifndef MIDIBASSPEDALCHORDS_CONFIGURATION_HPP
-#define MIDIBASSPEDALCHORDS_CONFIGURATION_HPP
+#ifndef MIDITRANSPOSER_CONFIGURATION_HPP
+#define MIDITRANSPOSER_CONFIGURATION_HPP
 
-#include "JuceHeader.h"
 #include <fstream>
 #include "nlohmann/json.hpp"
-#include "gin/utilities/gin_filesystemwatcher.h"
+#include "gin/gin.h"
 
 namespace Gui
 {
@@ -42,6 +41,8 @@ public:
     template<typename T>
     class Listener {
     public:
+        virtual ~Listener() = default;
+
         /**
          * @brief Send the updated data
          */
@@ -69,7 +70,7 @@ public:
         if (reloadConfiguration()) {
             notifyListeners();
             if (mRootComponent) {
-                mRootComponent->repaint();
+                juce::MessageManager::callAsync([&]() { mRootComponent->repaint(); });
             }
         }
     }
@@ -127,4 +128,4 @@ private:
 
 }
 
-#endif //MIDIBASSPEDALCHORDS_CONFIGURATION_HPP
+#endif //MIDITRANSPOSER_CONFIGURATION_HPP

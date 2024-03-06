@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_CUSTOMSLIDER_H
-#define MIDIBASSPEDALCHORDS_CUSTOMSLIDER_H
+#ifndef MIDITRANSPOSER_CUSTOMSLIDER_H
+#define MIDITRANSPOSER_CUSTOMSLIDER_H
 
-#include "JuceHeader.h"
 #include "params/Params.h"
 
 namespace Gui
@@ -11,8 +10,8 @@ class CustomSlider : public juce::Slider
 {
 public:
     explicit CustomSlider(const juce::String& name,
-                 juce::Slider::SliderStyle style = juce::Slider::SliderStyle::Rotary,
-                 juce::Slider::TextEntryBoxPosition position = juce::Slider::TextEntryBoxPosition::NoTextBox);
+                 juce::Slider::SliderStyle inStyle = juce::Slider::SliderStyle::Rotary,
+                 juce::Slider::TextEntryBoxPosition inPosition = juce::Slider::TextEntryBoxPosition::NoTextBox);
 
     void setCustomTextLambda(std::function<juce::String(double value)> inLambda);
 
@@ -30,4 +29,4 @@ private:
 
 } // Gui
 
-#endif //MIDIBASSPEDALCHORDS_CUSTOMSLIDER_H
+#endif //MIDITRANSPOSER_CUSTOMSLIDER_H

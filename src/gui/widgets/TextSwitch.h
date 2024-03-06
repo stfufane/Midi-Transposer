@@ -1,6 +1,8 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_core/juce_core.h>
+#include <juce_graphics/juce_graphics.h>
+
 #include "CustomToggleButton.h"
 
 namespace Gui
@@ -9,7 +11,7 @@ namespace Gui
     {
     public:
         TextSwitch() = delete;
-        explicit TextSwitch(const juce::String& name, juce::String onText, juce::String offText, float fontSize = 20.f);
+        explicit TextSwitch(const juce::String& name, juce::String inOnText, juce::String inOffText, float inFontSize = 20.f);
 
         void paint(juce::Graphics& g) override;
 

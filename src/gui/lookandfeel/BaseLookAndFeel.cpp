@@ -50,7 +50,7 @@ void BaseLookAndFeel::resetColors() {
 
 juce::Rectangle<int> BaseLookAndFeel::getTooltipBounds(const juce::String& /* tipText */,
                                       juce::Point<int> /* screenPos */,
-                                      juce::Rectangle<int> parentArea)
+                                      const juce::Rectangle<int> parentArea)
 {
     // Return the global bounds of the tooltips, at the bottom of the plugin area.
     return juce::Rectangle<int>(0, 0, parentArea.getWidth(), parentArea.getHeight()).reduced(3, 1);
@@ -89,12 +89,12 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
     g.strokePath (backgroundTrack, { trackWidth, juce::PathStrokeType::mitered, juce::PathStrokeType::square });
 
     juce::Path valueTrack;
-    juce::Point<float> minPoint, maxPoint;
+    juce::Point<float> maxPoint;
 
     auto kx = (float) x + (float) width * 0.5f;
     auto ky = sliderPos * h_ratio;
 
-    minPoint = startPoint;
+    juce::Point<float> minPoint = startPoint;
     maxPoint = { kx, ky };
 
     valueTrack.startNewSubPath (minPoint);
@@ -167,7 +167,7 @@ void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, i
                              bounds.getCentreY() + arcRadius * std::sin (toAngle - juce::MathConstants<float>::halfPi));
 
     g.setColour (slider.findColour (juce::Slider::thumbColourId));
-    g.fillRect(juce::Rectangle<float> (static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre (thumbPoint));
+    g.fillRect(juce::Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
 }
 
 void BaseLookAndFeel::drawComboBox (juce::Graphics& g, int width, int height, bool /* isButtonDown */,
@@ -197,11 +197,11 @@ void BaseLookAndFeel::drawPopupMenuBackground (juce::Graphics& g, int width, int
 }
 
 void BaseLookAndFeel::drawPopupMenuItem (juce::Graphics& g, const juce::Rectangle<int>& area,
-                                        const bool isSeparator, const bool isActive,
-                                        const bool isHighlighted, const bool isTicked,
-                                        const bool hasSubMenu, const juce::String& text,
-                                        const juce::String& shortcutKeyText,
-                                        const juce::Drawable* icon, const juce::Colour* const textColourToUse)
+                                        const bool /* isSeparator */, const bool isActive,
+                                        const bool isHighlighted, const bool /* isTicked */,
+                                        const bool /* hasSubMenu */, const juce::String& text,
+                                        const juce::String& /* shortcutKeyText */,
+                                        const juce::Drawable* /* icon */, const juce::Colour* const /* textColourToUse */)
 {
     g.fillAll(juce::Colours::transparentWhite);
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+
 #include "processor/MidiProcessor.h"
 #include "gui/UISettings.h"
 #include "presets/PresetManager.h"

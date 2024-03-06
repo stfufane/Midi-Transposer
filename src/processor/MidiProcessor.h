@@ -1,20 +1,23 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+
 #include "params/Params.h"
 
 class MidiProcessor
 {
 public:
-    MidiProcessor();
+    MidiProcessor() = default;
 
     void prepareToPlay(double rate);
-    void process(juce::MidiBuffer& midiMessages, int numSamples, juce::AudioPlayHead* playHead);
+    void process(juce::MidiBuffer& midiMessages, int numSamples, const juce::AudioPlayHead* playHead);
     void addParameters(juce::AudioProcessor& p);
 
     int getLastNoteOn() const { return lastNoteOn.note; }
 
-    Params::MidiParams& getMidiParams() { return midiParams; }
+    Params::MidiParams& getMidiParams();
+
     Params::NoteParams& getNoteParams() { return noteParams; }
     Params::ArpeggiatorParams& getArpeggiatorParams() { return arpeggiatorParams; }
 private:
@@ -25,7 +28,7 @@ private:
 
     juce::MidiBuffer processedMidi;
 
-    std::vector< std::set<int> > notesMapping;
+    std::vector< std::set<int> > notesMapping { 12, std::set({ 0 }) };
     
     struct NoteState {
         int note { -1 };
@@ -41,7 +44,7 @@ private:
     // Used to calculate the arpeggiator note positions.
     struct Arpeggiator 
     {
-        float     sampleRate;
+        float     sampleRate { 0.f };
         int       time { 0 };
         double    division { 0. };
         double    nextBeatPosition { 0. };
@@ -70,7 +73,7 @@ private:
     void stopCurrentNotes(juce::uint8 velocity, int samplePosition);
     void removeHeldNote(int note);
 
-    void processArpeggiator(int numSamples, juce::AudioPlayHead* playHead);
+    void processArpeggiator(int numSamples, const juce::AudioPlayHead* playHead);
     int  getArpeggiatorNoteDuration(const juce::AudioPlayHead::PositionInfo& positionInfo);
     void arpeggiate(int numSamples, const juce::AudioPlayHead::PositionInfo& positionInfo);
     void arpeggiateSync(int numSamples, const juce::AudioPlayHead::PositionInfo& positionInfo);

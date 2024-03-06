@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_KEYSPANEL_H
-#define MIDIBASSPEDALCHORDS_KEYSPANEL_H
+#ifndef MIDITRANSPOSER_KEYSPANEL_H
+#define MIDITRANSPOSER_KEYSPANEL_H
 
-#include "JuceHeader.h"
 #include "params/Params.h"
 #include "gui/widgets/NoteKey.h"
 
@@ -17,11 +16,11 @@ public:
 
     void resized() override;
 
-    std::vector<std::unique_ptr<Gui::NoteKey>>& getNoteKeys() { return noteKeys; }
+    std::vector<std::unique_ptr<NoteKey>>& getNoteKeys() { return noteKeys; }
     void setNoteKeyEdited(int index);
     void setNotePlayed(int index);
 private:
-    std::vector<std::unique_ptr<Gui::NoteKey>> noteKeys;
+    std::vector<std::unique_ptr<NoteKey>> noteKeys;
 
     static constexpr auto kNbNotes = 12;
 
@@ -29,4 +28,4 @@ private:
 };
 }
 
-#endif //MIDIBASSPEDALCHORDS_KEYSPANEL_H
+#endif //MIDITRANSPOSER_KEYSPANEL_H

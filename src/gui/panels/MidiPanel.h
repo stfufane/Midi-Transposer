@@ -1,7 +1,6 @@
-#ifndef MIDIBASSPEDALCHORDS_MIDIPANEL_H
-#define MIDIBASSPEDALCHORDS_MIDIPANEL_H
+#ifndef MIDITRANSPOSER_MIDIPANEL_H
+#define MIDITRANSPOSER_MIDIPANEL_H
 
-#include "JuceHeader.h"
 #include "processor/PluginProcessor.h"
 #include "gui/widgets/Helpers.h"
 #include "gui/widgets/CustomSlider.h"
@@ -29,4 +28,4 @@ private:
 };
 
 }
-#endif //MIDIBASSPEDALCHORDS_MIDIPANEL_H
+#endif //MIDITRANSPOSER_MIDIPANEL_H

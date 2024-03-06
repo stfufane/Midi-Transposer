@@ -91,7 +91,7 @@ void MainPanel::paint(juce::Graphics& g)
     g.drawRoundedRectangle(coordinates.mMidiPanel.reduced(coordinates.mMargin),
                            coordinates.mFrameCorner, 1.f);
     const auto midi_header_coordinates = juce::Rectangle<float>(0.f, 0.f,
-                                                           static_cast<float>(coordinates.mMidiPanel.getWidth()),
+                                                           coordinates.mMidiPanel.getWidth(),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(midi_header_coordinates, coordinates.mFrameCorner / 2.f);
     g.drawRoundedRectangle(coordinates.mMidiLabels, coordinates.mKeyCorner, 1.f);
@@ -102,7 +102,7 @@ void MainPanel::paint(juce::Graphics& g)
                            coordinates.mFrameCorner, 1.f);
     const auto arp_header_x = coordinates.mArpPanel.getX();
     const auto arp_header_coordinates = juce::Rectangle<float>(arp_header_x, 0.f,
-                                                           static_cast<float>(coordinates.mArpPanel.getWidth()),
+                                                           coordinates.mArpPanel.getWidth(),
                                                            coordinates.mHeaderHeight).reduced(coordinates.mMargin * 2.f);
     g.fillRoundedRectangle(arp_header_coordinates, coordinates.mFrameCorner / 2.f);
 

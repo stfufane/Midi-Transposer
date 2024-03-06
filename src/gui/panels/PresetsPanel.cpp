@@ -1,4 +1,5 @@
 #include "PresetsPanel.h"
+#include "BinaryData.h"
 #include "gui/panels/MainPanel.h"
 
 namespace Gui
@@ -52,7 +53,7 @@ PresetsPanel::~PresetsPanel()
     presetListComboBox.removeListener(this);
 }
 
-void PresetsPanel::initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable, const juce::String& inTooltip)
+void PresetsPanel::initButton(juce::DrawableButton& ioButton, const juce::Drawable* inDrawable, const juce::String& inTooltip)
 {
     addAndMakeVisible(ioButton);
     ioButton.setImages(inDrawable);
@@ -104,7 +105,7 @@ void PresetsPanel::buttonClicked(juce::Button* button)
 
 void PresetsPanel::loadPreset(int offset)
 {
-    auto new_index = (presetListComboBox.getSelectedItemIndex() + offset);
+    auto new_index = presetListComboBox.getSelectedItemIndex() + offset;
     // Make the index loop around.
     new_index = new_index < 0 ? presetListComboBox.getNumItems() - 1 : new_index % presetListComboBox.getNumItems();
     presetManager.loadPreset(presetListComboBox.getItemText(new_index));
@@ -184,7 +185,7 @@ void PresetsPanel::resized()
 
         // Calculate the combobox coordinates.
         auto combo_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight) + static_cast<int>(coordinates.mButtonHeight),
-                                         getWidth(), static_cast<int>(static_cast<int>(coordinates.mButtonHeight)))
+                                         getWidth(), static_cast<int>(coordinates.mButtonHeight))
                                          .reduced(static_cast<int>(coordinates.mMargin) * 2, static_cast<int>(coordinates.mMargin));
         presetListComboBox.setBounds(combo_bounds);
 

@@ -7,14 +7,14 @@ namespace Gui
 {
 
 NoteKey::NoteKey(int index)
-        : juce::TextButton("Note Key " + juce::String(index)), noteIndex(index)
+        : TextButton("Note Key " + juce::String(index)), noteIndex(index)
 {
-    setTooltip("Click to change the intervals for this note.");
+    Button::setTooltip("Click to change the intervals for this note.");
 }
 
 void NoteKey::setPlayed(const int index) 
 {
-    auto oldPlayed = isPlayed;
+    const auto oldPlayed = isPlayed;
     isPlayed = (noteIndex == index % 12); 
     if (oldPlayed != isPlayed) {
         repaint();
@@ -47,7 +47,7 @@ void NoteKey::paint(juce::Graphics& g)
             g.setColour(findColour(text_color));
             g.drawRoundedRectangle(key_bounds, coordinates.mKeyCorner, 1.f);
             g.setFont(LnF::getDefaultFont(coordinates.mKeyFontSize));
-            g.drawText(std::string(Notes::labels[noteIndex]), key_bounds, juce::Justification::centred);
+            g.drawText(std::string(Notes::labels[static_cast<size_t>(noteIndex)]), key_bounds, juce::Justification::centred);
         };
         if (Notes::whiteNotes[static_cast<size_t>(noteIndex)]) {
             draw_key(juce::Label::ColourIds::textColourId, juce::Label::ColourIds::backgroundColourId);

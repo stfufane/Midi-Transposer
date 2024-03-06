@@ -1,8 +1,8 @@
-#ifndef MIDIBASSPEDALCHORDS_PRESETSPANEL_H
-#define MIDIBASSPEDALCHORDS_PRESETSPANEL_H
+#ifndef MIDITRANSPOSER_PRESETSPANEL_H
+#define MIDITRANSPOSER_PRESETSPANEL_H
 
-#include "JuceHeader.h"
 #include "presets/PresetManager.h"
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace Gui
 {
@@ -16,7 +16,7 @@ public:
     explicit PresetsPanel(PresetBrowser::PresetManager& pm);
     ~PresetsPanel() override;
 
-    void initButton(juce::DrawableButton& ioButton, juce::Drawable* inDrawable, const juce::String& inTooltip);
+    void initButton(juce::DrawableButton& ioButton, const juce::Drawable* inDrawable, const juce::String& inTooltip);
 
     void resized() override;
 
@@ -53,4 +53,4 @@ private:
 };
 }
 
-#endif //MIDIBASSPEDALCHORDS_PRESETSPANEL_H
+#endif //MIDITRANSPOSER_PRESETSPANEL_H

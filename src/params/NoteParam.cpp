@@ -1,4 +1,7 @@
 #include "Params.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_core/juce_core.h>
+#include <string>
 
 namespace Params
 {
@@ -6,7 +9,7 @@ namespace Params
  * NoteParam
  ***********************************************/
 NoteParam::NoteParam(const int index)
-        : noteIndex(index), noteName(Notes::names[static_cast<size_t>(index)]), noteLabel(Notes::labels[index])
+        : noteIndex(index), noteName(Notes::names[static_cast<size_t>(index)]), noteLabel(Notes::labels[static_cast<size_t>(index)])
 {
     intervals.reserve(Notes::names.size());
     for (int i = 0; i < Notes::count; i++) {

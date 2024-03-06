@@ -1,7 +1,8 @@
-#ifndef MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
-#define MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
+#ifndef MIDITRANSPOSER_BASELOOKANDFEEL_H
+#define MIDITRANSPOSER_BASELOOKANDFEEL_H
 
-#include "JuceHeader.h"
+#include <juce_gui_basics/juce_gui_basics.h>
+#include "BinaryData.h"
 #include "gui/Configuration.hpp"
 #include "gui/CompColors.h"
 
@@ -38,9 +39,9 @@ public:
 
     void drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown,
                       int buttonX, int buttonY, int buttonW, int buttonH,
-                      juce::ComboBox& combo) override;
+                      juce::ComboBox& box) override;
 
-    void positionComboBoxText(juce::ComboBox& combo, juce::Label& label) override;
+    void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override;
 
     void onConfigChanged(const CompColors& colors) override;
 
@@ -60,4 +61,4 @@ private:
 };
 
 }
-#endif //MIDIBASSPEDALCHORDS_BASELOOKANDFEEL_H
+#endif //MIDITRANSPOSER_BASELOOKANDFEEL_H

@@ -5,7 +5,7 @@
 namespace Gui
 {
 
-IntervalsPanel::IntervalsPanel(Params::NoteParam& noteParam)
+IntervalsPanel::IntervalsPanel(const Params::NoteParam& noteParam)
     : juce::Component("Intervals Panel " + noteParam.noteName)
 {
     intervalsChoices.reserve(kNbIntervals);
