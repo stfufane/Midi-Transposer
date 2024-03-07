@@ -5,7 +5,7 @@
 namespace Gui
 {
 
-MidiPanel::MidiPanel(MidiBassPedalChordsAudioProcessor& p)
+MidiPanel::MidiPanel(MidiTransposerAudioProcessor& p)
     : juce::Component("Midi Panel")
 {
     auto& midiParams = p.getMidiProcessor().getMidiParams();

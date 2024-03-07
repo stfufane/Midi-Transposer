@@ -4,12 +4,12 @@
 #include "gui/lookandfeel/BaseLookAndFeel.h"
 #include "gui/panels/MainPanel.h"
 
-class MidiBassPedalChordsAudioProcessorEditor : public juce::AudioProcessorEditor
+class MidiTransposerAudioProcessorEditor final : public juce::AudioProcessorEditor
 {
 public:
-    explicit MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p);
+    explicit MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor& p);
 
-    ~MidiBassPedalChordsAudioProcessorEditor() override;
+    ~MidiTransposerAudioProcessorEditor() override;
 
     //==============================================================================
     void paint(juce::Graphics&) override;
@@ -34,5 +34,5 @@ private:
     static constexpr int kWindowHeight = 442;
     static constexpr float kMaxResize = 1.5f;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiBassPedalChordsAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiTransposerAudioProcessorEditor)
 };

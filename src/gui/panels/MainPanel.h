@@ -19,7 +19,7 @@ class MainPanel : public juce::Component,
 {
 public:
     MainPanel() = delete;
-    explicit MainPanel(MidiBassPedalChordsAudioProcessor& p);
+    explicit MainPanel(MidiTransposerAudioProcessor& p);
     ~MainPanel() override;
 
     void resized() override;

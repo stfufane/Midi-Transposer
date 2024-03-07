@@ -114,7 +114,7 @@ struct IntervalParam
 This represents the structure for a note with its transposition and selected intervals.
 The update function is called on parameter changed to update the mappingNotes vector of the processor.
 */
-struct NoteParam : juce::AudioProcessorParameter::Listener
+struct NoteParam final : juce::AudioProcessorParameter::Listener
 {
     NoteParam() = delete;
 

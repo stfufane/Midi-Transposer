@@ -13,7 +13,7 @@ namespace Gui
  * It also has to implement a getFileName static method that returns a std::string
  */
 template<class Data>
-class Configuration : public gin::FileSystemWatcher::Listener
+class Configuration final : public gin::FileSystemWatcher::Listener
 {
 public:
     Configuration() = delete;
@@ -81,7 +81,7 @@ private:
     bool reloadConfiguration()
     {
         // Read json config
-        std::string json_path = mWatchedFolder + "/" + Data::getFileName();
+        const std::string json_path = mWatchedFolder + "/" + Data::getFileName();
         try {
             std::ifstream f(json_path);
             auto j = nlohmann::json::parse(f);

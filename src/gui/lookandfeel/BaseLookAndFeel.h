@@ -9,15 +9,15 @@
 namespace Gui::LnF
 {
 
-inline juce::Font getDefaultFont(float inPointHeight = 16.f)
+inline juce::Font getDefaultFont(const float inPointHeight = 16.f)
 {
     return juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::iosevkaregular_ttf,
                                                    BinaryData::iosevkaregular_ttfSize))
                                                    .withPointHeight(inPointHeight);
 }
 
-class BaseLookAndFeel : public juce::LookAndFeel_V4,
-        public Gui::Configuration<CompColors>::Listener<CompColors>
+class BaseLookAndFeel final : public juce::LookAndFeel_V4,
+                              public Gui::Configuration<CompColors>::Listener<CompColors>
 {
 public:
     explicit BaseLookAndFeel(juce::Component* rootComponent);
@@ -48,11 +48,11 @@ public:
     void drawPopupMenuBackground (juce::Graphics& g, int width, int height) override;
 
     void drawPopupMenuItem (juce::Graphics& g, const juce::Rectangle<int>& area,
-                                 const bool isSeparator, const bool isActive,
-                                 const bool isHighlighted, const bool isTicked,
-                                 const bool hasSubMenu, const juce::String& text,
+                                 bool isSeparator, bool isActive,
+                                 bool isHighlighted, bool isTicked,
+                                 bool hasSubMenu, const juce::String& text,
                                  const juce::String& shortcutKeyText,
-                                 const juce::Drawable* icon, const juce::Colour* const textColourToUse) override;
+                                 const juce::Drawable* icon, const juce::Colour* textColourToUse) override;
 
 private:
     Gui::Configuration<CompColors> mConfiguration;

@@ -9,7 +9,7 @@ namespace Gui
 /**
  * @brief The drawing of a key with an event to display its intervals.
  */
-class NoteKey : public juce::TextButton
+class NoteKey final : public juce::TextButton
 {
 public:
     NoteKey() = delete;
@@ -21,7 +21,7 @@ public:
     void mouseExit(const juce::MouseEvent&) override;
 
     void setEdited(const int index) { isEdited = (noteIndex == index); }
-    void setPlayed(const int index);
+    void setPlayed(int index);
     void setChangeNoteCallback(std::function<void(int)> inCallback) { changeNote = std::move(inCallback); }
 
 private:

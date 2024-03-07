@@ -15,7 +15,7 @@ class MidiPanel : public juce::Component
 {
 public:
     MidiPanel() = delete;
-    explicit MidiPanel(MidiBassPedalChordsAudioProcessor& p);
+    explicit MidiPanel(MidiTransposerAudioProcessor& p);
 
     void resized() override;
 

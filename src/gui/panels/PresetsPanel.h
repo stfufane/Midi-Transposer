@@ -9,7 +9,7 @@ namespace Gui
 /**
  * @brief Contains the current preset name + presets browsing/save/load
  */
-class PresetsPanel : public juce::Component, juce::Button::Listener, juce::ComboBox::Listener
+class PresetsPanel final : public juce::Component, juce::Button::Listener, juce::ComboBox::Listener
 {
 public:
     PresetsPanel() = delete;
@@ -47,7 +47,7 @@ private:
 
     juce::ComboBox presetListComboBox { "cmbPresetList" };
 
-    std::unique_ptr<juce::AlertWindow> presetNameChooser = nullptr;
+    std::unique_ptr<juce::AlertWindow> presetNameChooser;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetsPanel)
 };

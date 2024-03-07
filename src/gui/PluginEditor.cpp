@@ -1,7 +1,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor(MidiBassPedalChordsAudioProcessor& p)
+MidiTransposerAudioProcessorEditor::MidiTransposerAudioProcessorEditor(MidiTransposerAudioProcessor& p)
         : juce::AudioProcessorEditor(&p),
           mLookAndFeel(this),
           mainPanel(p),
@@ -10,7 +10,7 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     setResizable(true, true);
 
     // Retrieve useful data from the processor.
-    auto& uiSettings = p.getUISettings();
+    const auto& uiSettings = p.getUISettings();
 
     // Restore the last size if it exists.
     if (uiSettings.width != 0) {
@@ -28,20 +28,20 @@ MidiBassPedalChordsAudioProcessorEditor::MidiBassPedalChordsAudioProcessorEditor
     addAndMakeVisible(mainPanel);
 }
 
-MidiBassPedalChordsAudioProcessorEditor::~MidiBassPedalChordsAudioProcessorEditor()
+MidiTransposerAudioProcessorEditor::~MidiTransposerAudioProcessorEditor()
 {
     setLookAndFeel(nullptr);
 }
 
 //==============================================================================
-void MidiBassPedalChordsAudioProcessorEditor::paint(juce::Graphics& g)
+void MidiTransposerAudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colours::whitesmoke);
 }
 
-void MidiBassPedalChordsAudioProcessorEditor::resized()
+void MidiTransposerAudioProcessorEditor::resized()
 {
-    auto* p = dynamic_cast<MidiBassPedalChordsAudioProcessor*>(&processor);
+    auto* p = dynamic_cast<MidiTransposerAudioProcessor*>(&processor);
     p->saveEditorSize(getWidth(), getHeight());
 
     mainPanel.setSize(kWindowWidth, kWindowHeight);

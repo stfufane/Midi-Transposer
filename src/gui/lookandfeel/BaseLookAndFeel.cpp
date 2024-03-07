@@ -77,10 +77,10 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
                                        juce::Slider& slider)
 {
     auto trackWidth = 10.f;
-    auto h_ratio = .72f;
+    constexpr auto h_ratio = .72f;
 
-    juce::Point<float> startPoint ((float) x + (float) width * 0.5f, (float) (height + y) * h_ratio);
-    juce::Point<float> endPoint (startPoint.x, (float) y * h_ratio);
+    const juce::Point startPoint (static_cast<float>(x) + static_cast<float>(width) * 0.5f, static_cast<float>(height + y) * h_ratio);
+    const juce::Point endPoint (startPoint.x, static_cast<float>(y) * h_ratio);
 
     juce::Path backgroundTrack;
     backgroundTrack.startNewSubPath (startPoint);
@@ -89,13 +89,12 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
     g.strokePath (backgroundTrack, { trackWidth, juce::PathStrokeType::mitered, juce::PathStrokeType::square });
 
     juce::Path valueTrack;
-    juce::Point<float> maxPoint;
 
-    auto kx = (float) x + (float) width * 0.5f;
-    auto ky = sliderPos * h_ratio;
+    const auto kx = static_cast<float>(x) + static_cast<float>(width) * 0.5f;
+    const auto ky = sliderPos * h_ratio;
 
-    juce::Point<float> minPoint = startPoint;
-    maxPoint = { kx, ky };
+    const juce::Point<float> minPoint = startPoint;
+    const juce::Point<float> maxPoint = { kx, ky };
 
     valueTrack.startNewSubPath (minPoint);
     valueTrack.lineTo (maxPoint);
@@ -106,29 +105,29 @@ void BaseLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int widt
     g.fillRect(juce::Rectangle<float> (trackWidth * 2.f, trackWidth / 2.f).withCentre (maxPoint));
 
     const auto value = slider.getValue();
-    auto text = (value > 0 ? "+" : "") + juce::String(value);
-    auto text_bounds = juce::Rectangle<float>(0.f, static_cast<float>(slider.getHeight()) * h_ratio, 
-        static_cast<float>(width), static_cast<float>(slider.getHeight()) * (1.f - h_ratio));
+    const auto text = (value > 0 ? "+" : "") + juce::String(value);
+    const auto text_bounds = juce::Rectangle<float>(0.f, static_cast<float>(slider.getHeight()) * h_ratio,
+                                                    static_cast<float>(width), static_cast<float>(slider.getHeight()) * (1.f - h_ratio));
 
     g.setFont(LnF::getDefaultFont(20.f));
     g.setColour(findColour(juce::Label::ColourIds::backgroundColourId));
     g.drawText(text, text_bounds, juce::Justification::centred);
 }
 
-void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, int width, int height,
-                       float sliderPos, float rotaryStartAngle,
-                       float rotaryEndAngle, juce::Slider& slider)
+void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, const int y, const int width, const int height,
+                                        const float sliderPos, const float rotaryStartAngle,
+                                        const float rotaryEndAngle, juce::Slider& slider)
 {
-    auto outline = slider.findColour (juce::Slider::backgroundColourId);
-    auto fill    = slider.findColour (juce::Slider::trackColourId);
+    const auto outline = slider.findColour (juce::Slider::backgroundColourId);
+    const auto fill    = slider.findColour (juce::Slider::trackColourId);
 
-    auto bounds = juce::Rectangle<int> ((width - height) / 2, y, // TODO: calculate properly
-                                        juce::jmin(width, height), juce::jmin(width, height)).toFloat().reduced (5);
+    const auto bounds = juce::Rectangle<int> ((width - height) / 2, y, // TODO: calculate properly
+                                              juce::jmin(width, height), juce::jmin(width, height)).toFloat().reduced (5);
 
-    auto radius = juce::jmin (bounds.getWidth(), bounds.getHeight()) / 2.0f;
-    auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    auto lineW = 2.0f;
-    auto arcRadius = radius - lineW * 0.5f + 2.0f;
+    const auto radius = juce::jmin (bounds.getWidth(), bounds.getHeight()) / 2.0f;
+    const auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+    constexpr auto lineW = 2.0f;
+    const auto arcRadius = radius - lineW * 0.5f + 2.0f;
 
     g.setColour (outline);
     g.fillEllipse(bounds.reduced(3.0f));
@@ -162,20 +161,20 @@ void BaseLookAndFeel::drawRotarySlider (juce::Graphics& g, int /* x */, int y, i
     g.strokePath (valueArc, juce::PathStrokeType (lineW, juce::PathStrokeType::mitered, juce::PathStrokeType::square));
     
     // The thumb is just a small square
-    auto thumbWidth = lineW * 2.f;
-    juce::Point<float> thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - juce::MathConstants<float>::halfPi),
-                             bounds.getCentreY() + arcRadius * std::sin (toAngle - juce::MathConstants<float>::halfPi));
+    constexpr auto thumbWidth = lineW * 2.f;
+    const juce::Point thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - juce::MathConstants<float>::halfPi),
+                                bounds.getCentreY() + arcRadius * std::sin (toAngle - juce::MathConstants<float>::halfPi));
 
     g.setColour (slider.findColour (juce::Slider::thumbColourId));
     g.fillRect(juce::Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
 }
 
-void BaseLookAndFeel::drawComboBox (juce::Graphics& g, int width, int height, bool /* isButtonDown */,
+void BaseLookAndFeel::drawComboBox (juce::Graphics& g, const int width, const int height, bool /* isButtonDown */,
                                     int /* buttonX */, int /* buttonY */, int /* buttonW */, int /* buttonH */,
                                     juce::ComboBox& box)
 {
-    auto cornerSize = 16.f;
-    auto bounds = juce::Rectangle<int> (0, 0, width, height).toFloat().reduced (3.f, 0.f);
+    constexpr auto cornerSize = 16.f;
+    const auto bounds = juce::Rectangle<int> (0, 0, width, height).toFloat().reduced (3.f, 0.f);
 
     g.setColour (box.findColour (juce::Label::backgroundColourId).darker(box.isMouseOver(true) ? .2f : .1f));
     g.fillRoundedRectangle (bounds, cornerSize);
@@ -205,7 +204,7 @@ void BaseLookAndFeel::drawPopupMenuItem (juce::Graphics& g, const juce::Rectangl
 {
     g.fillAll(juce::Colours::transparentWhite);
 
-    auto textColour = findColour (juce::Label::textColourId);
+    const auto textColour = findColour (juce::Label::textColourId);
     auto r  = area.reduced (1);
     r.reduce (juce::jmin (5, area.getWidth() / 20), 0);
 
@@ -219,7 +218,7 @@ void BaseLookAndFeel::drawPopupMenuItem (juce::Graphics& g, const juce::Rectangl
     }
 
     auto font = getDefaultFont();
-    auto maxFontHeight = (float) r.getHeight() / 1.3f;
+    const auto maxFontHeight = static_cast<float>(r.getHeight()) / 1.3f;
     if (font.getHeight() > maxFontHeight)
         font.setHeight (maxFontHeight);
 

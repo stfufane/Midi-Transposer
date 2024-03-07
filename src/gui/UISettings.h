@@ -10,7 +10,7 @@ struct UISettings
     UISettings() = default;
 
     // Get it from the plugin state
-    explicit UISettings(juce::XmlElement* xml)
+    explicit UISettings(const juce::XmlElement* xml)
     {
         if (xml != nullptr) {
             width = xml->getIntAttribute("width");

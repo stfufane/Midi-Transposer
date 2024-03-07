@@ -9,12 +9,12 @@
 /**
  * 
 */
-class MidiBassPedalChordsAudioProcessor : public juce::AudioProcessor
+class MidiTransposerAudioProcessor final : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    MidiBassPedalChordsAudioProcessor();
-    ~MidiBassPedalChordsAudioProcessor() override;
+    MidiTransposerAudioProcessor();
+    ~MidiTransposerAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -59,5 +59,5 @@ private:
     PresetBrowser::PresetManager presetManager;
     MidiProcessor midiProcessor;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiBassPedalChordsAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiTransposerAudioProcessor)
 };

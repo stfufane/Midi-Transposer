@@ -13,7 +13,7 @@ class ArpPanel : public juce::Component
 {
 public:
     ArpPanel() = delete;
-    explicit ArpPanel(MidiBassPedalChordsAudioProcessor& p);
+    explicit ArpPanel(MidiTransposerAudioProcessor& p);
 
     void resized() override;
 private:

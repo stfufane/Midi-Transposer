@@ -6,12 +6,12 @@
 namespace Gui
 {
 
-class CustomSlider : public juce::Slider
+class CustomSlider final : public juce::Slider
 {
 public:
     explicit CustomSlider(const juce::String& name,
-                 juce::Slider::SliderStyle inStyle = juce::Slider::SliderStyle::Rotary,
-                 juce::Slider::TextEntryBoxPosition inPosition = juce::Slider::TextEntryBoxPosition::NoTextBox);
+                 SliderStyle inStyle = Rotary,
+                 TextEntryBoxPosition inPosition = NoTextBox);
 
     void setCustomTextLambda(std::function<juce::String(double value)> inLambda);
 

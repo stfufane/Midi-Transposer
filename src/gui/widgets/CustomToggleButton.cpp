@@ -2,7 +2,7 @@
 
 namespace Gui
 {
-    CustomToggleButton::CustomToggleButton(const juce::String &name)
+    CustomToggleButton::CustomToggleButton(const juce::String& name)
         : juce::ToggleButton(name)
     { }
 

@@ -13,7 +13,7 @@ This way I can build a sequence of chords to play with my feet while improvising
 It was mainly a way to start learning how to use the JUCE framework and make an application I can use instead of a dull tutorial. 
 I'll improve it as ideas come and I make progress learning the framework. 
 
-It uses version 7.0.10 of JUCE by pulling the master branch from CMake. It's compatible with Windows and macOS as far as I tested. I intend to test on Linux too.
+It uses version 7.0.10 of JUCE by pulling the master branch from CMake. It builds and run on Windows 10/11, MacOS and Arch Linux so far. 
 
 You're welcome to clone it and use it as you want. And if you see stupid code, don't hesitate to tell me, I'll be happy to improve and fix it :) 
 

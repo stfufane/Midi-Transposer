@@ -5,7 +5,7 @@
 namespace Gui
 {
 
-MainPanel::MainPanel(MidiBassPedalChordsAudioProcessor& p)
+MainPanel::MainPanel(MidiTransposerAudioProcessor& p)
         : juce::Component("Main Panel"),
           mConfiguration(CONFIG_FOLDER, this),
           presetsPanel(p.getPresetManager()),

@@ -10,7 +10,7 @@ namespace Gui
  */
 struct PresetNameDialogChosen
 {
-    void operator()(int result) const noexcept
+    void operator()(const int result) const noexcept
     {
         panel.validatePresetSave(result);
     }
@@ -28,13 +28,13 @@ PresetsPanel::PresetsPanel(PresetBrowser::PresetManager& pm)
     presetListComboBox.addListener(this);
     updatePresetsList();
 
-    auto new_icon = juce::Drawable::createFromImageData(BinaryData::new_svg, BinaryData::new_svgSize);
-    auto save_icon = juce::Drawable::createFromImageData(BinaryData::save_svg, BinaryData::save_svgSize);
-    auto copy_icon = juce::Drawable::createFromImageData(BinaryData::copy_svg, BinaryData::copy_svgSize);
-    auto delete_icon = juce::Drawable::createFromImageData(BinaryData::delete_svg, BinaryData::delete_svgSize);
+    const auto new_icon = juce::Drawable::createFromImageData(BinaryData::new_svg, BinaryData::new_svgSize);
+    const auto save_icon = juce::Drawable::createFromImageData(BinaryData::save_svg, BinaryData::save_svgSize);
+    const auto copy_icon = juce::Drawable::createFromImageData(BinaryData::copy_svg, BinaryData::copy_svgSize);
+    const auto delete_icon = juce::Drawable::createFromImageData(BinaryData::delete_svg, BinaryData::delete_svgSize);
 
-    auto previous_icon = juce::Drawable::createFromImageData(BinaryData::previous_svg, BinaryData::previous_svgSize);
-    auto next_icon = juce::Drawable::createFromImageData(BinaryData::next_svg, BinaryData::next_svgSize);
+    const auto previous_icon = juce::Drawable::createFromImageData(BinaryData::previous_svg, BinaryData::previous_svgSize);
+    const auto next_icon = juce::Drawable::createFromImageData(BinaryData::next_svg, BinaryData::next_svgSize);
 
     initButton(presetNewButton, &*new_icon, "Create a new preset");
     initButton(presetSaveButton, &*save_icon, "Save the current preset");
@@ -103,7 +103,7 @@ void PresetsPanel::buttonClicked(juce::Button* button)
     }
 }
 
-void PresetsPanel::loadPreset(int offset)
+void PresetsPanel::loadPreset(const int offset)
 {
     auto new_index = presetListComboBox.getSelectedItemIndex() + offset;
     // Make the index loop around.
@@ -141,7 +141,7 @@ void PresetsPanel::updatePresetsList()
     presetListComboBox.setSelectedItemIndex(allPresets.indexOf(currentPreset), juce::dontSendNotification);
 }
 
-void PresetsPanel::validatePresetSave(int result)
+void PresetsPanel::validatePresetSave(const int result)
 {
     presetNameChooser->exitModalState(result);
     presetNameChooser->setVisible(false);
@@ -150,7 +150,7 @@ void PresetsPanel::validatePresetSave(int result)
         return;
     }
 
-    auto preset_name = presetNameChooser->getTextEditorContents("preset");
+    const auto preset_name = presetNameChooser->getTextEditorContents("preset");
     //TODO: Some input validation.
     if (presetManager.savePreset(preset_name)) {
         updatePresetsList();
@@ -175,7 +175,7 @@ void PresetsPanel::resized()
     preset_buttons.items.add(juce::FlexItem(presetPreviousButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 20, 0, 20)));
     preset_buttons.items.add(juce::FlexItem(presetNextButton).withFlex(1).withMargin(juce::FlexItem::Margin(0, 20, 0, 20)));
 
-    if (auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
+    if (const auto* main_panel = findParentComponentOfClass<MainPanel>(); main_panel) {
         const auto& coordinates = main_panel->getCoordinates();
 
         // Draw the file buttons icons.
@@ -184,7 +184,7 @@ void PresetsPanel::resized()
                                    .reduced(static_cast<int>(coordinates.mMargin) * 2, 0));
 
         // Calculate the combobox coordinates.
-        auto combo_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight) + static_cast<int>(coordinates.mButtonHeight),
+        const auto combo_bounds = juce::Rectangle<int>(0, static_cast<int>(coordinates.mHeaderHeight) + static_cast<int>(coordinates.mButtonHeight),
                                          getWidth(), static_cast<int>(coordinates.mButtonHeight))
                                          .reduced(static_cast<int>(coordinates.mMargin) * 2, static_cast<int>(coordinates.mMargin));
         presetListComboBox.setBounds(combo_bounds);

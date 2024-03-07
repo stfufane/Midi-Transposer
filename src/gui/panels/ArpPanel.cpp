@@ -5,10 +5,10 @@
 namespace Gui
 {
 
-ArpPanel::ArpPanel(MidiBassPedalChordsAudioProcessor& p)
+ArpPanel::ArpPanel(MidiTransposerAudioProcessor& p)
     : juce::Component("Arp Panel")
 {
-    auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
+    const auto& arpParams = p.getMidiProcessor().getArpeggiatorParams();
 
     arpActivated = std::make_unique< AttachedComponent<Gui::TextSwitch, juce::ButtonParameterAttachment> >(
         *arpParams.activated, *this,
