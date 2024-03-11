@@ -55,7 +55,7 @@ public:
     /**
      * @brief Triggered by the file-watcher when a file in the listened folder has been modified
      */
-    void fileChanged(const juce::File inFile, gin::FileSystemWatcher::FileSystemEvent inEvent) override
+    void fileChanged(const juce::File& inFile, gin::FileSystemWatcher::FileSystemEvent inEvent) override
     {
         // Only interested in modified files
         if (inEvent != gin::FileSystemWatcher::FileSystemEvent::fileUpdated) {
