@@ -20,33 +20,24 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 option(JUCE_BUILD_EXTRAS "Build JUCE Extras" ON)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 
-# Include JUCE from the Git repository so it's a subdirectory of the project
-update_from_git(juce "https://github.com/juce-framework/juce" "7.0.10" TRUE)
-
-# Add external libraries
-update_from_git(json "https://github.com/nlohmann/json" "v3.11.3" FALSE)
-
 # Adds all the module sources so they appear correctly in the IDE
 set(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Enable Module Source Groups" ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+
+# Include JUCE from the Git repository so it's a subdirectory of the project
+retrieve_from_git(juce "https://github.com/juce-framework/juce" "7.0.10" "")
+
+# Add external libraries
+retrieve_from_git(json "https://github.com/nlohmann/json" "v3.11.3" "")
+retrieve_from_git(gin "https://github.com/stfufane/Gin" "master" "modules")
+
+FetchContent_MakeAvailable(juce json gin)
 
 if (MSVC)
     string(REGEX REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
     string(REGEX REPLACE "-W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
-
-# Add juce as a subdirectory:
-add_subdirectory(${juce_SOURCE_DIR})
-
-# Load gin module
-FetchContent_Declare(gin
-        GIT_REPOSITORY https://github.com/FigBug/Gin
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        GIT_TAG master
-        SOURCE_SUBDIR modules)
-FetchContent_MakeAvailable(gin)
 
 # Generate the ProjectInfo struct.
 set(PROJECT_COMPANY "Stfufane")
