@@ -233,7 +233,7 @@ void MidiProcessor::arpeggiateSync(const int numSamples, const juce::AudioPlayHe
     while (offset < numSamples) {
         // Reset the position calculation if the division has changed.
         const auto lastDivision = Notes::divisions[static_cast<size_t>(arpeggiatorParams.syncRate->get())].division;
-        if (arp.division != lastDivision) {
+        if (!juce::exactlyEqual(arp.division, lastDivision)) {
             // Update the current division from parameter
             arp.division = lastDivision;
             arp.nextBeatPosition = 0.;

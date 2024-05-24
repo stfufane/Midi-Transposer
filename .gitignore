@@ -3,12 +3,10 @@
 .vscode/
 .vs/
 .DS_Store
+
+libs/
 build/
 out/
-Builds/
-JuceLibraryCode/
 
-/CMakeSettings.json
-/cmake-build-debug/
-
-ProjectInfo.h
+cmake-build-debug/
+cmake-build-release/
